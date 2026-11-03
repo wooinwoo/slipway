@@ -1,0 +1,17 @@
+{
+  "name": "slipway-mono",
+  "private": true,
+  "packageManager": "pnpm@10.33.2",
+  "scripts": {
+    "dev": "turbo dev",
+    "dev:demo": "turbo dev:demo --filter=@slipway/web",
+    "build": "turbo build",
+    "typecheck": "turbo typecheck",
+    "lint": "turbo lint",
+    "test": "turbo test test:e2e",
+    "verify": "turbo verify"
+  },
+  "devDependencies": {
+    "turbo": "^2.11.10"
+  }
+}

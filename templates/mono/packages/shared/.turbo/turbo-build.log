@@ -1,0 +1,4 @@
+
+> @slipway/shared@ build /home/rst010/projects/personal/slipway/templates/mono/packages/shared
+> tsc -p tsconfig.json
+

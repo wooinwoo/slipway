@@ -1,0 +1,14 @@
+
+> @slipway/shared@ test /home/rst010/projects/personal/slipway/templates/mono/packages/shared
+> vitest run
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.1.0 [39m[90m/home/rst010/projects/personal/slipway/templates/mono/packages/shared[39m
+
+ [32m✓[39m src/kr.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 42[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m7 passed[39m[22m[90m (7)[39m
+[2m   Start at [22m 18:09:08
+[2m   Duration [22m 366ms[2m (import 63%, tests 24%, transform 9%, worker 5%)[22m
+

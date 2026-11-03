@@ -1,0 +1,43 @@
+# Slipway Nest
+
+The real backend for Slipway web apps. It serves exactly the `/api/*` contract that the
+React template's mock backend fakes, so a web app switches from demo to real by setting
+`VITE_API_URL`. Runs with zero setup: embedded Postgres (PGlite) in `./.data`, seeded with
+the same demo account as the web mock (demo@slipway.dev / demo1234).
+
+## Commands
+
+- `pnpm dev` starts http://localhost:3000/api with watch mode.
+- `pnpm verify` runs typecheck, lint, unit tests, API contract tests, and build.
+  Run it before reporting a task as done. Fix the cause of a failure; do not weaken a check.
+- `pnpm db:generate` writes a SQL migration after a schema change. The app applies migrations on start.
+
+## Map
+
+| Path | What lives there |
+|---|---|
+| `src/config.ts` | Every env setting, parsed with zod. See `.env.example` |
+| `src/contracts/` | zod schemas and types shared with the web app. Same rules on both sides |
+| `src/db/` | Drizzle schema, connection (PGlite or Postgres), demo account seed |
+| `src/common/http.ts` | `parse()` for request bodies and `fail()` for errors, both in the `{ message, fields }` shape |
+| `src/auth/` | Email, guest, Kakao and Naver sign-in, bearer sessions, `AuthGuard` + `@CurrentUser()` |
+| `test/api.e2e-spec.ts` | Contract tests against a fresh in-memory database |
+
+## Rules
+
+- The web app is the client of record. Any change to a request or response shape changes
+  `src/contracts/` here and the matching file in the web app, plus a contract test.
+- Validate every body and query with `parse(schema, value)`. Throw `fail(status, message, fields)`
+  for expected errors. Messages are Korean and tell the user what to do.
+- Inject with an explicit token, `@Inject(Service)`, not by type alone.
+- Every route that touches user data sits behind `@UseGuards(AuthGuard)`.
+- Passwords and tokens go through `src/common/crypto.ts` only. Never log a token.
+- Imports use the `.js` suffix (ESM, `nodenext`).
+
+## Adding a resource
+
+1. Add the zod schema to `src/contracts/<resource>.ts` (Korean validators are in `src/contracts/kr.ts`).
+2. Add the table to `src/db/schema.ts`, then `pnpm db:generate`.
+3. Create `src/<resource>/` with a service (inject `DB`), a controller behind `AuthGuard` that
+   parses every body with `parse()`, and a module. Register the module in `src/app.module.ts`.
+4. Add contract tests in `test/`.
