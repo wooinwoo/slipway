@@ -14,7 +14,7 @@ import {
   Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail,
 } from "@/components/ui/sidebar"
-import { isDemo } from "@/config"
+import { codepack, isDemo } from "@/config"
 
 // Add a page: create the route file under src/routes/_app/, then add one line here.
 // The command menu (Ctrl+K) lists the same pages.
@@ -56,7 +56,7 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        {isDemo && (
+        {isDemo && codepack.showEnvironment && (
           <SidebarGroup className="mt-auto group-data-[collapsible=icon]:hidden">
             <div className="rounded-lg border bg-background/60 p-3 text-xs leading-relaxed text-muted-foreground">
               <p className="font-medium text-foreground">Mock API</p>

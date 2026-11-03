@@ -14,7 +14,10 @@
     "e2e": "playwright test",
     "check:reqs": "node scripts/check-reqs.mjs",
     "verify": "pnpm typecheck && pnpm lint && pnpm test && pnpm check:reqs && pnpm build && pnpm e2e",
-    "shots": "node scripts/shots.mjs"
+    "shots": "node scripts/shots.mjs",
+    "parts:typecheck": "tsc -p tsconfig.parts.json",
+    "parts:test": "playwright test --config playwright.parts.config.ts",
+    "parts:verify": "pnpm parts:typecheck && pnpm parts:test"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

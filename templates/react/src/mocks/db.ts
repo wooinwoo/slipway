@@ -1,7 +1,7 @@
 // In-browser database for the mock backend, persisted to localStorage so a demo
 // survives reloads. Clear site data to start over.
 import type { User } from "@/api/auth"
-// gen:imports (pnpm gen resource adds type imports above this line)
+// Import domain resource types here as they are added.
 
 const KEY = "slipway.mock-db.v1"
 

@@ -49,6 +49,10 @@
         "^build"
       ],
       "cache": false
+    },
+    "@slipway/web#verify": {
+      "dependsOn": ["^build", "@slipway/api#build"],
+      "cache": false
     }
   }
 }

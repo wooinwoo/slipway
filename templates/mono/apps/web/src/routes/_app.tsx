@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { isDemo } from "@/config"
+import { codepack, isDemo } from "@/config"
 
 // Every route under src/routes/_app/ requires a signed-in user.
 export const Route = createFileRoute("/_app")({
@@ -38,7 +38,7 @@ function AppLayout() {
           <Separator orientation="vertical" className="mr-2 data-vertical:h-4 data-vertical:self-center" />
           <Crumbs />
           <div className="ml-auto flex items-center gap-2">
-            {isDemo && (
+            {isDemo && codepack.showEnvironment && (
               <Badge variant="secondary" className="hidden font-normal sm:inline-flex">
                 Mock API
               </Badge>

@@ -12,7 +12,7 @@ export default defineConfig({
       "@": resolve(import.meta.dirname, "./src"),
     },
   },
-  // Same origin in dev and preview: no CORS setup.
-  server: { proxy: { "/api": "http://localhost:3000" } },
-  preview: { proxy: { "/api": "http://localhost:3000" } },
+  // Tests use an isolated API port; ordinary development uses :3000.
+  server: { proxy: { "/api": process.env.API_PROXY_TARGET ?? "http://localhost:3000" } },
+  preview: { proxy: { "/api": process.env.API_PROXY_TARGET ?? "http://localhost:3000" } },
 })

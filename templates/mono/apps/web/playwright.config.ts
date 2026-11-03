@@ -25,14 +25,15 @@ export default defineConfig({
   webServer: [
     {
       command: "pnpm --dir ../api start",
-      url: "http://localhost:3000/api/health",
-      env: { DATABASE_URL: "memory", DEMO: "true", ALLOW_GUEST: "true" },
-      reuseExistingServer: !process.env.CI,
+      url: "http://localhost:3017/api/health",
+      env: { PORT: "3017", DATABASE_URL: "memory", DEMO: "true", ALLOW_GUEST: "true" },
+      reuseExistingServer: false,
     },
     {
       command: `pnpm exec vite preview --port ${PORT} --strictPort`,
       url: `http://localhost:${PORT}`,
-      reuseExistingServer: !process.env.CI,
+      env: { API_PROXY_TARGET: "http://localhost:3017" },
+      reuseExistingServer: false,
     },
   ],
 })

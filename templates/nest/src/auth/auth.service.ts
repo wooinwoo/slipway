@@ -3,12 +3,7 @@ import type { Request } from 'express';
 import { and, eq, gt } from 'drizzle-orm';
 import type { z } from 'zod';
 
-import type {
-  loginSchema,
-  Provider,
-  signupSchema,
-  User,
-} from '../contracts/auth.js';
+import type { loginSchema, signupSchema, User } from '../contracts/auth.js';
 import {
   hashPassword,
   newId,
@@ -55,14 +50,6 @@ export class AuthService {
   }
 
   async signup({ name, email, password }: z.infer<typeof signupSchema>) {
-    const [taken] = await this.db
-      .select({ id: users.id })
-      .from(users)
-      .where(eq(users.email, email));
-    if (taken)
-      throw fail(400, '입력값을 확인해 주세요', {
-        email: '이미 가입된 이메일입니다',
-      });
     const [user] = await this.db
       .insert(users)
       .values({
@@ -72,25 +59,34 @@ export class AuthService {
         passwordHash: await hashPassword(password),
         provider: 'email',
       })
+      .onConflictDoNothing({ target: users.email })
       .returning();
+    if (!user)
+      throw fail(400, '입력값을 확인해 주세요', {
+        email: '이미 가입된 이메일입니다',
+      });
     return this.startSession(user);
   }
 
   async guest() {
     if (!config.ALLOW_GUEST)
       throw fail(403, '게스트 로그인이 꺼져 있습니다', {});
-    const user = await this.upsert({
-      id: 'u_guest',
-      name: '게스트',
-      email: 'guest@slipway.dev',
-      provider: 'guest',
-    });
+    const id = newId('guest');
+    const [user] = await this.db
+      .insert(users)
+      .values({
+        id,
+        name: '게스트',
+        email: `${id}@users.noreply.slipway.dev`,
+        provider: 'guest',
+      })
+      .returning();
     return this.startSession(user);
   }
 
   /** Finds or creates the account for a social profile. Kakao may withhold email. */
   async social(
-    provider: Provider,
+    provider: 'kakao' | 'naver',
     profile: { id: string; name: string; email?: string },
   ) {
     const [existing] = await this.db
@@ -102,14 +98,35 @@ export class AuthService {
     if (existing) return this.startSession(existing);
     const email =
       profile.email ?? `${provider}_${profile.id}@users.noreply.slipway.dev`;
-    const user = await this.upsert({
-      id: newId('u'),
-      name: profile.name,
-      email,
-      provider,
-      providerId: profile.id,
-    });
-    return this.startSession(user);
+    // Email alone never proves that two identities belong to the same person.
+    // Concurrent callbacks may create the same provider identity; only that exact
+    // identity may be reused after a conflict.
+    const [user] = await this.db
+      .insert(users)
+      .values({
+        id: newId('u'),
+        name: profile.name,
+        email,
+        provider,
+        providerId: profile.id,
+      })
+      .onConflictDoNothing()
+      .returning();
+    if (user) return this.startSession(user);
+    const [sameIdentity] = await this.db
+      .select()
+      .from(users)
+      .where(
+        and(eq(users.provider, provider), eq(users.providerId, profile.id)),
+      );
+    if (sameIdentity) return this.startSession(sameIdentity);
+    throw fail(
+      409,
+      '같은 이메일로 가입한 계정이 있습니다. 기존 로그인 방법을 사용해 주세요',
+      {
+        email: '계정을 자동으로 연결하지 않습니다',
+      },
+    );
   }
 
   async userFromRequest(request: Request) {
@@ -134,14 +151,5 @@ export class AuthService {
       await this.db
         .delete(sessions)
         .where(eq(sessions.tokenHash, sha256(token)));
-  }
-
-  private async upsert(values: typeof users.$inferInsert) {
-    const [user] = await this.db
-      .insert(users)
-      .values(values)
-      .onConflictDoUpdate({ target: users.email, set: { name: values.name } })
-      .returning();
-    return user;
   }
 }

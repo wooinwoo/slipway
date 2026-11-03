@@ -14,9 +14,10 @@ The web app of the Slipway monorepo (read `../../AGENTS.md` first). By default i
 | Path | What lives there |
 |---|---|
 | `src/config.ts` | Product name and copy, `isDemo` flag |
+| `src/patterns/` | Domain-independent table, form, details, board and metric patterns |
 | `src/index.css` | Theme tokens. `--brand-h` and `--brand-c` re-skin the whole app |
 | `src/api/<resource>.ts` | zod schema, types, query options, mutations for one resource |
-| `src/mocks/` | Mock backend: `db.ts` (localStorage), `seed.ts`, `handlers/<resource>.ts` |
+| `src/mocks/` | Mock backend: `db.ts` (localStorage and initial demo account), `handlers/<resource>.ts` |
 | `src/routes/` | TanStack Router file routes. Everything under `_app/` requires login |
 | `src/components/ui/` | shadcn, every component installed. Don't hand-edit; re-add with `pnpm dlx shadcn add <name> -o` |
 | `src/components/kr-inputs.tsx` | Korean inputs. Formatting and validation come from `@slipway/shared/kr` |
@@ -38,11 +39,18 @@ The web app of the Slipway monorepo (read `../../AGENTS.md` first). By default i
 
 ## Adding a resource
 
-Copy the customers set and rename it:
+Select independent components from `src/patterns/`. Do not preassemble business
+screens or register domain menus/APIs in the base template. Patterns must not import
+domain types or API clients.
+Read `CODEPACK.md` in a generated project (or `docs/codepack.md` in Slipway).
+There is no automatic resource generator. Define the acceptance criteria first.
 
-1. `src/api/customers.ts` holds the schema and queries.
-2. `src/mocks/handlers/customers.ts` holds the endpoints. Register it in `src/mocks/browser.ts`,
-   and add a table plus seed rows in `src/mocks/db.ts` and `src/mocks/seed.ts`.
-3. `src/routes/_app/customers/` holds the list and detail pages.
+1. `src/api/<resource>.ts` holds the schema and queries.
+2. `src/mocks/handlers/<resource>.ts` holds the endpoints. Register it in `src/mocks/browser.ts`,
+   and add the table and seed rows in `src/mocks/db.ts`.
+3. `src/routes/_app/<resource>/` holds the pages, including loading, empty, and error states.
 4. Add the page to `nav` in `src/components/app-sidebar.tsx`.
 5. Add `REQ-n` entries and e2e tests.
+
+Guest sign-in creates a new identity each time. Never assume one global guest ID.
+Use the returned user's ID to scope new domain data.

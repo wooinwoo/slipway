@@ -39,9 +39,10 @@ export const authHandlers = [
     return startSession(user)
   }),
 
-  http.post(`${API}/auth/guest`, () =>
-    startSession(ensureUser({ id: "u_guest", name: "게스트", email: "guest@slipway.dev", provider: "guest" })),
-  ),
+  http.post(`${API}/auth/guest`, () => {
+    const id = `guest_${crypto.randomUUID()}`
+    return startSession(ensureUser({ id, name: "게스트", email: `${id}@users.noreply.slipway.dev`, provider: "guest" }))
+  }),
 
   http.post(`${API}/auth/social/:provider`, ({ params }) => {
     const provider = params.provider === "naver" ? "naver" : "kakao"

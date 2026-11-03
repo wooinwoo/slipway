@@ -2,7 +2,7 @@ import { Controller, Get, Module } from '@nestjs/common';
 
 import { AuthModule } from './auth/auth.module.js';
 import { DbModule } from './db/db.module.js';
-// gen:imports (pnpm gen resource adds module imports above this line)
+// Resource modules are imported here and registered below.
 
 @Controller('health')
 class HealthController {

@@ -13,9 +13,14 @@
     "test": "vitest run --passWithNoTests",
     "e2e": "playwright test",
     "check:reqs": "node scripts/check-reqs.mjs",
-    "verify": "pnpm typecheck && pnpm lint && pnpm test && pnpm check:reqs && pnpm build && pnpm e2e",
+    "verify": "pnpm typecheck && pnpm lint && pnpm test && pnpm check:reqs && pnpm build && pnpm e2e && pnpm e2e:demo",
     "shots": "node scripts/shots.mjs",
-    "dev:demo": "vite --mode demo"
+    "parts:typecheck": "tsc -p tsconfig.parts.json",
+    "parts:test": "playwright test --config playwright.parts.config.ts",
+    "parts:verify": "pnpm parts:typecheck && pnpm parts:test",
+    "dev:demo": "vite --mode demo",
+    "build:demo": "tsc -b && vite build --mode demo --outDir dist-demo",
+    "e2e:demo": "pnpm build:demo && playwright test --config playwright.demo.config.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

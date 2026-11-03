@@ -5,20 +5,27 @@
 //   shared code      -> mono/packages/shared/src (Korean helpers from react, auth contract from nest)
 // Hand-maintained mono files (root package.json, turbo.json, AGENTS.md, shared package.json and
 // tsconfig) are left alone. Every patch asserts its anchor, so drift in a preset fails loudly.
-import { cpSync, existsSync, readFileSync, rmSync, writeFileSync } from "node:fs"
-import { join, relative } from "node:path"
+import { cpSync, existsSync, readFileSync, unlinkSync, writeFileSync } from "node:fs"
+import { basename, join, relative } from "node:path"
 
 const root = join(import.meta.dirname, "..", "templates")
 const mono = join(root, "mono")
-const skip = new Set(["node_modules", "dist", "test-results", ".tanstack", ".shots", ".data", "pnpm-lock.yaml", "pnpm-workspace.yaml", ".env"])
+const skip = new Set(["node_modules", "dist", "dist-demo", "test-results", "playwright-report", ".tanstack", ".shots", ".data", ".turbo", "pnpm-lock.yaml", "pnpm-workspace.yaml", ".env"])
 
 function copy(from, to) {
-  rmSync(to, { recursive: true, force: true })
-  cpSync(from, to, { recursive: true, filter: (src) => !skip.has(relative(from, src).split("/").pop()) })
+  // Preserve dependencies, databases and local settings in existing checkouts.
+  cpSync(from, to, {
+    recursive: true,
+    filter: (src) => {
+      const entry = basename(src)
+      return !skip.has(entry) && !entry.endsWith(".tsbuildinfo")
+        && !(entry.startsWith(".env") && entry !== ".env.example")
+    },
+  })
 }
 
 function patch(file, ...pairs) {
-  let text = readFileSync(file, "utf8")
+  let text = readFileSync(file, "utf8").replace(/\r\n/g, "\n")
   for (let i = 0; i < pairs.length; i += 2) {
     if (!text.includes(pairs[i])) throw new Error(`${relative(mono, file)}: anchor not found:\n${pairs[i]}`)
     text = text.replace(pairs[i], pairs[i + 1])
@@ -38,7 +45,6 @@ const shared = join(mono, "packages/shared/src")
 
 copy(join(root, "react"), web)
 copy(join(root, "nest"), api)
-rmSync(shared, { recursive: true, force: true })
 cpSync(join(root, "react/src/lib/kr.ts"), join(shared, "kr.ts"))
 cpSync(join(root, "react/src/lib/kr.test.ts"), join(shared, "kr.test.ts"))
 cpSync(join(root, "nest/src/contracts/auth.ts"), join(shared, "auth.ts"))
@@ -49,13 +55,13 @@ patch(join(shared, "auth.ts"),
 
 // --- web
 writeFileSync(join(web, "src/lib/kr.ts"), '// Korean helpers live in packages/shared so the API validates with the same rules.\nexport * from "@slipway/shared/kr"\n')
-rmSync(join(web, "src/lib/kr.test.ts"))
+unlinkSync(join(web, "src/lib/kr.test.ts"))
 patch(join(web, "src/api/auth.ts"),
   'import { z } from "zod"\n\nimport { api, token } from "./client"\n\nexport type User = { id: string; name: string; email: string; provider: "email" | "guest" | "kakao" | "naver" }\n',
   'import type { z } from "zod"\n\nimport { loginSchema, signupSchema, type User } from "@slipway/shared/auth"\nimport { api, token } from "./client"\n\nexport { loginSchema, signupSchema, type User }\n')
 {
   const file = join(web, "src/api/auth.ts")
-  const text = readFileSync(file, "utf8")
+  const text = readFileSync(file, "utf8").replace(/\r\n/g, "\n")
   const start = text.indexOf("export const loginSchema")
   const end = text.indexOf("export const meQuery")
   if (start < 0 || end < 0) throw new Error("apps/web/src/api/auth.ts: schema block not found")
@@ -66,13 +72,16 @@ json(join(web, "package.json"), (pkg) => {
   pkg.dependencies["@slipway/shared"] = "workspace:*"
   pkg.scripts["dev:demo"] = "vite --mode demo"
   pkg.scripts.test = "vitest run --passWithNoTests"
+  pkg.scripts["build:demo"] = "tsc -b && vite build --mode demo --outDir dist-demo"
+  pkg.scripts["e2e:demo"] = "pnpm build:demo && playwright test --config playwright.demo.config.ts"
+  pkg.scripts.verify += " && pnpm e2e:demo"
 })
-writeFileSync(join(web, ".env"), "# In the monorepo the web app talks to apps/api on the same origin (Vite proxies /api in dev and preview).\n# `pnpm dev:demo` runs it on the in-browser mock instead.\nVITE_API_URL=/\n")
+if (!existsSync(join(web, ".env"))) writeFileSync(join(web, ".env"), "# In the monorepo the web app talks to apps/api on the same origin (Vite proxies /api in dev and preview).\n# `pnpm dev:demo` runs it on the in-browser mock instead.\nVITE_API_URL=/\n")
 writeFileSync(join(web, ".env.demo"), "VITE_API_URL=\n")
 patch(join(web, ".gitignore"), "\n# Playwright", "\n# Committed on purpose: they hold no secrets, only where the API lives.\n!.env\n!.env.demo\n\n# Playwright")
 patch(join(web, "vite.config.ts"),
   '      "@": resolve(import.meta.dirname, "./src"),\n    },\n  },\n})',
-  '      "@": resolve(import.meta.dirname, "./src"),\n    },\n  },\n  // Same origin in dev and preview: no CORS setup.\n  server: { proxy: { "/api": "http://localhost:3000" } },\n  preview: { proxy: { "/api": "http://localhost:3000" } },\n})')
+  '      "@": resolve(import.meta.dirname, "./src"),\n    },\n  },\n  // Tests use an isolated API port; ordinary development uses :3000.\n  server: { proxy: { "/api": process.env.API_PROXY_TARGET ?? "http://localhost:3000" } },\n  preview: { proxy: { "/api": process.env.API_PROXY_TARGET ?? "http://localhost:3000" } },\n})')
 patch(join(web, "playwright.config.ts"),
   "  fullyParallel: true,\n", "  // One shared database behind the API, so tests run one at a time.\n  workers: 1,\n",
   `  // Runs against the production build, mock backend included, exactly as a demo is deployed.
@@ -85,16 +94,32 @@ patch(join(web, "playwright.config.ts"),
   webServer: [
     {
       command: "pnpm --dir ../api start",
-      url: "http://localhost:3000/api/health",
-      env: { DATABASE_URL: "memory", DEMO: "true", ALLOW_GUEST: "true" },
-      reuseExistingServer: !process.env.CI,
+      url: "http://localhost:3017/api/health",
+      env: { PORT: "3017", DATABASE_URL: "memory", DEMO: "true", ALLOW_GUEST: "true" },
+      reuseExistingServer: false,
     },
     {
       command: \`pnpm exec vite preview --port \${PORT} --strictPort\`,
       url: \`http://localhost:\${PORT}\`,
-      reuseExistingServer: !process.env.CI,
+      env: { API_PROXY_TARGET: "http://localhost:3017" },
+      reuseExistingServer: false,
     },
   ],`)
+// The exact same browser tests must also pass without a backend.
+writeFileSync(join(web, "playwright.demo.config.ts"), `import { defineConfig } from "@playwright/test"
+import base from "./playwright.config"
+
+export default defineConfig({
+  ...base,
+  outputDir: "test-results/demo",
+  use: { ...base.use, baseURL: "http://localhost:5180" },
+  webServer: {
+    command: "pnpm exec vite preview --outDir dist-demo --port 5180 --strictPort",
+    url: "http://localhost:5180",
+    reuseExistingServer: false,
+  },
+})
+`)
 patch(join(web, "e2e/app.e2e.ts"),
   "// Each test gets a fresh browser context, so the mock database starts from the seed every time.",
   "// Runs against the real API (apps/api). Accounts persist across tests, so signup uses a unique email.")

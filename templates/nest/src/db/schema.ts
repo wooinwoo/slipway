@@ -31,4 +31,4 @@ export const sessions = pgTable('sessions', {
   expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
 });
 
-// gen:tables (pnpm gen resource adds tables below this line)
+// Add domain tables here; enforce their ownership in the resource service.

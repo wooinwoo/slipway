@@ -1,0 +1,652 @@
+{
+  "version": 1,
+  "parts": [
+    {
+      "id": "table",
+      "name": "표와 검색 입력",
+      "category": "pattern",
+      "entries": [
+        "patterns/data-table.tsx"
+      ],
+      "exports": [
+        "DataTable",
+        "SearchInput",
+        "Column"
+      ],
+      "theme": true,
+      "summary": "열 렌더와 선택 콜백을 받는 표, 빈 결과, 로컬 페이지 이동",
+      "inputs": [
+        "rows: { id: string }[]",
+        "columns: Column<T>[]",
+        "onOpen(row)",
+        "pageSize?: number"
+      ],
+      "outputs": [
+        "선택한 행을 onOpen으로 전달"
+      ],
+      "edit": [
+        "columns의 제목·렌더 함수",
+        "pageSize",
+        "공통 테마 토큰"
+      ],
+      "notes": [
+        "데이터 검색과 필터링은 호출자가 처리합니다.",
+        "서버 페이지 이동과 정렬은 포함하지 않습니다."
+      ]
+    },
+    {
+      "id": "form",
+      "name": "레코드 폼",
+      "category": "pattern",
+      "entries": [
+        "patterns/record-form.tsx"
+      ],
+      "exports": [
+        "RecordForm",
+        "RecordField",
+        "FormFailure",
+        "Option"
+      ],
+      "theme": true,
+      "summary": "필드 설정과 저장 콜백으로 사용하는 독립 폼",
+      "inputs": [
+        "initial: Record<string, string>",
+        "fields: RecordField<T>[]",
+        "submit(values): Promise<FormFailure | undefined>",
+        "cancel()"
+      ],
+      "outputs": [
+        "submit에 현재 입력값 전달",
+        "필드 오류와 실패한 입력값 보존"
+      ],
+      "edit": [
+        "필드 라벨·type·options",
+        "render(value, onChange, id)로 커스텀 입력",
+        "저장 콜백의 검증·API 연결"
+      ],
+      "notes": [
+        "모달·라우트·API·검증 스키마를 자동 생성하지 않습니다.",
+        "다른 레코드로 전환할 때 key를 바꿔 초기값을 새로 적용합니다."
+      ]
+    },
+    {
+      "id": "details",
+      "name": "상세 패널",
+      "category": "pattern",
+      "entries": [
+        "patterns/detail-panel.tsx"
+      ],
+      "exports": [
+        "DetailPanel"
+      ],
+      "theme": true,
+      "summary": "라벨·값과 액션 슬롯을 받는 슬라이드 패널",
+      "inputs": [
+        "open, onOpenChange",
+        "title, description",
+        "fields: { label, value: ReactNode }[]",
+        "actions?: ReactNode"
+      ],
+      "outputs": [
+        "열림 상태 변경 콜백"
+      ],
+      "edit": [
+        "필드와 값 렌더링",
+        "actions 슬롯"
+      ],
+      "notes": [
+        "조회·수정·삭제와 선택 상태는 호출자가 관리합니다."
+      ]
+    },
+    {
+      "id": "board",
+      "name": "상태 보드",
+      "category": "pattern",
+      "entries": [
+        "patterns/status-board.tsx"
+      ],
+      "exports": [
+        "StatusBoard",
+        "StatusGroup"
+      ],
+      "theme": true,
+      "summary": "그룹·카드 렌더·이동 콜백으로 사용하는 상태 보드",
+      "inputs": [
+        "rows, groups: StatusGroup[]",
+        "status(row), render(row)",
+        "open(row), move(row, value)",
+        "pending?: boolean"
+      ],
+      "outputs": [
+        "선택과 상태 변경 콜백"
+      ],
+      "edit": [
+        "그룹 이름·상태 값",
+        "카드 렌더 함수",
+        "move의 저장 처리"
+      ],
+      "notes": [
+        "드래그 기능은 없습니다. 선택 메뉴로 키보드 조작이 가능합니다."
+      ]
+    },
+    {
+      "id": "metrics",
+      "name": "지표 카드",
+      "category": "pattern",
+      "entries": [
+        "patterns/metric-grid.tsx"
+      ],
+      "exports": [
+        "MetricGrid"
+      ],
+      "theme": true,
+      "summary": "라벨·값·설명·아이콘으로 만드는 반응형 지표",
+      "inputs": [
+        "items: { label, value, caption, icon? }[]"
+      ],
+      "outputs": [
+        "렌더링만 수행"
+      ],
+      "edit": [
+        "지표 입력값",
+        "공통 테마 토큰"
+      ],
+      "notes": [
+        "수치를 생성하거나 계산하지 않습니다."
+      ]
+    },
+    {
+      "id": "files",
+      "name": "파일 선택·드롭",
+      "category": "interaction",
+      "entries": [
+        "patterns/file-drop.tsx"
+      ],
+      "exports": [
+        "FileDrop"
+      ],
+      "theme": true,
+      "summary": "제어형 파일 목록, 드롭, 크기·개수·형식 검사",
+      "inputs": [
+        "files: File[], onChange(files)",
+        "accept?, maxBytes?, maxFiles?, disabled?",
+        "renderPreview?(file)"
+      ],
+      "outputs": [
+        "검사에 통과한 파일 목록"
+      ],
+      "edit": [
+        "허용 형식·크기·개수",
+        "미리보기 슬롯"
+      ],
+      "notes": [
+        "업로드 요청과 저장소 연결은 하지 않습니다.",
+        "기본은 파일당 10MB, 최대 5개입니다."
+      ]
+    },
+    {
+      "id": "async-state",
+      "name": "비동기 상태",
+      "category": "interaction",
+      "entries": [
+        "patterns/async-state.tsx"
+      ],
+      "exports": [
+        "AsyncState"
+      ],
+      "theme": true,
+      "summary": "로딩·오류·빈 결과·성공 상태를 분리하는 래퍼",
+      "inputs": [
+        "pending?, error?, empty?",
+        "retry?",
+        "emptyTitle?, emptyDescription?, emptyAction?",
+        "children"
+      ],
+      "outputs": [
+        "재시도 콜백"
+      ],
+      "edit": [
+        "빈 상태 문구·액션",
+        "자식 콘텐츠"
+      ],
+      "notes": [
+        "pending → error → empty → children 순서로 표시합니다.",
+        "요청과 재시도 정책은 호출자가 관리합니다."
+      ]
+    },
+    {
+      "id": "confirm",
+      "name": "비동기 확인 동작",
+      "category": "interaction",
+      "entries": [
+        "patterns/confirm-action.tsx"
+      ],
+      "exports": [
+        "ConfirmAction"
+      ],
+      "theme": true,
+      "summary": "확인·취소, 중복 실행 방지, 실패 후 재시도",
+      "inputs": [
+        "trigger: ReactElement",
+        "title, description",
+        "run(): Promise<void>",
+        "confirmLabel?, cancelLabel?, destructive?"
+      ],
+      "outputs": [
+        "확인 시 run 호출"
+      ],
+      "edit": [
+        "문구·트리거·동작 콜백"
+      ],
+      "notes": [
+        "실패하면 다이얼로그를 유지합니다.",
+        "실행 중에는 닫기와 중복 실행을 막습니다."
+      ]
+    },
+    {
+      "id": "kr-inputs",
+      "name": "한국어 입력",
+      "category": "input",
+      "entries": [
+        "components/kr-inputs.tsx"
+      ],
+      "exports": [
+        "PhoneInput",
+        "BizNoInput",
+        "WonInput",
+        "AddressInput"
+      ],
+      "theme": true,
+      "summary": "전화번호·사업자번호·금액·주소 입력",
+      "inputs": [
+        "value, onChange",
+        "HTML input props"
+      ],
+      "outputs": [
+        "포맷한 문자열 또는 금액 숫자"
+      ],
+      "edit": [
+        "제어형 value/onChange 연결"
+      ],
+      "notes": [
+        "주소 검색은 사용자가 요청할 때 외부 Daum 스크립트를 불러옵니다.",
+        "사업자번호는 실존 조회가 아닌 체크섬 검사입니다."
+      ]
+    },
+    {
+      "id": "kr-format",
+      "name": "한국어 포맷·검증",
+      "category": "utility",
+      "entries": [
+        "lib/kr.ts"
+      ],
+      "exports": [
+        "formatPhone",
+        "phoneSchema",
+        "formatBizNo",
+        "isValidBizNo",
+        "bizNoSchema",
+        "formatWon",
+        "formatWonKorean",
+        "formatWonCompact",
+        "formatRelative",
+        "banks"
+      ],
+      "theme": false,
+      "summary": "UI에 의존하지 않는 한국어 표시·검증 함수",
+      "inputs": [
+        "전화번호·사업자번호 문자열",
+        "원화 숫자",
+        "날짜와 기준 시각"
+      ],
+      "outputs": [
+        "표시 문자열·검증 결과·Zod 스키마"
+      ],
+      "edit": [
+        "허용 입력과 표시 규칙"
+      ],
+      "notes": [
+        "모듈 로딩 시 Zod 기본 메시지를 한국어로 설정합니다."
+      ]
+    },
+    {
+      "id": "api-client",
+      "name": "JSON API 클라이언트",
+      "category": "adapter",
+      "entries": [
+        "api/client.ts"
+      ],
+      "exports": [
+        "api",
+        "ApiError",
+        "token",
+        "BASE_URL",
+        "Page"
+      ],
+      "theme": false,
+      "summary": "JSON 요청, 필드 오류, 204와 bearer 토큰 처리",
+      "inputs": [
+        "api<T>(path, { json?, ...RequestInit })",
+        "VITE_API_URL"
+      ],
+      "outputs": [
+        "응답 값 또는 ApiError(status, message, fields)"
+      ],
+      "edit": [
+        "토큰 키·저장 방식",
+        "BASE_URL",
+        "오류 계약"
+      ],
+      "notes": [
+        "Vite 환경을 기준으로 하며 localStorage의 slipway.token을 사용합니다.",
+        "로그인 화면·인증 서버·라우트는 포함하지 않습니다."
+      ]
+    },
+    {
+      "id": "theme",
+      "name": "공통 시각 토큰",
+      "category": "foundation",
+      "entries": [
+        "index.css"
+      ],
+      "exports": [],
+      "theme": false,
+      "summary": "라이트·다크, 브랜드 hue, Pretendard, 여백·곡률 토큰",
+      "inputs": [
+        "--brand-h, --brand-c",
+        ".dark 클래스"
+      ],
+      "outputs": [
+        "styles/slipway.css"
+      ],
+      "edit": [
+        "브랜드 색·타이포·곡률 토큰"
+      ],
+      "notes": [
+        "복사 후 전역 CSS 진입점에서 한 번 import합니다.",
+        "Tailwind CSS 4의 CSS 처리 환경이 필요합니다."
+      ]
+    },
+    {
+      "id": "advanced-table",
+      "name": "정렬·선택·일괄 처리 표",
+      "category": "pattern",
+      "entries": [
+        "patterns/advanced-table.tsx",
+        "lib/table-model.ts"
+      ],
+      "exports": [
+        "AdvancedTable",
+        "AdvancedColumn",
+        "BulkAction",
+        "SortDirection",
+        "sortRows",
+        "togglePageSelection"
+      ],
+      "theme": true,
+      "summary": "로컬 정렬과 페이지별 선택, 비동기 일괄 처리",
+      "inputs": [
+        "rows: { id: string }[]",
+        "columns: AdvancedColumn<T>[]",
+        "selectedIds, onSelectionChange(ids)",
+        "actions: BulkAction<T>[]",
+        "pageSize?, rowLabel?, onOpen?"
+      ],
+      "outputs": [
+        "정렬된 표와 선택 ID",
+        "run(selectedRows): Promise<void>",
+        "실패 시 선택 보존, 성공 시 선택 해제"
+      ],
+      "edit": [
+        "열의 render·sortValue",
+        "액션의 label·run",
+        "페이지 크기와 행 접근성 이름"
+      ],
+      "notes": [
+        "정렬과 페이지 이동은 전달된 전체 배열에서 처리합니다.",
+        "선택은 호출자가 관리합니다. 서버 정렬·서버 페이지 이동은 포함하지 않습니다."
+      ]
+    },
+    {
+      "id": "filters",
+      "name": "고급 필터",
+      "category": "pattern",
+      "entries": [
+        "patterns/filter-bar.tsx",
+        "lib/filter-model.ts"
+      ],
+      "exports": [
+        "FilterBar",
+        "FilterField",
+        "FilterOption",
+        "FilterValue",
+        "FilterValues",
+        "isActiveFilter",
+        "validateFilters",
+        "applyFilters"
+      ],
+      "theme": true,
+      "summary": "텍스트·단일·다중 선택·숫자 범위·날짜 범위 필터",
+      "inputs": [
+        "fields: FilterField[]",
+        "value: FilterValues",
+        "onChange(value)",
+        "applyFilters(rows, fields, values, read)"
+      ],
+      "outputs": [
+        "필터 값 변경과 초기화",
+        "범위 검증 오류",
+        "선택적으로 호출하는 순수 배열 필터"
+      ],
+      "edit": [
+        "필터 이름·type·options",
+        "필드 값을 읽는 read 콜백"
+      ],
+      "notes": [
+        "필드 사이는 AND, 다중 선택 안에서는 OR로 처리합니다.",
+        "UI는 데이터를 조회하거나 URL을 수정하지 않습니다. 잘못된 범위의 applyFilters 결과는 빈 배열입니다."
+      ]
+    },
+    {
+      "id": "chart",
+      "name": "막대·선·영역 차트",
+      "category": "pattern",
+      "entries": [
+        "patterns/chart-panel.tsx",
+        "lib/chart-model.ts"
+      ],
+      "exports": [
+        "ChartPanel",
+        "ChartSeries",
+        "normalizeChartData"
+      ],
+      "theme": true,
+      "summary": "반응형 다중 계열 차트와 원본 값 표",
+      "inputs": [
+        "data: Record<string, unknown>[]",
+        "xKey, series: ChartSeries[]",
+        "kind?: bar | line | area",
+        "title, description?, height?, formatValue?"
+      ],
+      "outputs": [
+        "전달된 수치의 차트와 펼쳐 보는 데이터 표",
+        "빈 데이터 상태"
+      ],
+      "edit": [
+        "계열의 key·label·color",
+        "차트 종류·높이·수치 포맷"
+      ],
+      "notes": [
+        "Recharts를 사용합니다. 수치를 집계하거나 데이터를 생성하지 않습니다.",
+        "유한한 숫자만 표시하며 0과 음수를 보존합니다. 문자열과 누락 값은 빈 구간입니다."
+      ]
+    },
+    {
+      "id": "wizard",
+      "name": "단계형 폼",
+      "category": "pattern",
+      "entries": [
+        "patterns/step-form.tsx"
+      ],
+      "exports": [
+        "StepForm",
+        "FormStep",
+        "StepContext",
+        "StepFailure"
+      ],
+      "theme": true,
+      "summary": "단계별 검증과 입력 보존, 비동기 최종 제출",
+      "inputs": [
+        "initial: T",
+        "steps: FormStep<T>[]",
+        "submit(values): Promise<StepFailure | undefined>",
+        "cancel?, completeLabel?"
+      ],
+      "outputs": [
+        "단계 render에 values·change·errors·pending 전달",
+        "다음 단계 전 validate 호출",
+        "서버 오류의 stepId로 해당 단계 이동"
+      ],
+      "edit": [
+        "단계별 필드 render·validate",
+        "최종 제출 콜백과 완료 문구"
+      ],
+      "notes": [
+        "검증과 API는 호출자가 연결합니다.",
+        "initial은 첫 마운트에 적용합니다. 다른 레코드로 전환할 때 key를 바꿉니다."
+      ]
+    },
+    {
+      "id": "date-range",
+      "name": "날짜 범위",
+      "category": "pattern",
+      "entries": [
+        "patterns/date-range.tsx",
+        "lib/date-range.ts"
+      ],
+      "exports": [
+        "DateRangePicker",
+        "DateRangeValue",
+        "isDateOnly",
+        "validateDateRange",
+        "dateRangePresets"
+      ],
+      "theme": true,
+      "summary": "시작·종료 날짜와 오늘·최근 7일·이번 달 프리셋",
+      "inputs": [
+        "value: DateRangeValue",
+        "onChange(value)",
+        "label?, presets?, disabled?",
+        "dateRangePresets(now?)"
+      ],
+      "outputs": [
+        "YYYY-MM-DD 형식의 from·to",
+        "역전 범위 오류와 초기화"
+      ],
+      "edit": [
+        "기간 프리셋과 라벨",
+        "날짜를 쿼리 조건으로 변환하는 호출자 코드"
+      ],
+      "notes": [
+        "달력 날짜 기준이며 타임존 변환을 하지 않습니다.",
+        "잘못된 입력은 수정을 위해 유지합니다. 조회 전에 validateDateRange를 확인합니다."
+      ]
+    },
+    {
+      "id": "timeline",
+      "name": "타임라인",
+      "category": "pattern",
+      "entries": [
+        "patterns/timeline.tsx"
+      ],
+      "exports": [
+        "Timeline",
+        "TimelineItem"
+      ],
+      "theme": true,
+      "summary": "완료·진행·예정 상태와 액션 슬롯이 있는 기록 목록",
+      "inputs": [
+        "items: TimelineItem[]",
+        "emptyLabel?"
+      ],
+      "outputs": [
+        "호출자가 전달한 순서대로 기록 표시",
+        "아이콘·시간·설명·액션 슬롯"
+      ],
+      "edit": [
+        "title·description·timeLabel·dateTime",
+        "state·icon·actions"
+      ],
+      "notes": [
+        "정렬·시간 계산·상태 전환·데이터 요청을 하지 않습니다."
+      ]
+    },
+    {
+      "id": "csv",
+      "name": "CSV 가져오기·내보내기 UI",
+      "category": "pattern",
+      "entries": [
+        "patterns/csv-transfer.tsx"
+      ],
+      "exports": [
+        "CsvImport",
+        "CsvExportButton"
+      ],
+      "theme": true,
+      "summary": "파일 검증·미리보기·비동기 전달과 CSV 다운로드",
+      "inputs": [
+        "onImport(document): Promise<void>",
+        "maxBytes?, maxRows?, previewRows?",
+        "rows, columns: CsvColumn<T>[], filename?"
+      ],
+      "outputs": [
+        "검증한 headers·rows를 콜백에 전달",
+        "실패 후 미리보기 유지와 재시도",
+        "UTF-8 BOM CSV 파일 다운로드"
+      ],
+      "edit": [
+        "열 매핑과 도메인 검증을 하는 onImport",
+        "내보낼 열·행·파일 이름",
+        "파일 크기·행 수·미리보기 수"
+      ],
+      "notes": [
+        "파일 선택만으로 저장하지 않습니다. 가져오기 버튼을 눌러 콜백을 실행합니다.",
+        "기본 제한은 2MB·1만 행입니다. 스키마 변환·서버 업로드는 콜백에서 처리합니다."
+      ]
+    },
+    {
+      "id": "csv-utils",
+      "name": "CSV 파싱·직렬화",
+      "category": "utility",
+      "entries": [
+        "lib/csv.ts"
+      ],
+      "exports": [
+        "parseCsv",
+        "stringifyCsv",
+        "CsvDocument",
+        "CsvScalar",
+        "CsvColumn"
+      ],
+      "theme": false,
+      "summary": "따옴표·줄바꿈·BOM을 처리하는 의존성 없는 CSV 함수",
+      "inputs": [
+        "parseCsv(text, { delimiter?, maxRows?, maxColumns?, maxChars? })",
+        "stringifyCsv(columns, rows, { delimiter?, bom?, protectFormulas? })"
+      ],
+      "outputs": [
+        "headers: string[], rows: string[][]",
+        "CSV 문자열 또는 형식 오류"
+      ],
+      "edit": [
+        "구분자와 파싱 제한",
+        "열 이름과 값 추출 함수",
+        "BOM·수식 문자열 보호 옵션"
+      ],
+      "notes": [
+        "헤더는 비어 있거나 중복될 수 없고 모든 행의 열 수가 같아야 합니다.",
+        "문자열의 수식 시작 문자는 기본적으로 작은따옴표로 보호하며 실제 숫자 음수는 유지합니다."
+      ]
+    }
+  ]
+}

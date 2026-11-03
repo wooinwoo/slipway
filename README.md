@@ -1,47 +1,80 @@
 # Slipway
 
-데모가 하루 안에 나오는 스타터. 로그인, 데이터, 화면, 검증이 처음부터 동작하고, 코드는 전부 내 것이라 바로 고칠 수 있습니다.
+해커톤·사내 POC용 코드팩. 필요한 코드를 골라 복사하고, 만들려는 데모에 맞게 수정합니다.
 
-| 프리셋 | 용도 |
+## 부품 가져오기
+
+저장소 루트에서 실행합니다. Node.js 22.23.4 이상이 필요합니다.
+
+```sh
+node scripts/pack.mjs list
+node scripts/pack.mjs show table form
+node scripts/pack.mjs copy table form --to ../my-poc/src
+```
+
+- `list`: 부품 목록
+- `show`: 사용법, 수정 지점, 의존 파일과 패키지
+- `copy`: 선택한 부품과 필요한 파일 복사. 기존 파일과 충돌하면 중단
+
+UI 부품은 React + TypeScript + Tailwind CSS 4 기준입니다. 복사 후에는 출력된 패키지를 설치하고,
+`@/`를 대상 프로젝트의 `src/`에 연결합니다. 전역 CSS 진입점에 테마를 한 번 불러옵니다.
+
+```ts
+import "./styles/slipway.css"
+```
+
+복사한 코드는 직접 수정해서 씁니다. 가져온 파일과 패키지 목록은 `src/slipway-parts.json`에 남습니다.
+
+## 들어 있는 것
+
+| ID | 용도 |
 |---|---|
-| `templates/react` | Vite + React. 서버 없이 브라우저 안의 가짜 API로 완성된 데모 |
-| `templates/nest` | 그 가짜 API와 똑같은 계약의 실서버. 설치 없이 내장 Postgres(PGlite), `DATABASE_URL`이면 실 Postgres |
-| `templates/mono` | react + nest + `packages/shared`(스키마·한국 입력·시드 한 벌). Turborepo |
-| `templates/next` | 보류. 서버 렌더링이 꼭 필요할 때 |
+| `table` | 표, 검색 입력, 페이지 이동 |
+| `advanced-table` | 정렬, 페이지별 선택, 비동기 일괄 처리 |
+| `filters` | 검색·선택·다중 선택·숫자·날짜 범위 필터 |
+| `chart` | 막대·선·영역 차트, 원본 데이터 표 |
+| `wizard` | 단계형 폼, 단계별 검증과 입력 보존 |
+| `date-range` | 날짜 범위와 기간 프리셋 |
+| `timeline` | 진행 기록과 액션 슬롯 |
+| `csv` | CSV 검증·미리보기·가져오기·다운로드 |
+| `csv-utils` | UI 없이 쓰는 CSV 파싱·직렬화 |
+| `form` | 필드 설정으로 만드는 폼, 입력 오류와 제출 상태 |
+| `details` | 상세 슬라이드 패널과 액션 슬롯 |
+| `board` | 상태별 보드, 상태 변경 콜백 |
+| `metrics` | 지표 카드 |
+| `files` | 파일 선택·드롭, 형식·크기·개수 검사 |
+| `async-state` | 로딩·오류·빈 결과·재시도 |
+| `confirm` | 비동기 확인·취소, 실패 후 재시도 |
+| `kr-inputs` | 전화번호·사업자번호·금액·주소 입력 |
+| `kr-format` | 한국어 숫자·날짜·연락처 포맷과 검증 |
+| `api-client` | JSON 요청, 필드 오류, 토큰 처리 |
+| `theme` | 브랜드 색, 라이트·다크, 타이포그래피 |
 
-세 프리셋이 같은 `/api/*` 계약을 씁니다. 데모로 시작해서 `VITE_API_URL`만 바꾸면 실서버로 넘어가고, 같은 E2E가 양쪽에서 돌아갑니다.
+입력값과 콜백 규약은 [부품 사용법](docs/codepack.md)에 정리돼 있습니다.
+원본 코드는 `templates/react/src/`, 목록 정의는 [`codepack/catalog.json`](codepack/catalog.json)에 있습니다.
+명령에 `--json`을 붙이면 목록과 규약을 도구에서도 읽을 수 있습니다.
 
-## react 프리셋에 들어 있는 것
+## 프로젝트 기반도 필요하면
 
-- **화면**: shadcn 컴포넌트 63개 전부, 랜딩, 로그인·가입, 사이드바 앱 틀, 대시보드, 목록·상세·추가, 설정
-- **데이터**: MSW 가짜 백엔드와 한국어 시드 46건. `VITE_API_URL`만 넣으면 같은 호출이 실서버로 갑니다
-- **로그인**: 게스트 원클릭, 이메일, 카카오·네이버 버튼(데모에서는 샘플 계정으로 로그인)
-- **한국 입력**: 전화번호 자동 하이픈, 사업자등록번호 국세청 검증, "1억 2,500만원" 금액 표기, 다음 주소 검색
-- **브랜드**: `--brand-h` 숫자 하나로 전체 색이 바뀝니다. 설정 화면에서 실시간으로도 바꿉니다
-- **하네스**: `AGENTS.md`, 요구사항 `REQ-n`이 화면 파일과 E2E 테스트에 모두 연결됐는지 검사, `pnpm verify` 한 줄 검증
-
-```bash
-cd templates/react
-pnpm install
-pnpm dev       # http://localhost:5173
-pnpm verify    # 타입, 린트, 단위 테스트, 요구사항 연결, 빌드, E2E
+```sh
+node scripts/create-project.mjs ../my-poc --name "프로젝트 이름"
+cd ../my-poc
+corepack pnpm install --frozen-lockfile
+corepack pnpm dev
 ```
 
-## nest
+기본은 React + Mock API입니다. `--preset mono`는 웹·API·공통 패키지, `--preset nest`는 API 기반을 생성합니다.
 
-```bash
-cd templates/nest
-pnpm install
-pnpm dev       # http://localhost:3000/api  (PGlite, 시드 46건, 게스트 로그인)
-pnpm verify    # 타입, 린트, 단위, API 계약 테스트 11개, 빌드
+## 코드팩 수정하기
+
+부품의 입력·출력과 의존성은 카탈로그에 등록합니다. 동작 테스트는 기본 앱과 분리된 `fixtures/parts/`에서 실행합니다.
+검증에는 PATH에 등록된 pnpm 10.33.2가 필요합니다.
+
+```sh
+node scripts/pack.mjs check
+corepack pnpm --dir templates/mono install --frozen-lockfile
+corepack pnpm --dir templates/mono --filter @slipway/web exec playwright install firefox
+corepack pnpm verify
 ```
 
-## mono
-
-```bash
-cd templates/mono
-pnpm install
-pnpm dev       # web :5173 → /api 프록시 → api :3000
-pnpm dev:demo  # web만, 브라우저 가짜 API로
-pnpm verify
-```
+[개발·검증 기준](docs/feature-workflow.md) · [부품 사용법](docs/codepack.md)

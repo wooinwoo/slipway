@@ -25,7 +25,7 @@ test("REQ-2 email login returns to the page you asked for", async ({ page }) => 
   await page.getByRole("button", { name: "로그인", exact: true }).click()
   await expect(page.getByText("이메일 또는 비밀번호가 맞지 않습니다")).toBeVisible()
 
-  await page.getByRole("button", { name: /데모 계정/ }).click()
+  await page.getByLabel("비밀번호").fill("demo1234")
   await page.getByRole("button", { name: "로그인", exact: true }).click()
   await expect(page).toHaveURL(/\/settings$/)
 })
