@@ -1,6 +1,6 @@
 ---
 name: new
-description: Slipway로 새 앱을 만든다. 프리셋(react·mono·nest), 화면 초안(k-style-ui-ux), 배포 대상을 먼저 묻고 프로젝트 생성, 리소스 데이터 층(DB·API·Mock), 부품으로 화면 조립, 검증까지 진행한다. 사용자가 "Slipway로 앱 만들어줘", "해커톤용으로 하나 띄워줘", PRD·기획서를 주며 앱을 만들라고 할 때 트리거.
+description: Slipway로 새 앱이나 사이트를 만든다. 프리셋(react·mono·nest·astro), 화면 초안(k-style-ui-ux), 배포 대상을 먼저 묻고 프로젝트 생성, 리소스 데이터 층(DB·API·Mock), 부품으로 화면 조립, 검증까지 진행한다. 사용자가 "Slipway로 앱 만들어줘", "해커톤용으로 하나 띄워줘", PRD·기획서를 주며 앱을 만들라고 할 때 트리거.
 ---
 
 # slipway:new
@@ -17,6 +17,7 @@ description: Slipway로 새 앱을 만든다. 프리셋(react·mono·nest), 화�
    - `react`(추천: 빠른 시연): 서버 없이 브라우저 Mock으로 바로 동작
    - `mono`: 웹 + NestJS API + DB. 실제 저장·로그인이 필요할 때
    - `nest`: API만
+   - `astro`: 소개·랜딩·문서 같은 정적 사이트. 리소스 생성기 없음
 3. **디자인 도구**
    - Impeccable(추천: 웹 화면). 비평·감사·다듬기, 프로젝트의 `PRODUCT.md`·`DESIGN.md`를 그대로 읽는다
    - k-style-ui-ux로 모바일 화면 초안 먼저: 소비자용 모바일 앱처럼 흐름과 미감이 중요할 때

@@ -1,0 +1,42 @@
+---
+// Every page goes through this layout: language, title, description, canonical URL, Open Graph, theme.
+import "../styles/global.css"
+import { product } from "../config"
+
+interface Props {
+  /** Page title; the site name is appended. Leave out on the home page. */
+  title?: string
+  description?: string
+  /** Absolute or root-relative image for link previews; defaults to product.ogImage. */
+  image?: string
+}
+
+const { title, description = product.tagline, image = product.ogImage } = Astro.props
+const fullTitle = title ? `${title} · ${product.name}` : `${product.name} · ${product.tagline}`
+const canonical = new URL(Astro.url.pathname, Astro.site)
+const ogImage = image ? new URL(image, Astro.site).href : undefined
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:site_name" content={product.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="twitter:card" content={ogImage ? "summary_large_image" : "summary"} />
+  </head>
+  <body class="min-h-svh">
+    <slot />
+  </body>
+</html>

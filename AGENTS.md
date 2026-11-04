@@ -6,7 +6,7 @@ When the request is to build an app (not to change Slipway itself), do not edit 
 The full flow is `plugin/skills/new/SKILL.md` (the `/slipway:new` command). In short:
 
 1. Ask first, in one go: what the app is (a line or a PRD), the preset (react for a quick demo,
-   mono for web + API + DB, nest for API only), whether to draft screens first with the
+   mono for web + API + DB, nest for API only, astro for a landing or docs site), whether to draft screens first with the
    k-style-ui-ux plugin (consumer mobile apps), and where it will be deployed (or later).
 2. Create the project next to this repository and work only there:
    `node scripts/create-project.mjs ../<name> --preset <preset> --name "<서비스 이름>"`

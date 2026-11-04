@@ -121,6 +121,7 @@ node scripts/pack.mjs copy app-shell auth --to ../my-app/src
 | `react` (기본) | Vite 8 · React 19 · TanStack Router · TanStack Query · Tailwind CSS 4 · shadcn · MSW |
 | `mono` | 웹 + NestJS API + 공통 zod 스키마 패키지, Turborepo |
 | `nest` | NestJS 12 · Drizzle · PGlite 또는 Postgres · 이메일·게스트·카카오·네이버 인증 |
+| `astro` | Astro 7 · 같은 테마 토큰 · SEO(canonical·Open Graph·sitemap·robots) · 해시 CSP · React 아일랜드. 소개·랜딩·문서 사이트 |
 
 ## 문서
 

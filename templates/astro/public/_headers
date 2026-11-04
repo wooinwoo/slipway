@@ -1,0 +1,6 @@
+# Netlify and Cloudflare Pages. Scripts and styles are covered by the <meta> CSP Astro writes per page.
+/*
+  Content-Security-Policy: frame-ancestors 'none'; object-src 'none'; base-uri 'self'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
