@@ -47,6 +47,20 @@ docker run -p 3000:3000 -e DATABASE_URL=postgres://... -e WEB_URL=https://my-app
 `DATABASE_URL`이 없으면 컨테이너 안의 PGlite(`/app/apps/api/.data`)에 저장합니다. 시연용이라면 그대로 써도 되지만,
 컨테이너를 다시 만들면 데이터가 사라지므로 볼륨을 붙이거나 Postgres를 연결합니다. 마이그레이션은 서버가 시작할 때 적용합니다.
 
+## Docker 없이
+
+Docker는 선택입니다. Node가 있는 곳이면 빌드한 결과를 그대로 실행합니다.
+
+| 프리셋 | 빌드 명령 | 시작 명령 |
+|---|---|---|
+| mono (한 주소) | `pnpm install --frozen-lockfile && VITE_API_URL=/ pnpm build` | `cd apps/api && NODE_ENV=production WEB_DIST=../web/dist node dist/main.js` |
+| mono (API만) | `pnpm install --frozen-lockfile && pnpm build:api` | `cd apps/api && NODE_ENV=production node dist/main.js` |
+| nest | `pnpm install --frozen-lockfile && pnpm build` | `NODE_ENV=production node dist/main.js` |
+
+- Railway·Render·Fly.io의 Node 서비스, Elastic Beanstalk에는 위 두 명령과 환경 변수를 넣습니다.
+- VPS에서는 `pm2 start "<시작 명령>" --name my-app` 또는 systemd 서비스로 띄우고, 앞에 Caddy·Nginx를 둡니다.
+- 마이그레이션은 서버가 시작할 때 적용되므로 따로 돌리지 않습니다.
+
 ## VPS 한 대: mono + Postgres
 
 ```sh
