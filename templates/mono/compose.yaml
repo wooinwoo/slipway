@@ -1,0 +1,30 @@
+# A whole app on one server (iwinv, EC2, Lightsail, any VPS with Docker):
+#   PUBLIC_URL=http://<server address> docker compose up -d --build
+services:
+  app:
+    build: .
+    ports: ["${APP_PORT:-80}:3000"]
+    environment:
+      DATABASE_URL: postgres://slipway:${POSTGRES_PASSWORD:-slipway}@db:5432/slipway
+      WEB_URL: ${PUBLIC_URL:-http://localhost}
+      API_URL: ${PUBLIC_URL:-http://localhost}
+      DEMO: ${DEMO:-true}
+      ALLOW_GUEST: ${ALLOW_GUEST:-true}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: slipway
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-slipway}
+      POSTGRES_DB: slipway
+    volumes: ["db:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U slipway"]
+      interval: 5s
+      retries: 10
+    restart: unless-stopped
+volumes:
+  db: {}

@@ -1,0 +1,80 @@
+---
+name: new
+description: Slipway로 새 앱을 만든다. 프리셋(react·mono·nest), 화면 초안(k-style-ui-ux), 배포 대상을 먼저 묻고 프로젝트 생성, 로그인·앱 틀, 리소스(DB·API·화면), 검증까지 진행한다. 사용자가 "Slipway로 앱 만들어줘", "해커톤용으로 하나 띄워줘", PRD·기획서를 주며 앱을 만들라고 할 때 트리거.
+---
+
+# slipway:new
+
+요구사항을 받아 Slipway 프로젝트를 만들고, 화면과 데이터를 조립해 검증까지 끝낸다.
+
+## 1. 먼저 묻는다
+
+만들기 전에 한 번에 묻는다(Claude Code는 AskUserQuestion 하나에 질문 여러 개). 사용자가 이미 답한 항목은 묻지 않는다.
+
+1. **무엇을 만드는가**: 한 줄 설명이나 PRD. 없으면 "어떤 앱인지 한두 줄로 알려 주세요"를 먼저 묻는다.
+2. **프리셋**
+   - `react`(추천: 빠른 시연): 서버 없이 브라우저 Mock으로 바로 동작
+   - `mono`: 웹 + NestJS API + DB. 실제 저장·로그인이 필요할 때
+   - `nest`: API만
+3. **화면 초안**
+   - 바로 만들기(추천: 관리·업무형 화면)
+   - k-style-ui-ux로 모바일 화면 초안 먼저: 소비자용 모바일 앱처럼 흐름과 미감이 중요할 때
+4. **배포**: 나중에(추천) / 정적 호스팅(Vercel·Cloudflare·Netlify) / 컨테이너(Railway·Fly.io·AWS·Cloud Run) / VPS 한 대(iwinv·EC2)
+
+## 2. Slipway 소스 준비
+
+- 지금 폴더가 Slipway 저장소(`scripts/create-project.mjs`가 있음)라면 그대로 쓴다.
+- 아니면 캐시에 받는다: `git clone --depth 1 https://github.com/wooinwoo/slipway ~/.cache/slipway`
+  (이미 있으면 `git -C ~/.cache/slipway pull --ff-only`).
+
+## 3. 프로젝트 생성
+
+Slipway 저장소 안이나 `templates/`에는 만들지 않는다. 사용자의 현재 작업 폴더(Slipway 저장소라면 그 옆)에 만든다.
+
+```sh
+node <slipway>/scripts/create-project.mjs <폴더> --preset <프리셋> --name "<서비스 이름>" --tagline "<한 줄 소개>"
+cd <폴더> && corepack pnpm install --frozen-lockfile
+```
+
+폴더 이름은 영문 소문자·숫자·하이픈. 이후 작업은 그 폴더의 `AGENTS.md`를 따른다.
+
+## 4. 화면 초안 (골랐을 때만)
+
+- k-style-ui-ux 플러그인이 있으면 PRD로 `/k-style-ui-ux:go <PRD 파일>`을 실행한다. 결과는 `out/index.html`.
+- 없으면 설치 명령을 알려 주고, 설치할지 이번엔 건너뛸지 묻는다.
+  ```
+  /plugin marketplace add vmc-inner-circle/k-style-ui-ux
+  /plugin install k-style-ui-ux@k-style-ui-ux
+  ```
+- 초안은 참고 자료다. 흐름(어떤 화면이 있고 어디로 이어지는지)과 대상(리소스·필드)을 읽고,
+  고른 팔레트의 주 색을 `src/index.css`의 `--brand-h`·`--brand-c`로 옮긴다. HTML을 복사하지 않고 Slipway 부품으로 조립한다.
+
+## 5. 조립 (react·mono)
+
+1. 요구사항에서 사용자가 만들고 고치는 대상(리소스)과 필드를 뽑는다. 첫 필드는 이름 역할의 필수 text.
+2. 리소스마다 생성기를 돌린다. 처음 한 번 로그인·앱 틀도 같이 만들어진다.
+   ```sh
+   corepack pnpm gen resource orders 주문 --icon Receipt --fields "title:text:주문명 amount:won:금액 status:enum(접수|배송중|완료):상태 dueAt?:date:납기 memo?:textarea:메모"
+   ```
+   타입: text, textarea, email, phone, number, won, date, enum(a|b). 이름 뒤 `?`는 선택 입력.
+3. 대시보드·보드·차트 같은 화면은 `src/patterns/`의 부품으로 직접 조립한다(`CODEPACK.md`). 요구사항마다 `docs/requirements.md`에 `REQ-n`을 추가한다.
+4. `src/config.ts`의 이름·소개, `src/index.css`의 브랜드 색을 맞춘다.
+
+nest 프리셋도 `corepack pnpm gen resource ...`로 테이블·마이그레이션·API·계약 테스트를 만든다.
+
+## 6. 검증
+
+```sh
+corepack pnpm verify
+corepack pnpm shots / /<리소스>     # react·mono 웹. .shots/의 캡처를 직접 열어 본다
+```
+
+실패하면 원인을 고친다. 검사를 약하게 바꾸지 않는다. 캡처를 보기 전에는 화면 품질을 보고하지 않는다.
+
+## 7. 배포 (골랐을 때만)
+
+`/slipway:deploy`의 순서를 따른다.
+
+## 끝낼 때
+
+만든 폴더, 실행 명령(`corepack pnpm dev`), 만든 리소스와 화면, 검증 결과, 남은 일을 짧게 알린다.

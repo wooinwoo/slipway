@@ -12,9 +12,14 @@ import {
   MoonIcon,
   SearchIcon,
   SunIcon,
-  type LucideIcon,
 } from "lucide-react"
-import { Fragment, useEffect, useState, type ReactNode } from "react"
+import {
+  Fragment,
+  useEffect,
+  useState,
+  type ComponentType,
+  type ReactNode,
+} from "react"
 import { useTheme } from "@/components/theme-provider"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
@@ -76,7 +81,8 @@ declare module "@tanstack/react-router" {
 export type NavItem = {
   to: NonNullable<LinkProps["to"]>
   label: string
-  icon: LucideIcon
+  /** Any icon component: lucide-react (installed), Tabler, Phosphor, Heroicons... */
+  icon: ComponentType<{ className?: string }>
 }
 export type ShellUser = { name: string; email: string }
 

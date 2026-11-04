@@ -10,7 +10,7 @@ import { basename, join, relative } from "node:path"
 
 const root = join(import.meta.dirname, "..", "templates")
 const mono = join(root, "mono")
-const skip = new Set(["node_modules", "dist", "dist-demo", "test-results", "playwright-report", ".tanstack", ".shots", ".data", ".turbo", "pnpm-lock.yaml", "pnpm-workspace.yaml", ".env"])
+const skip = new Set(["node_modules", "dist", "dist-demo", "test-results", "playwright-report", ".tanstack", ".shots", ".data", ".turbo", "pnpm-lock.yaml", "pnpm-workspace.yaml", ".env", "Dockerfile", ".dockerignore"])
 
 function copy(from, to) {
   // Preserve dependencies, databases and local settings in existing checkouts.

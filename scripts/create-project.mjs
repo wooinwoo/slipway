@@ -38,6 +38,8 @@ export async function createProject(destination, { preset = "react", name, tagli
     const manifest = JSON.parse(await readFile(manifestPath, "utf8"))
     manifest.name = slug
     manifest.packageManager = "pnpm@10.33.2"
+    // `pnpm gen app` and `pnpm gen resource ...` write every layer from one field list.
+    manifest.scripts = { ...manifest.scripts, gen: "node scripts/gen.mjs" }
     await writeFile(manifestPath, JSON.stringify(manifest, null, 2) + "\n")
     try {
       const lockPath = join(stage, "package-lock.json")
@@ -60,6 +62,9 @@ export async function createProject(destination, { preset = "react", name, tagli
     }
     await cp(new URL("../docs/feature-workflow.md", import.meta.url), join(stage, "FEATURE-WORKFLOW.md"))
     await cp(new URL("../docs/codepack.md", import.meta.url), join(stage, "CODEPACK.md"))
+    await cp(new URL("../docs/deploy.md", import.meta.url), join(stage, "DEPLOY.md"))
+    await mkdir(join(stage, "scripts"), { recursive: true })
+    await cp(new URL("./gen.mjs", import.meta.url), join(stage, "scripts/gen.mjs"))
     await writeFile(join(stage, "README.md"), projectReadme(slug, preset, name ?? slug))
     // The target was checked above; recheck just before the atomic publish as well.
     try { await lstat(target); throw new Error("생성 도중 대상 경로가 만들어졌습니다. 다른 경로를 사용하세요.") }
@@ -81,11 +86,13 @@ function projectReadme(slug, preset, name) {
     + (preset === "react" ? "웹은 :5173에서 Mock API로 실행됩니다. 실제 API를 연결할 때 `.env`의 `VITE_API_URL`을 설정하고 다시 빌드하세요.\n\n" : "")
     + (preset === "nest" ? "API는 :3000/api에서 실행됩니다. `.env.example`과 내장 PGlite로 시작할 수 있습니다.\n\n" : "")
     + (preset !== "nest" ? `제품 이름·설명: \`${web}src/config.ts\`, 테마: \`${web}src/index.css\`.\n\n` : "")
+    + ("## 리소스 생성\n\n```sh\ncorepack pnpm gen resource orders 주문 --fields \"title:text:주문명 amount:won:금액 status:enum(접수|배송중|완료):상태\"\n```\n\n스키마, DB 테이블과 마이그레이션, API, Mock, 화면, 테스트 가운데 이 프리셋에 있는 층을 한 번에 만듭니다. 처음 실행하면 로그인과 앱 틀도 생깁니다. 사용법은 `node scripts/gen.mjs`를 인자 없이 실행해 확인합니다.\n\n")
     + "## 조립과 검증\n\n`CODEPACK.md`에서 독립 표·폼·상세·보드 부품의 입력과 콜백 규약을 확인하세요. `AGENTS.md`와 `FEATURE-WORKFLOW.md`에서 요구사항·권한·검증 기준을 이어갑니다.\n\n```sh\n"
     + (preset === "mono" ? "corepack pnpm --filter @slipway/web exec playwright install firefox\n" : preset === "react" ? "corepack pnpm exec playwright install firefox\n" : "")
     + "corepack pnpm verify\n```\n\n"
     + (preset === "mono" ? "verify는 공통 패키지, API, 실제 API를 사용하는 웹과 Mock 모드 웹을 모두 검증합니다.\n\n" : "")
-    + "## 운영 설정\n\n"
+    + "## 운영 설정\n\n배포 방법은 `DEPLOY.md`에 있습니다. "
+
     + (preset !== "react" ? "API `.env.example`을 참고해 영구 `DATABASE_URL`, 실제 `WEB_URL`·`API_URL`, `DEMO=false`, `ALLOW_GUEST=false`를 설정하세요. OAuth는 공급자 콘솔의 콜백 URL도 등록해야 합니다. DB 마이그레이션은 API 시작 시 적용됩니다.\n\n" : "배포 환경의 `VITE_API_URL`은 빌드 시 반영됩니다. Mock 빌드에는 브라우저 내부 데모 데이터만 있습니다.\n\n")
     + (preset === "mono" ? "운영 프록시에서 /api는 API 서버로, 나머지 웹 경로는 정적 SPA로 연결하세요. Vite 개발 프록시는 운영 서버에 포함되지 않습니다.\n\n" : "")
     + "인증 기본 기능이 포함되어 있습니다. 역할·조직·도메인 데이터 권한, 이메일 소유 확인, 비밀번호 재설정은 제품 요구사항에 맞춰 추가해야 합니다.\n"

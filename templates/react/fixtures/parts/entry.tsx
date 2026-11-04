@@ -153,7 +153,8 @@ function ConfirmFixture() {
         description="콜백과 재시도 검증"
         run={async () => {
           setCalls((previous) => previous + 1)
-          await new Promise((resolve) => setTimeout(resolve, 500))
+          // Long enough for the test to observe the pending state on a busy machine.
+          await new Promise((resolve) => setTimeout(resolve, 1500))
           if (!calls) throw new Error("검증 실패")
         }}
       />

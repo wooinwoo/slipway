@@ -1,5 +1,24 @@
 # Slipway maintenance
 
+## Building an app with Slipway
+
+When the request is to build an app (not to change Slipway itself), do not edit `templates/`.
+The full flow is `plugin/skills/new/SKILL.md` (the `/slipway:new` command). In short:
+
+1. Ask first, in one go: what the app is (a line or a PRD), the preset (react for a quick demo,
+   mono for web + API + DB, nest for API only), whether to draft screens first with the
+   k-style-ui-ux plugin (consumer mobile apps), and where it will be deployed (or later).
+2. Create the project next to this repository and work only there:
+   `node scripts/create-project.mjs ../<name> --preset <preset> --name "<서비스 이름>"`
+   (`<name>`: lowercase letters, digits and hyphens), then `corepack pnpm install --frozen-lockfile`.
+3. Generate each resource: `corepack pnpm gen resource <plural> <한글 이름> --fields "..."`.
+   It writes the schema, table and migration, API, mock, screens and tests, plus the login and app frame.
+4. Compose the rest from `src/patterns/`, then `corepack pnpm verify` and look at `pnpm shots`.
+
+Follow the generated project's AGENTS.md from step 2 on.
+
+## Changing Slipway
+
 - Read PRODUCT.md for product priorities: rapidly assembling requested demos from reusable
   screen patterns, consistent visual quality, easy editing, and clear structure. Prioritize
   composable patterns over polishing one default application. Default to React; use mono

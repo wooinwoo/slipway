@@ -147,6 +147,8 @@ test("Korean controlled inputs format values without a form or router", async ({
 test("parts render at desktop and narrow widths without app routes or API requests", async ({
   page,
 }, info) => {
+  // Opens and screenshots nine fixtures in one test; the dev server compiles each on first visit.
+  test.slow()
   const requests: string[] = [],
     errors: string[] = []
   page.on("request", (request) => {

@@ -55,7 +55,9 @@ Select independent components from `src/patterns/`. Do not preassemble business
 screens or register domain menus/APIs in the base template. Patterns must not import
 domain types or API clients.
 Read `CODEPACK.md` in a generated project (or `docs/codepack.md` in Slipway).
-There is no automatic resource generator. Define the acceptance criteria first.
+Define the acceptance criteria first. In a project made by Slipway, `pnpm gen resource <plural> <한글 이름> --fields "..."` writes all of
+this at once (run `node scripts/gen.mjs` for the field syntax). The steps describe what it produces,
+for editing the result or doing it by hand.
 
 1. `src/api/<resource>.ts` holds the schema and queries.
 2. `src/mocks/handlers/<resource>.ts` holds the endpoints. Register it in `src/mocks/browser.ts`,

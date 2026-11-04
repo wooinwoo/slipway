@@ -1,0 +1,14 @@
+**/node_modules
+**/dist
+**/dist-demo
+**/.data
+**/.turbo
+**/.tanstack
+**/.shots
+**/test-results
+**/playwright-report
+**/*.tsbuildinfo
+**/.env
+**/.env.*
+!**/.env.example
+.git

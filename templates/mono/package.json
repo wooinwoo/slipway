@@ -9,7 +9,9 @@
     "typecheck": "turbo typecheck",
     "lint": "turbo lint",
     "test": "turbo test test:e2e",
-    "verify": "turbo verify"
+    "verify": "turbo verify",
+    "build:web": "turbo build --filter=@slipway/web",
+    "build:api": "turbo build --filter=@slipway/api"
   },
   "devDependencies": {
     "turbo": "^2.11.10"

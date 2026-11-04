@@ -31,6 +31,7 @@ test("creates an independent mono project with branding and safe defaults", asyn
   assert.match(await readFile(join(target, "README.md"), "utf8"), /--filter @slipway\/web exec playwright install firefox/)
   assert.ok((await readdir(target)).includes("FEATURE-WORKFLOW.md"))
   assert.ok((await readdir(target)).includes("CODEPACK.md"))
+  for (const file of ["DEPLOY.md", "Dockerfile", "Dockerfile.api", "compose.yaml", ".dockerignore"]) assert.ok((await readdir(target)).includes(file), file)
   assert.ok((await readdir(target)).includes("pnpm-lock.yaml"))
   const files = await readdir(target, { recursive: true })
   assert.ok(!files.some(p => /(^|[\\/])(node_modules|dist|\.data|\.git|test-results)([\\/]|$)/.test(p)))

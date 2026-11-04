@@ -1,0 +1,16 @@
+{
+  "name": "slipway",
+  "owner": {
+    "name": "wooinwoo"
+  },
+  "metadata": {
+    "description": "Slipway: React·NestJS 셋업 코드와 화면 부품으로 앱을 만드는 Claude Code 플러그인"
+  },
+  "plugins": [
+    {
+      "name": "slipway",
+      "source": "./plugin",
+      "description": "React·NestJS 셋업 코드와 화면 부품으로 앱을 만든다 (/slipway:new, /slipway:resource, /slipway:deploy)"
+    }
+  ]
+}

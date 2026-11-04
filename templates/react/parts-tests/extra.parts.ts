@@ -137,6 +137,8 @@ test("CSV validates, previews, preserves failed imports and exports protected va
 test("new parts stay within narrow layouts without APIs or runtime errors", async ({
   page,
 }, info) => {
+  // Opens and screenshots seven fixtures in one test; the dev server compiles each on first visit.
+  test.slow()
   const errors: string[] = [],
     calls: string[] = []
   page.on("pageerror", (error) => errors.push(error.message))

@@ -1,0 +1,14 @@
+# API only, for deploying the web app separately (static hosting). Build from the repo root:
+#   docker build -f Dockerfile.api -t my-app-api .
+# Set WEB_URL to the web app's origin (CORS and the OAuth return address) and API_URL to this API's.
+# ponytail: single stage with dev dependencies kept; add a pruned runtime stage if image size matters.
+FROM node:24-slim
+WORKDIR /app
+RUN corepack enable && corepack prepare pnpm@10.33.2 --activate
+COPY . .
+RUN pnpm install --frozen-lockfile
+RUN pnpm turbo build --filter=@slipway/api
+ENV NODE_ENV=production PORT=3000
+WORKDIR /app/apps/api
+EXPOSE 3000
+CMD ["node", "dist/main.js"]

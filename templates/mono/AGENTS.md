@@ -32,6 +32,9 @@ template they are ordinary code; edit them freely.
 
 ## Adding a resource
 
+Run `pnpm gen resource ...` at the repo root: it writes every step below across `packages/shared`,
+`apps/api` and `apps/web`, including the migration. The steps describe what it produces.
+
 1. `packages/shared/src/<resource>.ts`: zod schema and types. Export it from `index.ts`.
 2. `apps/api`: table in `src/db/schema.ts` and `pnpm db:generate`, then a module behind `AuthGuard`
    (steps in `apps/api/AGENTS.md`).
