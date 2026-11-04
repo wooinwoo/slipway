@@ -1,7 +1,7 @@
 // node scripts/sync-next.mjs
 // Copies what the Next preset shares with templates/react, so the React preset stays the one source:
 // shadcn components, Slipway parts, Korean helpers, the API client and auth hooks, the mock backend,
-// the theme and the UI checks. Next-only files are hand-maintained in templates/next: src/app/,
+// the theme tokens and the UI checks. Next-only files are hand-maintained in templates/next: src/app/,
 // src/proxy.ts, src/config.ts, src/patterns/app-shell.tsx (next/link), scripts/ui.mjs, e2e/, configs.
 // Every rewrite asserts its anchor, so drift in the React preset fails loudly.
 import { cpSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs"
@@ -24,7 +24,6 @@ const shared = [
   "src/api/auth.ts",
   "src/mocks",
   "public/mockServiceWorker.js",
-  "public/favicon.svg",
   "public/robots.txt",
   "scripts/ui-checks.mjs",
 ]
@@ -60,20 +59,6 @@ for (const file of shared.flatMap(files)) {
 
 // Theme tokens: the React preset's src/index.css is the App Router's global stylesheet.
 cpSync(join(react, "src/index.css"), join(next, "src/app/globals.css"))
-
-// Design rules: same system, Next's way of naming pages.
-{
-  let text = readFileSync(join(react, "DESIGN.md"), "utf8")
-  const pairs = [
-    ["사이드바 메뉴와 Ctrl/⌘+K는 `AppShell`의 `nav` 하나로 같이 바뀐다. 라우트마다 `staticData.title`을 둔다.",
-      "사이드바 메뉴와 Ctrl/⌘+K는 `AppShell`의 `nav` 하나로 같이 바뀐다. 페이지마다 `metadata.title`을 둔다."],
-  ]
-  for (const [anchor, replacement] of pairs) {
-    if (!text.includes(anchor)) throw new Error(`templates/react/DESIGN.md: anchor not found:\n${anchor}`)
-    text = text.replace(anchor, replacement)
-  }
-  writeFileSync(join(next, "DESIGN.md"), text)
-}
 
 console.log(`templates/next synced from templates/react (${count} files). Next: cd templates/next && pnpm verify`)
 console.log(`  untouched, Next-only: src/app/, src/proxy.ts, src/config.ts, src/patterns/app-shell.tsx, scripts/ui.mjs`)

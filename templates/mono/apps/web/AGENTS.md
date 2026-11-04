@@ -45,33 +45,28 @@ tools read them from there.
   implements it with `// REQ-n title`, and name an e2e test `REQ-n ...`. `pnpm check:reqs` enforces all three.
 - Validation lives once, in the resource's zod schema. The form and the mock handler both parse with it,
   and server field errors come back on the same field names.
-- Reach for an installed shadcn component before writing new UI. Use semantic tokens
-  (`bg-primary`, `text-muted-foreground`, `border`), not raw colors. Status dots are the one exception.
 - Money goes through `formatWon`, `formatWonKorean`, or `formatWonCompact`; times through `formatRelative`.
-  Numbers in tables and cards get the `tabular` class.
-- UI copy is Korean, short, and plain. Say what happened and what to do next.
 - A page reads data with `queryClient.ensureQueryData` in its route `loader` and `useSuspenseQuery`
   (or `useQuery` with placeholder data when search params change) in the component.
 
-## Building screens
+## Screens and design
 
-Screens and their design are yours to build here; Slipway ships parts, not screens. Parts, tokens and
-`DESIGN.md` are a starting point, not a frame to preserve: edit, replace or drop any of them. When the
-product needs a different look, rewrite `DESIGN.md` and the tokens in `src/index.css` first, then build.
-What stays fixed are the quality gates (`pnpm check:ui`, the bundle budget, security defaults).
+Slipway gives you parts and a data layer, not screens and not a design. The look of every screen,
+the sign-in page and the app frame included, comes from a design harness working with the user:
 
-- Read `PRODUCT.md` (who, why, tone) and `DESIGN.md` (tokens, type, layout, component rules) first.
-  Fill `PRODUCT.md` with the user before the first screen.
-- For design work, use the Impeccable skill if it is available (`/impeccable` critique, audit, polish;
-  it reads the same PRODUCT.md and DESIGN.md). For consumer mobile flows, a k-style-ui-ux draft is a
-  good starting point; translate it into these parts, don't copy its HTML.
-- Loop: build → `pnpm shots` → look at every image → fix → `pnpm check:ui`.
-- Sign-in: `src/routes/login.tsx` renders `AuthCard` with `LoginForm`, `SocialButtons` and
-  `GuestButton` from `src/patterns/auth-forms.tsx`, and calls the hooks in `src/api/auth.ts`.
-- Signed-in area: a layout route `src/routes/_app.tsx`. Its `beforeLoad` ensures `meQuery` and
-  redirects to `/login` without a user; its component wraps `<Outlet />` in `<AppShell>`.
-- Give each route `staticData: { title }`. It names the tab and the `AppShell` breadcrumb.
-- The recipes with code are in CODEPACK.md ("로그인과 앱 틀 조립").
+- Web: the Impeccable skill (`/impeccable`). Before the first screen it captures `PRODUCT.md` and
+  `DESIGN.md` with the user; build screens with it, then `critique` and `polish`. If it isn't
+  installed, ask the user to install it (https://impeccable.style) rather than inventing a style.
+- Consumer mobile flows: a k-style-ui-ux draft, translated into these parts (don't copy its HTML).
+- Parts in `src/patterns/` are building blocks: use, edit, restyle or skip them. Theme tokens in
+  `src/index.css` are technical defaults for shadcn; the harness rewrites them.
+- Never make up a logo, favicon or app icon (a letter in a shape, a stock icon standing in for the brand). Use only the logo file the user supplies (`AppShell`'s `logo` prop, `public/`); until then the product name stands as plain text and you ask the user for a logo.
+- Whatever the design, it passes `pnpm check:ui` (accessibility, contrast, focus, overflow, cursor,
+  console errors) and the e2e tests. Look at `pnpm shots` before calling a screen done.
+
+Wiring facts (not a layout): sign-in calls the hooks in `src/api/auth.ts`; a layout route's
+`beforeLoad` ensures `meQuery` and redirects without a user; each route sets `staticData: { title }`
+for the tab and the `AppShell` breadcrumb. Details: CODEPACK.md ("인증 연결").
 
 ## Adding a resource
 
@@ -86,7 +81,7 @@ layer at once (run `node scripts/gen.mjs` for the field syntax). It never writes
 2. `src/mocks/handlers/<resource>.ts` holds the endpoints. Register it in `src/mocks/browser.ts`,
    and add the table and seed rows in `src/mocks/db.ts`.
 3. `src/routes/_app/<resource>/` holds the pages, including loading, empty, and error states.
-4. Add the page to `nav` in `src/components/app-sidebar.tsx`.
+4. Add the page to the `nav` you pass to `AppShell` in the layout route.
 5. Add `REQ-n` entries and e2e tests.
 
 Guest sign-in creates a new identity each time. Never assume one global guest ID.

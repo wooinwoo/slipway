@@ -108,7 +108,19 @@ function above(file, marker, text) {
   edit(file, (source) => {
     const at = source.search(new RegExp(`^[ \\t]*// gen:${marker}\\b`, "m"))
     if (at === -1) exit(`${file} lost its "// gen:${marker}" marker. Add the line back where new entries go.`)
-    return source.slice(0, at) + text + "\n" + source.slice(at)
+    let before = source.slice(0, at)
+    // A list entry needs a comma after the entry above it; a formatter may have dropped that trailing comma.
+    if (text.trimEnd().endsWith(",")) {
+      const lines = before.split("\n")
+      for (let i = lines.length - 1; i >= 0; i--) {
+        const line = lines[i].trimEnd()
+        if (!line.trim() || line.trim().startsWith("//")) continue
+        if (!/[,([{]$/.test(line)) lines[i] = `${line},`
+        break
+      }
+      before = lines.join("\n")
+    }
+    return before + text + "\n" + source.slice(at)
   })
 }
 

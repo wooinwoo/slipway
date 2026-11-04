@@ -84,6 +84,7 @@ export type ShellUser = { name: string; email: string }
  */
 export function AppShell({
   brand,
+  logo,
   nav,
   user,
   onLogout,
@@ -92,6 +93,8 @@ export function AppShell({
   children,
 }: {
   brand: string
+  /** The product's logo (an <img> or inline SVG the user supplied). Leave out until there is one. */
+  logo?: ReactNode
   nav: readonly NavItem[]
   user?: ShellUser | null
   onLogout?: () => void
@@ -108,9 +111,12 @@ export function AppShell({
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton size="lg" className="pointer-events-none">
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground">
-                  {brand.slice(0, 1)}
-                </span>
+                {/* Only the product's real logo. Without one, the name stands alone: no made-up mark. */}
+                {logo && (
+                  <span className="flex size-8 shrink-0 items-center justify-center [&>img]:max-h-8 [&>svg]:max-h-8">
+                    {logo}
+                  </span>
+                )}
                 <span className="truncate font-semibold tracking-tight">
                   {brand}
                 </span>

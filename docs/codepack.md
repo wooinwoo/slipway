@@ -59,85 +59,19 @@ AI 작업 도구에서도 읽을 수 있습니다. 목록의 원본은 `codepack
 모노레포에서는 같은 파일이 `apps/web/src/patterns/`에 있습니다. 각 부품은 다른 부품이나
 업무 API를 자동으로 연결하지 않습니다. UI 기초 컴포넌트와 공통 테마만 사용합니다.
 
-## 조합 예시
+## 인증 연결
 
-![지표·차트·타임라인](images/patterns-overview.png)
-![필터와 정렬·선택 표](images/patterns-list.png)
-![상태 보드, 다크 모드](images/patterns-board-dark.png)
+부품은 화면을 정하지 않습니다. 로그인 화면과 로그인 뒤 영역을 어떻게 구성할지는 프로젝트에서 디자인 하네스와 함께 정하고,
+연결에 필요한 사실만 여기에 적습니다.
 
-원본은 `templates/react/fixtures/gallery/`입니다. `pnpm dev` 후 `/fixtures/gallery/index.html`을 엽니다.
-`?shot=shell`, `?shot=login`, `&theme=dark`로 앱 틀·로그인 조합과 다크 모드를 봅니다.
-
-## 로그인과 앱 틀 조립
-
-템플릿에는 화면이 없습니다. 로그인 화면과 로그인 뒤 영역은 라우트 두 개로 조립합니다.
-`src/api/auth.ts`의 훅이 토큰 저장과 `me` 캐시를 처리하고, 부품은 입력과 표시만 맡습니다.
-
-```tsx
-// src/routes/login.tsx
-export const Route = createFileRoute("/login")({
-  validateSearch: z.object({ redirect: z.string().optional().catch(undefined) }),
-  staticData: { title: "로그인" },
-  component: LoginPage,
-})
-
-function LoginPage() {
-  const { redirect: next } = Route.useSearch()
-  const router = useRouter()
-  const done = () => router.history.push(next ?? "/")
-  const login = useLogin(), guest = useGuestLogin(), social = useSocialLogin()
-  const failure = (error: unknown) =>
-    error instanceof ApiError ? { message: error.message, fields: error.fields } : { message: "잠시 후 다시 시도해 주세요." }
-  return (
-    <main className="flex min-h-svh items-center justify-center bg-muted/40 p-6">
-      <AuthCard title="로그인" footer={<Link to="/signup">회원가입</Link>}>
-        <SocialButtons
-          pending={social.isPending ? social.variables : null}
-          onSelect={(provider) =>
-            // 실제 API는 OAuth로 이동하고 /auth/callback으로 돌아옵니다. Mock은 바로 로그인합니다.
-            isDemo ? social.mutate(provider, { onSuccess: done }) : location.assign(`${BASE_URL}/api/auth/${provider}`)
-          }
-        />
-        <AuthDivider>또는 이메일로</AuthDivider>
-        <LoginForm
-          demo={isDemo ? { email: "demo@slipway.dev", password: "demo1234" } : undefined}
-          submit={(values) => login.mutateAsync(values).then(() => void done(), failure)}
-        />
-        <GuestButton pending={guest.isPending} onClick={() => guest.mutate(undefined, { onSuccess: done })} />
-      </AuthCard>
-    </main>
-  )
-}
-```
-
-```tsx
-// src/routes/_app.tsx: 이 아래 라우트는 모두 로그인이 필요합니다.
-export const Route = createFileRoute("/_app")({
-  beforeLoad: async ({ context, location }) => {
-    const user = await context.queryClient.ensureQueryData(meQuery).catch(() => null)
-    if (!user) throw redirect({ to: "/login", search: { redirect: location.href } })
-    return { user }
-  },
-  component: AppLayout,
-})
-
-function AppLayout() {
-  const { user } = Route.useRouteContext()
-  const logout = useLogout(), navigate = useNavigate()
-  return (
-    <AppShell brand={product.name} nav={nav} user={user}
-      onLogout={() => logout.mutate(undefined, { onSettled: () => navigate({ to: "/login" }) })}>
-      <Outlet />
-    </AppShell>
-  )
-}
-
-const nav: NavItem[] = [{ to: "/orders", label: "주문", icon: ReceiptIcon }]
-```
-
-- 회원가입은 같은 방식으로 `SignupForm`과 `useSignup`을 연결합니다. 필드 오류는 `ApiError.fields`로 돌려주면 해당 칸에 표시됩니다.
-- `AppShell`의 브레드크럼과 탭 제목은 각 라우트의 `staticData.title`에서 옵니다.
-- 테마 설정 화면이 필요하면 라우트에 `<ThemeSettings />`를 놓습니다.
+- 로그인·가입·게스트·소셜 요청은 `src/api/auth.ts`의 `useLogin`·`useSignup`·`useGuestLogin`·`useSocialLogin`이 보내고,
+  토큰 저장과 `meQuery` 캐시를 처리합니다. `auth-forms`의 `submit`에는 이 훅의 `mutateAsync`를 연결하고,
+  실패는 `ApiError`의 `message`·`fields`를 `AuthFailure`로 돌려줍니다.
+- 어떤 로그인 방식을 둘지는 제품이 정합니다. 소셜·게스트 버튼은 필요할 때만 씁니다.
+- 실제 API의 카카오·네이버는 `${BASE_URL}/api/auth/<provider>`로 이동했다가 `/auth/callback`으로 돌아옵니다. Mock(`isDemo`)은 바로 로그인합니다.
+- 로그인이 필요한 라우트는 레이아웃 라우트의 `beforeLoad`에서 `context.queryClient.ensureQueryData(meQuery)`로 확인하고,
+  사용자가 없으면 `token.clear()` 후 로그인 라우트로 `redirect`합니다. 반환한 `{ user }`는 `Route.useRouteContext()`로 읽습니다.
+- `app-shell`의 브레드크럼과 탭 제목은 각 라우트의 `staticData.title`에서 옵니다(next는 `metadata.title`).
 
 ## 표의 연결 규약
 

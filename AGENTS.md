@@ -8,17 +8,18 @@ The full flow is `plugin/skills/new/SKILL.md` (the `/slipway:new` command; Claud
 
 1. Ask first, in one go: what the app is (a line or a PRD), the preset (react for a quick demo,
    next for Next.js App Router, mono for web + API + DB, nest for API only, astro for a landing or docs
-   site, flutter to ship a web app to the app stores), whether to draft screens first with the
-   k-style-ui-ux plugin (consumer mobile apps), and where it will be deployed (or later).
+   site, flutter to ship a web app to the app stores), the design harness (Impeccable for web,
+   a k-style-ui-ux draft first for consumer mobile apps), and where it will be deployed (or later).
 2. Create the project next to this repository and work only there:
    `node scripts/create-project.mjs ../<name> --preset <preset> --name "<서비스 이름>"`
    (`<name>`: lowercase letters, digits and hyphens), then `corepack pnpm install --frozen-lockfile`.
 3. Generate each resource's data layer: `corepack pnpm gen resource <plural> <한글 이름> --fields "..."`.
    It writes the schema, table and migration, API, mock, query hooks and contract tests. No screens.
-4. Fill `PRODUCT.md` with the user, then build every screen, the login and app frame included, from
-   `src/patterns/` (CODEPACK.md recipes) following `DESIGN.md`. Screen design is this step's job; use the
-   Impeccable skill for web design work when available. Then `corepack pnpm verify` (UI, bundle, e2e) and
-   look at `pnpm shots`. CI adds the Lighthouse score.
+4. Build every screen, the login and app frame included: the function from `src/patterns/` and the
+   generated hooks, the look from the design harness (Impeccable writes `PRODUCT.md` and `DESIGN.md`
+   with the user; never invent a style or ship Slipway examples as the design). Then `corepack pnpm
+   verify` (UI, bundle, e2e), look at `pnpm shots`, and click through the main flow at the exact URL you
+   hand over. CI adds the Lighthouse score.
 
 Follow the generated project's AGENTS.md from step 2 on.
 
@@ -28,6 +29,11 @@ Follow the generated project's AGENTS.md from step 2 on.
   screen patterns, consistent visual quality, easy editing, and clear structure. Prioritize
   composable patterns over polishing one default application. Default to React; use mono
   when a real API is needed. Keep implementation instructions out of product screens.
+- Ship no logo, favicon or icon of Slipway's in a template, and no part that draws a placeholder mark
+  (a letter in a shape). Parts take the product's real logo as a prop or show the name as text.
+- Ship no design: no DESIGN.md or PRODUCT.md templates, no style rules, no galleries, no layout
+  recipes or example screens. The look of every screen comes from the design harness (Impeccable,
+  k-style-ui-ux) in each project. Docs state contracts and wiring facts only.
 - Deliver independent code parts and contracts. Do not wire a business application, domain
   routes, menus or tables into the base template; keep usage examples in documentation or
   isolated fixtures. A preassembled customer application is explicitly out of scope.

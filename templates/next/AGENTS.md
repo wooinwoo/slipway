@@ -47,10 +47,11 @@ tools read them from there.
 
 ## Rules
 
-- Read `PRODUCT.md` (who, why, tone) and `DESIGN.md` (tokens, type, layout, component rules) before
-  building a screen. Use the Impeccable skill for design work when it is available.
-- Parts, tokens and `DESIGN.md` are a starting point: edit, replace or drop them. For a different look,
-  rewrite `DESIGN.md` and the tokens in `src/app/globals.css` first. The quality gates stay fixed.
+- Slipway gives you parts and a data layer, not screens or a design. The look comes from a design
+  harness with the user: the Impeccable skill (`/impeccable`, which writes `PRODUCT.md` and `DESIGN.md`)
+  for web, a k-style-ui-ux draft for consumer mobile flows. If neither is installed, ask the user to
+  install one rather than inventing a style. Every design passes `pnpm check:ui` and the e2e tests.
+- Never make up a logo, favicon or app icon (a letter in a shape, a stock icon standing in for the brand). Use only the logo file the user supplies (`AppShell`'s `logo` prop, `public/`); until then the product name stands as plain text and you ask the user for a logo.
 - Interactive parts are client components (`"use client"`). Keep pages as server components when they
   only arrange parts; data comes from the TanStack Query hooks in `src/api/` on the client.
 - A signed-in area is a layout (`src/app/(app)/layout.tsx`, client) that reads `meQuery`, sends visitors
@@ -58,8 +59,7 @@ tools read them from there.
   use `src/patterns/auth-forms.tsx` with the hooks in `src/api/auth.ts`.
 - Give each page `export const metadata = { title }`; the layout appends the product name.
 - No inline `<script>` without the nonce (`headers().get("x-nonce")`): the CSP blocks it.
-- Money goes through `formatWon`; times through `formatRelative`. Numbers in tables get `tabular`.
-- UI copy is Korean, short, and plain.
+- Money goes through `formatWon`; times through `formatRelative`.
 
 ## Adding a resource
 

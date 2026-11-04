@@ -41,6 +41,14 @@ declare module "@tanstack/react-router" {
 
 async function enableMocks() {
   if (!isDemo) return
+  // Service workers only run on https and localhost. On http://<LAN or WSL IP> the mock API can't
+  // start, so say so instead of failing every request silently.
+  if (!("serviceWorker" in navigator)) {
+    document.getElementById("root")!.textContent =
+      `Mock API는 https 또는 localhost 주소에서만 동작합니다. 지금 주소(${location.origin})로 보려면 ` +
+      "VITE_API_URL로 실제 API를 연결하거나, localhost 또는 https 터널로 여세요."
+    throw new Error("Mock API needs a secure context (https or localhost).")
+  }
   const { worker } = await import("./mocks/browser")
   await worker.start({
     serviceWorker: { url: `${import.meta.env.BASE_URL}mockServiceWorker.js` },

@@ -71,3 +71,15 @@ test("refuses bad input and never overwrites", async t => {
   gen(cwd, "resource", "orders", "주문", "--fields", fields)
   assert.throws(() => gen(cwd, "resource", "orders", "주문", "--fields", fields), /already exists/)
 })
+
+test("a second resource still leaves valid list syntax, even after a formatter dropped a comma", async t => {
+  const cwd = await project(t, "react")
+  gen(cwd, "resource", "orders", "주문", "--fields", fields)
+  // What prettier with trailingComma "es5" does to call arguments: drop the comma after the last one.
+  const browser = join(cwd, "src/mocks/browser.ts")
+  const { writeFile } = await import("node:fs/promises")
+  await writeFile(browser, (await read(cwd, "src/mocks/browser.ts")).replace("...orderHandlers,", "...orderHandlers"))
+  gen(cwd, "resource", "bookings", "예약", "--fields", "memberName:text:회원명")
+  const source = await read(cwd, "src/mocks/browser.ts")
+  assert.match(source, /\.\.\.orderHandlers,\n\s+\.\.\.bookingHandlers,\n\s+\/\/ gen:handlers/)
+})

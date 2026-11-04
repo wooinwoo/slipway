@@ -9,7 +9,6 @@ import { Providers } from "./providers"
 export const metadata: Metadata = {
   title: { template: `%s · ${product.name}`, default: `${product.name} · ${product.tagline}` },
   description: product.tagline,
-  icons: { icon: "/favicon.svg" },
 }
 
 // Runs before first paint so a saved dark theme or brand hue never flashes (theme-provider and lib/brand

@@ -1,6 +1,6 @@
 "use client"
 
-import type { ReactNode } from "react"
+import type { ReactNode, CSSProperties } from "react"
 import { Badge } from "@/components/ui/badge"
 import {
   Select,
@@ -20,6 +20,7 @@ export function StatusBoard<T extends { id: string }>({
   open,
   move,
   pending,
+  empty = "아직 항목이 없습니다",
 }: {
   rows: T[]
   groups: readonly StatusGroup[]
@@ -28,9 +29,15 @@ export function StatusBoard<T extends { id: string }>({
   open: (row: T) => void
   move: (row: T, value: string) => void
   pending?: boolean
+  /** Shown in a column with no cards. */
+  empty?: ReactNode
 }) {
   return (
-    <div className="grid gap-4 lg:grid-cols-3">
+    // One column per group on wide screens (up to four side by side), two on tablets, one on phones.
+    <div
+      className="grid gap-4 md:grid-cols-2 lg:grid-cols-[repeat(var(--board-columns),minmax(0,1fr))]"
+      style={{ "--board-columns": Math.min(groups.length, 4) } as CSSProperties}
+    >
       {groups.map((group) => {
         const items = rows.filter((row) => status(row) === group.value)
         return (
@@ -82,7 +89,7 @@ export function StatusBoard<T extends { id: string }>({
               ))}
               {!items.length && (
                 <p className="rounded-lg border border-dashed py-10 text-center text-xs text-muted-foreground">
-                  아직 항목이 없습니다
+                  {empty}
                 </p>
               )}
             </div>

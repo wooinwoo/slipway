@@ -91,7 +91,6 @@ export async function createProject(destination, { preset = "react", name, tagli
         await cp(new URL("./gen.mjs", import.meta.url), join(stage, "scripts/gen.mjs"))
       }
       await writeFile(join(stage, "README.md"), projectReadme(slug, preset, name ?? slug))
-      await writeFile(join(stage, "PRODUCT.md"), productBrief(preset, name ?? slug, tagline))
     }
     // The target was checked above; recheck just before the atomic publish as well.
     try { await lstat(target); throw new Error("생성 도중 대상 경로가 만들어졌습니다. 다른 경로를 사용하세요.") }
@@ -121,61 +120,6 @@ async function nameFlutterApp(stage, name) {
   }
 }
 
-/** Product truth for whoever builds the screens (people, or AI with the Impeccable design skill). */
-function productBrief(preset, name, tagline) {
-  const todo = "(작성 필요)"
-  return `# Product
-
-${name}${tagline ? `: ${tagline}` : ""}
-
-화면을 만들기 전에 채웁니다. 화면 구성·문구·톤은 이 파일과 디자인 기준(${preset === "mono" ? "\`apps/web/DESIGN.md\`" : preset === "nest" ? "웹 앱의 DESIGN.md" : "\`DESIGN.md\`"})을 따릅니다.
-
-## Platform
-
-${preset === "nest" ? "api" : "web"}
-
-## Stack
-
-${{ react: "React 19, TanStack Router·Query, Tailwind CSS 4, shadcn, Slipway 부품. Mock API로 시작", mono: "웹(React 19, TanStack, Tailwind CSS 4, shadcn, Slipway 부품) + NestJS API + Postgres(Drizzle)", nest: "NestJS, Drizzle, Postgres 또는 PGlite", next: "Next.js 16 App Router, TanStack Query, Tailwind CSS 4, shadcn, Slipway 부품. Mock API로 시작", astro: "Astro 7, Tailwind CSS 4, React 아일랜드. 정적 사이트" }[preset]}
-
-## Users
-
-누가, 어떤 상황에서 쓰는가. ${todo}
-
-## Product Purpose
-
-무엇을 해결하는가. 첫 화면에서 사용자가 해야 할 일 하나. ${todo}
-
-## Positioning
-
-비슷한 서비스와 다른 점. ${todo}
-
-## Operating Context
-
-어디서 보는가(사무실 PC, 현장 휴대폰, 발표 화면), 하루에 얼마나 쓰는가. ${todo}
-
-## Capabilities and Constraints
-
-꼭 되어야 하는 것과 이번에 하지 않는 것. 요구사항 목록은 \`docs/requirements.md\`(REQ-n). ${todo}
-
-## Brand Commitments
-
-브랜드 색(\`--brand-h\`), 말투(합니다체·해요체), 피해야 할 표현. ${todo}
-
-## Evidence on Hand
-
-받은 자료: PRD, 화면 초안(k-style-ui-ux), 참고 서비스, 로고. ${todo}
-
-## Product Principles
-
-결정이 갈릴 때의 기준 세 가지. ${todo}
-
-## Accessibility & Inclusion
-
-WCAG 2.1 AA(대비, 키보드 포커스, 이름 있는 버튼). \`pnpm check:ui\`가 자동으로 검사합니다. 그 밖의 요구 ${todo}
-`
-}
-
 function projectReadme(slug, preset, name) {
   if (preset === "flutter") {
     return `# ${name}\n\nSlipway flutter 프리셋으로 만든 ${slug} 앱입니다. Slipway 웹 앱(react·next·mono)을 Android·iOS 앱으로 감싸는 셸이고, 화면은 웹 앱에서 만듭니다.\n\n`
@@ -192,11 +136,11 @@ function projectReadme(slug, preset, name) {
     astro: "사이트는 :4321에서 실행됩니다. 공개 주소는 빌드 환경 변수 `SITE_URL`로 정합니다(canonical, sitemap, Open Graph).",
   }[preset]
   const identity = {
-    react: "이름·소개 `src/config.ts`, 테마 `src/index.css`, 디자인 기준 `DESIGN.md`, 제품 정보 `PRODUCT.md`.",
-    next: "이름·소개 `src/config.ts`, 테마 `src/app/globals.css`, 디자인 기준 `DESIGN.md`, 제품 정보 `PRODUCT.md`.",
-    mono: "이름·소개 `apps/web/src/config.ts`, 테마 `apps/web/src/index.css`, 디자인 기준 `apps/web/DESIGN.md`, 제품 정보 `PRODUCT.md`.",
-    nest: "설정 `src/config.ts`(환경 변수), 제품 정보 `PRODUCT.md`.",
-    astro: "이름·소개 `src/config.ts`, 테마 `src/styles/global.css`, 디자인 기준 `DESIGN.md`, 제품 정보 `PRODUCT.md`.",
+    react: "이름·소개 `src/config.ts`, 테마 토큰 `src/index.css`.",
+    next: "이름·소개 `src/config.ts`, 테마 토큰 `src/app/globals.css`.",
+    mono: "이름·소개 `apps/web/src/config.ts`, 테마 토큰 `apps/web/src/index.css`.",
+    nest: "설정 `src/config.ts`(환경 변수).",
+    astro: "이름·소개 `src/config.ts`, 테마 토큰 `src/styles/global.css`.",
   }[preset]
   const browsers = { react: "corepack pnpm exec playwright install firefox\n", next: "corepack pnpm exec playwright install firefox\n", mono: "corepack pnpm --filter @slipway/web exec playwright install firefox\n", astro: "corepack pnpm exec playwright install firefox\n", nest: "" }[preset]
   const verify = {
@@ -222,9 +166,10 @@ function projectReadme(slug, preset, name) {
     + "## 시작\n\nNode.js 22.23.4 이상과 pnpm 10.33.2를 씁니다. Corepack을 쓴다면 처음 한 번 `corepack enable`을 실행합니다.\n\n"
     + "```sh\ncorepack pnpm install --frozen-lockfile\ncorepack pnpm dev\n```\n\n"
     + `${run}\n\n${identity}\n\n`
-    + (preset === "nest" ? "" : "## 화면 만들기\n\nAI에게 화면 단위로 요청합니다. 예: \"주문 목록 화면 만들어 줘. 상태 필터, 상세 패널, 배송 처리 버튼\". "
-      + "Claude Code에 Slipway 플러그인이 있으면 `/slipway:screen 주문 목록`. AI는 `PRODUCT.md`와 `DESIGN.md`를 읽고 부품으로 조립한 뒤, "
-      + "`pnpm shots` 캡처를 직접 보고 `pnpm check:ui`로 검사합니다. 사람이 만들 때도 같은 순서입니다.\n\n")
+    + (preset === "nest" ? "" : "## 화면과 디자인\n\nSlipway는 화면도 디자인 기준도 주지 않습니다. 부품(`src/patterns/`, `CODEPACK.md`)과 데이터 층만 있습니다. "
+      + "화면의 방향과 모양은 디자인 하네스로 정합니다. 웹은 [Impeccable](https://impeccable.style)이 사용자와 함께 `PRODUCT.md`·`DESIGN.md`를 만들고 "
+      + "화면을 짓고 다듬습니다. 모바일 소비자 앱 초안은 [k-style-ui-ux](https://github.com/vmc-inner-circle/k-style-ui-ux)를 씁니다. "
+      + "어떤 디자인이든 `pnpm check:ui`(접근성·대비·포커스·넘침)와 E2E는 통과해야 합니다.\n\n")
     + generate
     + `## 검증\n\n\`\`\`sh\n${browsers}corepack pnpm verify\n\`\`\`\n\n${verify} GitHub에 올리면 \`.github/workflows/verify.yml\`이 같은 검증에 웹 점수(Lighthouse)와 의존성 검사를 더해 돌립니다.\n\n`
     + `## 배포와 운영\n\n방법은 \`DEPLOY.md\`에 있습니다. ${operate}\n`

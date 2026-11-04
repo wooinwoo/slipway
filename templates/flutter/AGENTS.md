@@ -42,5 +42,6 @@ the web app's `/auth/callback`. Any other site, `tel:`, `mailto:` and app links 
 - New bridge messages: add a case to `BridgeMessage.parse`, handle it in `_onBridge`, test both.
   Never add a message that runs arbitrary code or reads files.
 - Release builds load https only. Set `APP_URL` per build; never ship the 10.0.2.2 default.
+- The launcher icon is Flutter's default until the user supplies the product's icon. Never draw one.
 - Before a store release, change the application id (`android/app/build.gradle.kts`: `namespace`,
   `applicationId`, and the `MainActivity.kt` package) and the iOS bundle id (Xcode, Runner target).

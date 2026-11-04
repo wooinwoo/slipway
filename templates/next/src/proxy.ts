@@ -33,7 +33,7 @@ export const config = {
   // Pages only: static files, images and the mock service worker don't need a policy per request.
   matcher: [
     {
-      source: "/((?!_next/static|_next/image|favicon.svg|robots.txt|mockServiceWorker.js).*)",
+      source: "/((?!_next/static|_next/image|favicon.ico|robots.txt|mockServiceWorker.js).*)",
       missing: [{ type: "header", key: "next-router-prefetch" }],
     },
   ],

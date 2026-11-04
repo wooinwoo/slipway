@@ -31,13 +31,14 @@ For deploying, follow `.claude/skills/deploy/SKILL.md`.
 
 ## Rules
 
-- Read `PRODUCT.md` (who, why, tone) and `DESIGN.md` (tokens, type, layout) before building a page.
-  Use the Impeccable skill for design work when it is available. Both are a starting point: for a
-  different look, rewrite `DESIGN.md` and `src/styles/global.css` first. The quality gates stay fixed.
+- The site ships no pages and no design. The look comes from a design harness with the user: the
+  Impeccable skill (`/impeccable`, which writes `PRODUCT.md` and `DESIGN.md`). If it isn't installed,
+  ask the user to install it rather than inventing a style. Every page passes `pnpm check:ui`.
+- Never make up a logo or favicon (a letter in a shape, a stock icon standing in for the brand). Use only
+  the logo file the user supplies; until then the site name stands as plain text and you ask for a logo.
 - Every page passes `title` and `description` to `Base`. One `<h1>` per page.
 - Images go through `astro:assets` (`<Image>`) with `alt` text and explicit sizes.
 - Ship HTML first. Use a React island (`client:visible`, `client:idle`) only where the page needs
   interaction. Slipway parts copy in with `node <slipway>/scripts/pack.mjs copy <part> --to src`.
 - No inline `<script>` or `style=""` that Astro doesn't hash: the CSP blocks them. Put scripts in
   `<script>` tags Astro processes, styles in classes.
-- UI copy is Korean, short, and plain.

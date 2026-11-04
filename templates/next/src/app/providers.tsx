@@ -14,14 +14,16 @@ export function Providers({ children }: { children: ReactNode }) {
     () => new QueryClient({ defaultOptions: { queries: { staleTime: 30_000, refetchOnWindowFocus: false } } }),
   )
   const [ready, setReady] = useState(!isDemo)
+  const [blocked, setBlocked] = useState(false)
 
   useEffect(() => {
     if (!isDemo) return
-    import("@/mocks/browser")
-      .then(({ worker }) =>
-        worker.start({ serviceWorker: { url: "/mockServiceWorker.js" }, onUnhandledFrame: "bypass", quiet: true }),
-      )
-      .then(() => setReady(true))
+    import("@/mocks/browser").then(async ({ worker }) => {
+      // Service workers only run on https and localhost; on http://<LAN or WSL IP> the mock API can't start.
+      if (!("serviceWorker" in navigator)) return setBlocked(true)
+      await worker.start({ serviceWorker: { url: "/mockServiceWorker.js" }, onUnhandledFrame: "bypass", quiet: true })
+      setReady(true)
+    })
   }, [])
 
   // Tests and scripts wait for this: the app (and the mock backend, when used) is ready for requests.
@@ -33,7 +35,14 @@ export function Providers({ children }: { children: ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <TooltipProvider>
-          {ready ? children : null}
+          {blocked ? (
+            <p role="alert" className="p-6 text-sm">
+              Mock API는 https 또는 localhost 주소에서만 동작합니다. 이 주소로 보려면 NEXT_PUBLIC_API_URL로 실제 API를
+              연결하거나, localhost 또는 https 터널로 여세요.
+            </p>
+          ) : ready ? (
+            children
+          ) : null}
           <Toaster position="top-center" />
         </TooltipProvider>
       </ThemeProvider>

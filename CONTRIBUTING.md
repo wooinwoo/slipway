@@ -29,7 +29,7 @@ templates/astro, templates/flutter            따로 관리
 |---|---|---|
 | 부품 하나 | `templates/react/src/patterns/` | `codepack/catalog.json`의 규약, `fixtures/parts/`와 `parts-tests/`, `docs/codepack.md`, `pnpm sync` |
 | 새 부품 | 위와 같고, `parts-tests/a11y.parts.ts`의 목록에도 추가 | `pnpm pack:check`가 export와 의존 파일을 확인 |
-| 테마·디자인 규칙 | `templates/react/src/index.css`, `templates/react/DESIGN.md` | `pnpm sync`(next·mono에 복사), astro의 `src/styles/global.css`는 직접 |
+| 테마 토큰(기술 기본값) | `templates/react/src/index.css` | `pnpm sync`(next·mono에 복사), astro의 `src/styles/global.css`는 직접. 디자인 기준·예시 화면은 넣지 않습니다(디자인은 각 프로젝트의 하네스가 정함) |
 | 인증·API 규칙 | `templates/nest/src/` | 계약 테스트 `test/`, 웹 Mock(`templates/react/src/mocks/`)도 같은 규칙으로 |
 | 리소스 생성기 | `scripts/gen.mjs` | `tests/gen.test.mjs`, 그리고 실제 프로젝트에 생성해서 `pnpm verify`(아래) |
 | 새 프로젝트에 들어가는 문서·README | `docs/*.md`, `scripts/create-project.mjs` | `tests/create-project.test.mjs` |
