@@ -1,6 +1,6 @@
 ---
 name: screen
-description: Slipway 프로젝트에서 화면 하나를 만든다. 기능은 Slipway 부품과 생성된 데이터 훅으로 조립하고, 모양은 디자인 하네스(Impeccable)로 정하고 다듬은 뒤, 캡처·UI 검사·실제 클릭까지 확인한다. "○○ 화면 만들어줘", "목록 페이지 추가", "대시보드 만들어줘", "로그인 화면 붙여줘"에 트리거.
+description: Slipway 프로젝트에서 화면 하나를 만든다. 기능은 Slipway 부품과 생성된 데이터 훅으로 조립하고, 모양은 디자인 하네스(모바일 앱은 k-style-ui-ux, 웹은 Impeccable)로 정한 뒤, 캡처·UI 검사·실제 클릭까지 확인한다. "○○ 화면 만들어줘", "목록 페이지 추가", "대시보드 만들어줘", "로그인 화면 붙여줘"에 트리거.
 ---
 
 # slipway:screen
@@ -10,11 +10,11 @@ Slipway는 화면도 디자인 기준도 주지 않는다. 부품과 데이터 �
 
 ## 1. 디자인 하네스 준비
 
-- 웹 화면은 Impeccable 스킬로 디자인한다. 설치돼 있지 않으면 사용자에게 설치를 권하고(https://impeccable.style),
-  설치 전에는 스타일을 지어내지 않는다.
-- 프로젝트에 `PRODUCT.md`·`DESIGN.md`가 없으면 Impeccable의 흐름(`/impeccable init`, 새 화면이면 `shape`)으로 사용자와 함께 먼저 만든다.
-  이 두 파일은 하네스가 쓰고, Slipway는 내용을 정하지 않는다.
-- 소비자용 모바일 흐름이라면 k-style-ui-ux 초안을 먼저 받는 것도 방법이다. HTML을 복사하지 않고 흐름과 방향만 가져온다.
+- 모바일 앱(휴대폰에서 주로 쓰는 화면, flutter 셸 포함)은 k-style-ui-ux로 디자인한다. `out/`가 아직 없으면 PRD로 `/k-style-ui-ux:go`를
+  먼저 돌린다. 이 화면에 해당하는 `out/screens/<id>.html`과 고른 팔레트가 기준이다.
+- 데스크톱 웹·랜딩·문서는 Impeccable로 디자인한다. `PRODUCT.md`·`DESIGN.md`가 없으면 Impeccable의 흐름(`/impeccable init`,
+  새 화면이면 `shape`)으로 사용자와 함께 먼저 만든다. 이 두 파일은 하네스가 쓰고, Slipway는 내용을 정하지 않는다.
+- 하네스가 설치돼 있지 않으면 설치를 권하고, 설치 전에는 스타일을 지어내지 않는다.
 
 ## 2. 화면이 할 일 정하기
 
@@ -59,13 +59,17 @@ Slipway는 화면도 디자인 기준도 주지 않는다. 부품과 데이터 �
 
 ## 5. 디자인
 
-기능이 돌면 Impeccable로 모양을 짓고 다듬는다. `DESIGN.md`와 하네스의 판단을 따르고, 이 스킬이 스타일을 덧붙이지 않는다.
+기능이 돌면 하네스의 디자인으로 모양을 짓는다. 이 스킬이 스타일을 덧붙이지 않는다.
+
+- k-style-ui-ux: 고른 팔레트·글자·여백·곡률을 테마 토큰에 옮기고, `out/screens/<id>.html`의 구성(첫 화면 주인공, 블록 순서, 부품, 문구)을
+  부품 조립으로 재현한다. 캡처를 그 화면 옆에 두고 비교한다.
+- Impeccable: `DESIGN.md`와 하네스의 판단을 따른다.
 
 ```sh
 corepack pnpm shots /<route>     # .shots/에 데스크톱·모바일 × 라이트·다크
 ```
 
-캡처를 직접 열어 보고, `/impeccable critique`로 비평을 받아 P0·P1을 고친 뒤 `polish`. 그다음:
+캡처를 직접 열어 보고 P0·P1을 고친다(Impeccable이면 `/impeccable critique` 뒤 `polish`). 그다음:
 
 ```sh
 corepack pnpm check:ui /<route>  # 접근성·대비·포커스·넘침·커서·콘솔 오류

@@ -8,8 +8,8 @@ The full flow is `plugin/skills/new/SKILL.md` (the `/slipway:new` command; Claud
 
 1. Ask first, in one go: what the app is (a line or a PRD), the preset (react for a quick demo,
    next for Next.js App Router, mono for web + API + DB, nest for API only, astro for a landing or docs
-   site, flutter to ship a web app to the app stores), the design harness (Impeccable for web,
-   a k-style-ui-ux draft first for consumer mobile apps), and where it will be deployed (or later).
+   site, flutter to ship a web app to the app stores), the design harness (k-style-ui-ux for mobile apps,
+   meaning screens used mainly on a phone, flutter shells included; Impeccable for desktop web, landing and docs), and where it will be deployed (or later).
 2. Create the project next to this repository and work only there:
    `node scripts/create-project.mjs ../<name> --preset <preset> --name "<서비스 이름>"`
    (`<name>`: lowercase letters, digits and hyphens), then `corepack pnpm install --frozen-lockfile`.

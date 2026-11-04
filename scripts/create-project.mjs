@@ -176,8 +176,8 @@ function projectReadme(slug, preset, name) {
     + (webPresets.has(preset) ? " 로고는 제품의 실제 로고 파일을 `corepack pnpm brand logo.svg`로 연결합니다(`public/`, 파비콘). Slipway는 로고를 만들지 않습니다." : "")
     + "\n\n"
     + (preset === "nest" ? "" : "## 화면과 디자인\n\nSlipway는 화면도 디자인 기준도 주지 않습니다. 부품(`src/patterns/`, `CODEPACK.md`)과 데이터 층만 있습니다. "
-      + "화면의 방향과 모양은 디자인 하네스로 정합니다. 웹은 [Impeccable](https://impeccable.style)이 사용자와 함께 `PRODUCT.md`·`DESIGN.md`를 만들고 "
-      + "화면을 짓고 다듬습니다. 모바일 소비자 앱 초안은 [k-style-ui-ux](https://github.com/vmc-inner-circle/k-style-ui-ux)를 씁니다. "
+      + "화면의 방향과 모양은 디자인 하네스로 정합니다. 모바일 앱(휴대폰에서 주로 쓰는 화면)은 [k-style-ui-ux](https://github.com/vmc-inner-circle/k-style-ui-ux)가 PRD로 디자인을 만들고 "
+      + "그 결과를 부품과 테마 토큰으로 옮깁니다. 데스크톱 웹·랜딩은 [Impeccable](https://impeccable.style)이 사용자와 함께 `PRODUCT.md`·`DESIGN.md`를 만들고 화면을 짓고 다듬습니다. "
       + "어떤 디자인이든 `pnpm check:ui`(접근성·대비·포커스·넘침)와 E2E는 통과해야 합니다.\n\n")
     + generate
     + `## 검증\n\n\`\`\`sh\n${browsers}corepack pnpm verify\n\`\`\`\n\n${verify} GitHub에 올리면 \`.github/workflows/verify.yml\`이 같은 검증에 웹 점수(Lighthouse)와 의존성 검사를 더해 돌립니다.\n\n`

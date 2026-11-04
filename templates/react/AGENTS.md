@@ -54,10 +54,12 @@ tools read them from there.
 Slipway gives you parts and a data layer, not screens and not a design. The look of every screen,
 the sign-in page and the app frame included, comes from a design harness working with the user:
 
-- Web: the Impeccable skill (`/impeccable`). Before the first screen it captures `PRODUCT.md` and
-  `DESIGN.md` with the user; build screens with it, then `critique` and `polish`. If it isn't
-  installed, ask the user to install it (https://impeccable.style) rather than inventing a style.
-- Consumer mobile flows: a k-style-ui-ux draft, translated into these parts (don't copy its HTML).
+- Mobile apps, meaning screens used mainly on a phone (flutter shells included): k-style-ui-ux
+  (`/k-style-ui-ux:go <PRD>`). Its `out/` (screens, palette, type, spacing, components) is the design:
+  port it into these parts and the theme tokens in `src/index.css`; don't paste its HTML.
+- Desktop web, landing and docs sites: the Impeccable skill (`/impeccable`). Before the first screen it
+  captures `PRODUCT.md` and `DESIGN.md` with the user; build screens with it, then `critique` and `polish`.
+- If the harness isn't installed, ask the user to install it rather than inventing a style.
 - Parts in `src/patterns/` are building blocks: use, edit, restyle or skip them. Theme tokens in
   `src/index.css` are technical defaults for shadcn; the harness rewrites them.
 - Never make up a logo, favicon or app icon (a letter in a shape, a stock icon standing in for the brand). Use only the logo file the user supplies: `pnpm brand <file>` puts it in `public/` and makes it the favicon, then pass it to `AppShell`'s `logo`. Until then the product name stands as plain text and you ask the user for a logo.

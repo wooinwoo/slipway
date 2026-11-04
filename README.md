@@ -38,7 +38,7 @@
 - **한국어 기본값.** 전화번호·사업자번호·금액·주소 입력, 한국어 검증 메시지, 어절 단위 줄바꿈, Pretendard.
 - **품질 관문.** 접근성·대비·포커스·커서·넘침 검사, 번들 예산, Lighthouse 점수, CSP·요청 제한·운영 모드 보호가 `pnpm verify`와 CI에 있습니다.
 - **어디든 배포.** 정적 호스팅, 컨테이너(Docker 선택), Node 직접 실행, VPS 한 대. Vercel, Cloudflare, Railway, AWS, iwinv.
-- **AI와 같이 쓰는 하네스.** `AGENTS.md`(Claude Code는 `CLAUDE.md`로 같은 파일을 읽음), 디자인 하네스(Impeccable) 연결, `REQ-n` 추적, `pnpm shots` 캡처, Claude Code 플러그인.
+- **AI와 같이 쓰는 하네스.** `AGENTS.md`(Claude Code는 `CLAUDE.md`로 같은 파일을 읽음), 디자인 하네스(모바일 앱 k-style-ui-ux, 웹 Impeccable) 연결, `REQ-n` 추적, `pnpm shots` 캡처, Claude Code 플러그인.
 
 ## 사용법
 
@@ -66,7 +66,7 @@ Slipway 레포에서 "Slipway로 ○○ 앱 만들어 줘"라고 하면 앱 만�
 | 명령 | 하는 일 |
 |---|---|
 | `/slipway:new` | 무엇을 만들지, 프리셋, 디자인 하네스, 배포 대상을 한 번에 묻습니다. Slipway 옆 폴더에 프로젝트를 만들고, 데이터 층을 생성하고, 하네스로 `PRODUCT.md`·`DESIGN.md`를 정한 뒤 화면을 만들고 검증합니다 |
-| `/slipway:screen` | 화면 하나를 만듭니다. 기능은 부품과 데이터 훅으로 조립하고 `REQ-n`·E2E를 붙입니다. 모양은 디자인 하네스(Impeccable)로 짓고 비평·다듬은 뒤, 캡처 확인·`check:ui`·실제 클릭까지 합니다 |
+| `/slipway:screen` | 화면 하나를 만듭니다. 기능은 부품과 데이터 훅으로 조립하고 `REQ-n`·E2E를 붙입니다. 모양은 디자인 하네스(모바일 앱은 k-style-ui-ux, 웹은 Impeccable)로 짓고 다듬은 뒤, 캡처 확인·`check:ui`·실제 클릭까지 합니다 |
 | `/slipway:resource` | 요청에서 필드를 뽑아 `pnpm gen resource`로 데이터 층을 만들고 화면에 연결합니다 |
 | `/slipway:deploy` | 정적, 컨테이너, VPS, 웹·API 분리 중에서 고르고 설정 파일과 환경 변수를 준비합니다. 올리기 전에 확인을 받습니다 |
 
@@ -227,8 +227,8 @@ Slipway는 디자인을 정하지 않습니다. 각 프로젝트에서 디자인
 
 | 하네스 | 하는 일 |
 |---|---|
-| [Impeccable](https://impeccable.style) (웹) | 사용자와 `PRODUCT.md`(누가·왜·톤)와 `DESIGN.md`(시각 방향·토큰)를 만들고, 화면을 짓고, 비평·감사·다듬기 |
-| [k-style-ui-ux](https://github.com/vmc-inner-circle/k-style-ui-ux) (모바일 소비자 앱) | PRD로 화면 흐름 초안. 흐름만 가져오고 HTML은 복사하지 않음 |
+| [k-style-ui-ux](https://github.com/vmc-inner-circle/k-style-ui-ux) (모바일 앱: 휴대폰에서 주로 쓰는 화면, flutter 셸 포함) | PRD 한 장으로 화면 흐름, 팔레트 3벌, 글자·여백, 부품까지 정한 디자인(`out/`). 그 결과를 부품과 테마 토큰으로 옮김(HTML을 붙여 넣지 않음) |
+| [Impeccable](https://impeccable.style) (데스크톱 웹, 랜딩, 문서) | 사용자와 `PRODUCT.md`(누가·왜·톤)와 `DESIGN.md`(시각 방향·토큰)를 만들고, 화면을 짓고, 비평·감사·다듬기 |
 
 부품과 테마 토큰은 기술 기본값이라 하네스가 고쳐 쓰거나 바꿉니다. 어떤 디자인이든 품질 관문(접근성·대비·포커스·넘침, E2E)은 통과해야 합니다.
 하네스가 설치돼 있지 않으면 스킬이 설치를 권하고, 그 전에는 스타일을 지어내지 않습니다.

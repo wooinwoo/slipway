@@ -48,9 +48,10 @@ tools read them from there.
 ## Rules
 
 - Slipway gives you parts and a data layer, not screens or a design. The look comes from a design
-  harness with the user: the Impeccable skill (`/impeccable`, which writes `PRODUCT.md` and `DESIGN.md`)
-  for web, a k-style-ui-ux draft for consumer mobile flows. If neither is installed, ask the user to
-  install one rather than inventing a style. Every design passes `pnpm check:ui` and the e2e tests.
+  harness with the user: k-style-ui-ux (`/k-style-ui-ux:go <PRD>`) for mobile apps, meaning screens used
+  mainly on a phone (its `out/` is the design: port it into the parts and `src/app/globals.css`, don't paste
+  its HTML); the Impeccable skill (`/impeccable`, which writes `PRODUCT.md` and `DESIGN.md`) for desktop web
+  and landing pages. If the harness isn't installed, ask the user to install it rather than inventing a style. Every design passes `pnpm check:ui` and the e2e tests.
 - Never make up a logo, favicon or app icon (a letter in a shape, a stock icon standing in for the brand). Use only the logo file the user supplies: `pnpm brand <file>` puts it in `public/` and makes it the favicon (`src/app/icon.*`), then pass it to `AppShell`'s `logo`. Until then the product name stands as plain text and you ask the user for a logo.
 - Interactive parts are client components (`"use client"`). Keep pages as server components when they
   only arrange parts; data comes from the TanStack Query hooks in `src/api/` on the client.

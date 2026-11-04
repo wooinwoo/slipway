@@ -22,8 +22,9 @@ Slipway는 화면도 디자인 기준도 주지 않는다. 기능은 부품으�
    - `astro`: 소개·랜딩·문서 같은 정적 사이트. 리소스 생성기 없음
    - `flutter`: 만든 웹 앱을 Android·iOS 앱으로 감싸는 셸. 웹 앱 프리셋과 함께 만든다
 3. **디자인 하네스**
-   - Impeccable(웹 화면, 기본). 사용자와 `PRODUCT.md`·`DESIGN.md`를 만들고 화면을 짓고 비평·다듬기까지 한다
-   - k-style-ui-ux 초안 먼저: 소비자용 모바일 앱처럼 흐름과 미감이 중요할 때. 이후 웹 화면은 Impeccable로
+   - 모바일 앱(휴대폰에서 주로 쓰는 화면, flutter 셸 포함): k-style-ui-ux. PRD로 화면·팔레트·글자·부품까지 정한다
+   - 데스크톱 웹·랜딩·문서: Impeccable. 사용자와 `PRODUCT.md`·`DESIGN.md`를 만들고 화면을 짓고 비평·다듬기까지 한다
+   - 어느 쪽인지는 누가 어디서 주로 쓰는지로 정한다. 사용자가 이미 정했으면 묻지 않는다
 4. **배포**: 나중에(추천) / 정적 호스팅(Vercel·Cloudflare·Netlify) / 컨테이너(Railway·Fly.io·AWS·Cloud Run) / VPS 한 대(iwinv·EC2)
 
 ## 2. Slipway 소스 준비
@@ -48,11 +49,12 @@ cd <폴더> && corepack pnpm install --frozen-lockfile
 - 로고와 브랜드 색이 이미 있는지 먼저 묻는다. 있으면 그대로 쓴다. 없으면 AI가 정해서 적어 넣지 않는다:
   하네스가 근거와 함께 방향을 제안하고 사용자가 고른다. 로고 파일이 생기기 전까지는 이름을 글자로만 쓴다(도형 속 첫 글자 같은 가짜 마크 금지).
   파일을 받으면 `corepack pnpm brand <파일>`로 연결한다.
-- Impeccable이 설치돼 있지 않으면 설치를 권한다(https://impeccable.style). 설치 전에는 스타일을 지어내지 않는다.
-- 설치돼 있으면 프로젝트에서 `/impeccable init`으로 사용자와 `PRODUCT.md`(누가·왜·톤)를, 첫 화면 전에 `DESIGN.md`(시각 방향·토큰)를
+- 고른 하네스가 설치돼 있지 않으면 설치를 권한다. 설치 전에는 스타일을 지어내지 않는다.
+- Impeccable(https://impeccable.style)이면 프로젝트에서 `/impeccable init`으로 사용자와 `PRODUCT.md`(누가·왜·톤)를, 첫 화면 전에 `DESIGN.md`(시각 방향·토큰)를
   만든다. 토큰은 하네스가 `src/index.css`에 반영한다.
-- k-style-ui-ux를 골랐다면 PRD로 `/k-style-ui-ux:go <PRD 파일>`을 실행하고(없으면 설치 명령을 안내), 결과 `out/index.html`의
-  흐름과 화면 목록을 요구사항으로 옮긴다. HTML은 복사하지 않는다.
+- k-style-ui-ux면 프로젝트 폴더에서 PRD로 `/k-style-ui-ux:go <PRD 파일>`을 실행한다. 결과 `out/`가 디자인이다: 화면 흐름과 목록은
+  요구사항(`REQ-n`)으로, 고른 팔레트·글자·여백은 테마 토큰(`src/index.css`)으로, 화면 구성은 부품 조립으로 옮긴다. HTML은 붙여 넣지 않는다.
+  팔레트는 캔버스의 색 점 3개 중 사용자가 고른 것을 쓴다.
   ```
   /plugin marketplace add vmc-inner-circle/k-style-ui-ux
   /plugin install k-style-ui-ux@k-style-ui-ux
