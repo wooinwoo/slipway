@@ -6,7 +6,6 @@ import { pathToFileURL } from "node:url"
 export function checkRequirements(requirements, routes, tests) {
   const ids = [...requirements.matchAll(/^## (REQ-\d+)\b/gm)].map(m => m[1])
   const errors = []
-  if (!ids.length) errors.push("No requirements declared in docs/requirements.md")
   for (const id of new Set(ids)) {
     if (ids.filter(value => value === id).length > 1) errors.push(`${id}: duplicate requirement`)
     if (!routes.some(route => new RegExp(`^// ${id}\\b`, "m").test(route))) errors.push(`${id}: no route header`)

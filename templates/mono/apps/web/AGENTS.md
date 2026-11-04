@@ -3,6 +3,9 @@
 The web app of the Slipway monorepo (read `../../AGENTS.md` first). By default it talks to
 `apps/api` on the same origin; `pnpm dev:demo` swaps in the in-browser mock backend (MSW).
 
+The template ships no screens. Every screen, the sign-in page and the app frame included, is
+assembled per project from the parts in `src/patterns/`.
+
 ## Commands
 
 - `pnpm dev` starts http://localhost:5173.
@@ -14,11 +17,11 @@ The web app of the Slipway monorepo (read `../../AGENTS.md` first). By default i
 | Path | What lives there |
 |---|---|
 | `src/config.ts` | Product name and copy, `isDemo` flag |
-| `src/patterns/` | Domain-independent table, form, details, board and metric patterns |
+| `src/patterns/` | Screen parts: app shell, sign-in forms, theme settings, table, filters, chart, board, form and more (see CODEPACK.md) |
 | `src/index.css` | Theme tokens. `--brand-h` and `--brand-c` re-skin the whole app |
 | `src/api/<resource>.ts` | zod schema, types, query options, mutations for one resource |
 | `src/mocks/` | Mock backend: `db.ts` (localStorage and initial demo account), `handlers/<resource>.ts` |
-| `src/routes/` | TanStack Router file routes. Everything under `_app/` requires login |
+| `src/routes/` | TanStack Router file routes. Ships only the root, an empty `/` and `/auth/callback` (Kakao/Naver landing) |
 | `src/components/ui/` | shadcn, every component installed. Don't hand-edit; re-add with `pnpm dlx shadcn add <name> -o` |
 | `src/components/kr-inputs.tsx` | Korean inputs. Formatting and validation come from `@slipway/shared/kr` |
 | `docs/requirements.md` | The `REQ-n` list the demo must satisfy |
@@ -36,6 +39,15 @@ The web app of the Slipway monorepo (read `../../AGENTS.md` first). By default i
 - UI copy is Korean, short, and plain. Say what happened and what to do next.
 - A page reads data with `queryClient.ensureQueryData` in its route `loader` and `useSuspenseQuery`
   (or `useQuery` with placeholder data when search params change) in the component.
+
+## Building screens
+
+- Sign-in: `src/routes/login.tsx` renders `AuthCard` with `LoginForm`, `SocialButtons` and
+  `GuestButton` from `src/patterns/auth-forms.tsx`, and calls the hooks in `src/api/auth.ts`.
+- Signed-in area: a layout route `src/routes/_app.tsx`. Its `beforeLoad` ensures `meQuery` and
+  redirects to `/login` without a user; its component wraps `<Outlet />` in `<AppShell>`.
+- Give each route `staticData: { title }`. It names the tab and the `AppShell` breadcrumb.
+- The recipes with code are in CODEPACK.md ("로그인과 앱 틀 조립").
 
 ## Adding a resource
 

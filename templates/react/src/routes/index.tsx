@@ -1,11 +1,6 @@
-import { createFileRoute, redirect } from "@tanstack/react-router"
+import { createFileRoute } from "@tanstack/react-router"
 
-import { meQuery } from "@/api/auth"
-
-// No landing page in the kit: signed-in users go to the app, everyone else to login.
+// Intentionally empty. Build the first screen from src/patterns/ (see CODEPACK.md).
 export const Route = createFileRoute("/")({
-  beforeLoad: async ({ context }) => {
-    const user = await context.queryClient.ensureQueryData(meQuery).catch(() => null)
-    throw redirect({ to: user ? "/home" : "/login" })
-  },
+  component: () => <main className="min-h-svh" />,
 })

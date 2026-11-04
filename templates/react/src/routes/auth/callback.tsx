@@ -25,10 +25,10 @@ function AuthCallback() {
     // Drop the token from the address bar and history before anything else renders.
     history.replaceState(null, "", window.location.pathname)
     queryClient.removeQueries({ queryKey: meQuery.queryKey })
-    navigate({ to: "/home", replace: true })
+    navigate({ to: "/", replace: true })
   }, [value, queryClient, navigate])
 
-  if (!value) return <RouteNotFound title="로그인 정보를 받지 못했습니다" backTo="/login" />
+  if (!value) return <RouteNotFound title="로그인 정보를 받지 못했습니다" />
   return (
     <div className="flex min-h-svh items-center justify-center gap-2 text-sm text-muted-foreground">
       <Spinner />

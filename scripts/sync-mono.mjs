@@ -120,9 +120,6 @@ export default defineConfig({
   },
 })
 `)
-patch(join(web, "e2e/app.e2e.ts"),
-  "// Each test gets a fresh browser context, so the mock database starts from the seed every time.",
-  "// Runs against the real API (apps/api). Accounts persist across tests, so signup uses a unique email.")
 patch(join(web, "AGENTS.md"),
   "# Slipway React\n\nDemo-first React app. It runs with no backend: an in-browser mock API (MSW) answers `/api/*`\nwith seeded Korean data. Set `VITE_API_URL` and the same calls go to a real server instead.",
   "# Slipway Mono: web\n\nThe web app of the Slipway monorepo (read `../../AGENTS.md` first). By default it talks to\n`apps/api` on the same origin; `pnpm dev:demo` swaps in the in-browser mock backend (MSW).",

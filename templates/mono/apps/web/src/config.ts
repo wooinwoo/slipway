@@ -3,11 +3,8 @@
 export const product = {
   name: "Slipway",
   tagline: "서비스 한 줄 소개",
-  description: "src/config.ts에서 이름과 소개를 바꾸세요. 로그인 화면과 브라우저 탭에 쓰입니다.",
+  description: "src/config.ts에서 이름과 소개를 바꾸세요. 브라우저 탭과 화면에서 가져다 씁니다.",
 }
-
-// Presentation switches live here, not inside reusable patterns.
-export const codepack = { showEnvironment: false }
 
 /** True when no backend is configured and the in-browser mock API answers requests. */
 export const isDemo = !import.meta.env.VITE_API_URL

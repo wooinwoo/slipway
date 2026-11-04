@@ -62,7 +62,8 @@ test("defaults to a React demo with no backend setup", async t => {
     const source = await readFile(join(target, "src/patterns", file), "utf8")
     assert.doesNotMatch(source, /from ["']@\/(api|features|contracts)\//)
   }
-  assert.ok(!(await readdir(join(target, "src/routes/_app"))).includes("customers.tsx"))
+  // Screens are assembled per project; the template ships only the router frame.
+  assert.deepEqual((await readdir(join(target, "src/routes"))).sort(), ["__root.tsx", "auth", "index.tsx"])
 })
 
 test("never overwrites an existing directory or file", async t => {

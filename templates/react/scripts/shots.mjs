@@ -1,6 +1,7 @@
 // pnpm shots [route ...]
 // Builds nothing; serves the current dist/ and screenshots each route at desktop and mobile,
-// light and dark, into .shots/. Signed-in routes go through guest login first.
+// light and dark, into .shots/. Pass the routes you built. Routes behind a login show whatever
+// the guard does, so add a sign-in step in `open` below when you need them.
 // Agents: look at these images before calling a UI change done.
 import { spawn } from "node:child_process"
 import { mkdirSync } from "node:fs"
@@ -8,8 +9,7 @@ import { firefox } from "@playwright/test"
 
 const PORT = 5199
 const base = `http://localhost:${PORT}`
-const routes = process.argv.slice(2).length ? process.argv.slice(2) : ["/login", "/signup", "/home", "/settings", "/home/missing"]
-const publicRoutes = new Set(["/login", "/signup"])
+const routes = process.argv.slice(2).length ? process.argv.slice(2) : ["/"]
 const out = ".shots"
 mkdirSync(out, { recursive: true })
 
@@ -35,15 +35,7 @@ try {
         await page.waitForLoadState("networkidle")
         return page
       }
-      let signedIn = false
       for (const route of routes) {
-        if (!publicRoutes.has(route) && !signedIn) {
-          const login = await open("/login")
-          await login.getByRole("button", { name: "가입 없이 둘러보기" }).click()
-          await login.waitForURL(/\/home$/)
-          await login.close()
-          signedIn = true
-        }
         const page = await open(route)
         const name = route.replace(/^\//, "").replace(/\//g, "-") || "root"
         await page.screenshot({ path: `${out}/${name}.${size}.${scheme}.png`, fullPage: true })

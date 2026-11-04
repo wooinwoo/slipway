@@ -13,6 +13,7 @@ import { ConfirmAction } from "@/patterns/confirm-action"
 import { PhoneInput, BizNoInput, WonInput } from "@/components/kr-inputs"
 import { Button } from "@/components/ui/button"
 import { extraFixtures } from "./extra"
+import { frameFixtures } from "./frame"
 
 function TableFixture() {
   const [rows, setRows] = useState(
@@ -175,6 +176,7 @@ function InputsFixture() {
 
 const fixtures = {
   ...extraFixtures,
+  ...frameFixtures,
   table: TableFixture,
   form: FormFixture,
   details: DetailsFixture,

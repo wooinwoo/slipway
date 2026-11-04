@@ -647,6 +647,112 @@
         "헤더는 비어 있거나 중복될 수 없고 모든 행의 열 수가 같아야 합니다.",
         "문자열의 수식 시작 문자는 기본적으로 작은따옴표로 보호하며 실제 숫자 음수는 유지합니다."
       ]
+    },
+    {
+      "id": "auth",
+      "name": "로그인·회원가입 부품",
+      "category": "pattern",
+      "entries": [
+        "patterns/auth-forms.tsx"
+      ],
+      "exports": [
+        "AuthCard",
+        "AuthDivider",
+        "SocialButtons",
+        "GuestButton",
+        "LoginForm",
+        "SignupForm",
+        "AuthFailure",
+        "LoginValues",
+        "SignupValues",
+        "SocialProvider"
+      ],
+      "theme": true,
+      "summary": "로그인 카드, 이메일 로그인·가입 폼, 카카오·네이버·게스트 버튼",
+      "inputs": [
+        "LoginForm.submit(values): Promise<AuthFailure | undefined>",
+        "SignupForm.submit(values): Promise<AuthFailure | undefined>",
+        "SocialButtons.onSelect(provider)",
+        "GuestButton.onClick()"
+      ],
+      "outputs": [
+        "입력값을 submit으로 전달",
+        "반환한 실패 메시지와 필드 오류를 폼에 표시",
+        "선택한 소셜 공급자 전달"
+      ],
+      "edit": [
+        "AuthCard 제목·설명·footer",
+        "조합 순서(소셜·이메일·게스트)",
+        "LoginForm demo 계정"
+      ],
+      "notes": [
+        "토큰 저장·페이지 이동·API 호출은 호출자가 합니다. src/api/auth.ts의 훅과 연결합니다.",
+        "화면 배치(가운데 정렬, 배경)는 라우트에서 정합니다."
+      ]
+    },
+    {
+      "id": "app-shell",
+      "name": "앱 틀",
+      "category": "pattern",
+      "entries": [
+        "patterns/app-shell.tsx"
+      ],
+      "exports": [
+        "AppShell",
+        "NavItem",
+        "ShellUser"
+      ],
+      "theme": true,
+      "summary": "사이드바 메뉴, 브레드크럼, Ctrl/⌘+K 빠른 이동, 사용자 메뉴",
+      "inputs": [
+        "brand: string",
+        "nav: { to, label, icon }[]",
+        "user?: { name, email }",
+        "onLogout?()",
+        "actions?: ReactNode",
+        "children"
+      ],
+      "outputs": [
+        "메뉴·빠른 이동으로 라우트 이동",
+        "onLogout 호출",
+        "테마 변경"
+      ],
+      "edit": [
+        "nav 항목과 아이콘",
+        "헤더 actions 슬롯",
+        "라우트 staticData.title로 브레드크럼"
+      ],
+      "notes": [
+        "TanStack Router 안에서 씁니다. 레이아웃 라우트의 Outlet을 감쌉니다.",
+        "로그인 확인은 레이아웃 라우트의 beforeLoad에서 합니다.",
+        "ThemeProvider와 TooltipProvider 안에서 렌더링합니다."
+      ]
+    },
+    {
+      "id": "theme-settings",
+      "name": "테마 설정",
+      "category": "pattern",
+      "entries": [
+        "patterns/theme-settings.tsx"
+      ],
+      "exports": [
+        "ThemeSettings"
+      ],
+      "theme": true,
+      "summary": "라이트·다크·시스템 전환과 브랜드 색 선택",
+      "inputs": [
+        "defaultHue?: number"
+      ],
+      "outputs": [
+        "테마와 --brand-h를 이 브라우저에 저장"
+      ],
+      "edit": [
+        "색 견본 목록",
+        "defaultHue를 index.css의 --brand-h와 맞춤"
+      ],
+      "notes": [
+        "저장한 브랜드 색은 main.tsx가 시작할 때 다시 적용합니다."
+      ]
     }
   ]
 }

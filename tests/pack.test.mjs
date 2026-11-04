@@ -18,7 +18,7 @@ async function sandbox(t) {
 
 test("catalog entries have usable contracts, public exports and resolvable dependencies", async () => {
   const result = await checkCatalog()
-  assert.equal(result.parts, 20)
+  assert.equal(result.parts, 23)
   assert.equal(result.parts, listParts().length)
 })
 
