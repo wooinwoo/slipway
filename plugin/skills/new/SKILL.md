@@ -47,6 +47,7 @@ cd <폴더> && corepack pnpm install --frozen-lockfile
 
 - 로고와 브랜드 색이 이미 있는지 먼저 묻는다. 있으면 그대로 쓴다. 없으면 AI가 정해서 적어 넣지 않는다:
   하네스가 근거와 함께 방향을 제안하고 사용자가 고른다. 로고 파일이 생기기 전까지는 이름을 글자로만 쓴다(도형 속 첫 글자 같은 가짜 마크 금지).
+  파일을 받으면 `corepack pnpm brand <파일>`로 연결한다.
 - Impeccable이 설치돼 있지 않으면 설치를 권한다(https://impeccable.style). 설치 전에는 스타일을 지어내지 않는다.
 - 설치돼 있으면 프로젝트에서 `/impeccable init`으로 사용자와 `PRODUCT.md`(누가·왜·톤)를, 첫 화면 전에 `DESIGN.md`(시각 방향·토큰)를
   만든다. 토큰은 하네스가 `src/index.css`에 반영한다.

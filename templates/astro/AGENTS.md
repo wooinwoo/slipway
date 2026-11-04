@@ -35,7 +35,8 @@ For deploying, follow `.claude/skills/deploy/SKILL.md`.
   Impeccable skill (`/impeccable`, which writes `PRODUCT.md` and `DESIGN.md`). If it isn't installed,
   ask the user to install it rather than inventing a style. Every page passes `pnpm check:ui`.
 - Never make up a logo or favicon (a letter in a shape, a stock icon standing in for the brand). Use only
-  the logo file the user supplies; until then the site name stands as plain text and you ask for a logo.
+  the logo file the user supplies (`pnpm brand <file>` puts it in `public/` and makes it the favicon);
+  until then the site name stands as plain text and you ask for a logo.
 - Every page passes `title` and `description` to `Base`. One `<h1>` per page.
 - Images go through `astro:assets` (`<Image>`) with `alt` text and explicit sizes.
 - Ship HTML first. Use a React island (`client:visible`, `client:idle`) only where the page needs

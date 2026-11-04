@@ -25,18 +25,19 @@ Follow the generated project's AGENTS.md from step 2 on.
 
 ## Changing Slipway
 
-- Read PRODUCT.md for product priorities: rapidly assembling requested demos from reusable
-  screen patterns, consistent visual quality, easy editing, and clear structure. Prioritize
-  composable patterns over polishing one default application. Default to React; use mono
-  when a real API is needed. Keep implementation instructions out of product screens.
+- Read PRODUCT.md for product priorities: apps assembled fast from setup code, parts and a
+  generated data layer, carried to production; no re-setup; freedom to edit anything; clear
+  structure. Slipway is a tool: it ships no screens and no design. Default to React; use mono
+  when a real API is needed.
 - Ship no logo, favicon or icon of Slipway's in a template, and no part that draws a placeholder mark
-  (a letter in a shape). Parts take the product's real logo as a prop or show the name as text.
+  (a letter in a shape). Parts take the product's real logo as a prop or show the name as text;
+  `scripts/brand.mjs` (`pnpm brand`) only wires a file the user supplies.
 - Ship no design: no DESIGN.md or PRODUCT.md templates, no style rules, no galleries, no layout
   recipes or example screens. The look of every screen comes from the design harness (Impeccable,
   k-style-ui-ux) in each project. Docs state contracts and wiring facts only.
 - Deliver independent code parts and contracts. Do not wire a business application, domain
-  routes, menus or tables into the base template; keep usage examples in documentation or
-  isolated fixtures. A preassembled customer application is explicitly out of scope.
+  routes, menus or tables into the base template, and ship no usage examples; part behavior is
+  tested in isolated fixtures. A preassembled customer application is explicitly out of scope.
 - Register parts in codepack/catalog.json with their input/output contract, edit points,
   exports and constraints. scripts/pack.mjs resolves the selected source dependency graph.
   Copying a part must not alter routes, menus, package.json or user-modified files.

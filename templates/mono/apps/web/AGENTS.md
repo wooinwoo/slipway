@@ -60,7 +60,7 @@ the sign-in page and the app frame included, comes from a design harness working
 - Consumer mobile flows: a k-style-ui-ux draft, translated into these parts (don't copy its HTML).
 - Parts in `src/patterns/` are building blocks: use, edit, restyle or skip them. Theme tokens in
   `src/index.css` are technical defaults for shadcn; the harness rewrites them.
-- Never make up a logo, favicon or app icon (a letter in a shape, a stock icon standing in for the brand). Use only the logo file the user supplies (`AppShell`'s `logo` prop, `public/`); until then the product name stands as plain text and you ask the user for a logo.
+- Never make up a logo, favicon or app icon (a letter in a shape, a stock icon standing in for the brand). Use only the logo file the user supplies: `pnpm brand <file>` puts it in `public/` and makes it the favicon, then pass it to `AppShell`'s `logo`. Until then the product name stands as plain text and you ask the user for a logo.
 - Whatever the design, it passes `pnpm check:ui` (accessibility, contrast, focus, overflow, cursor,
   console errors) and the e2e tests. Look at `pnpm shots` before calling a screen done.
 

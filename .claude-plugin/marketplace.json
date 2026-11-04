@@ -10,7 +10,7 @@
     {
       "name": "slipway",
       "source": "./plugin",
-      "description": "React·NestJS 셋업 코드와 화면 부품으로 앱을 만든다 (/slipway:new, /slipway:resource, /slipway:deploy)"
+      "description": "React·NestJS 셋업 코드와 화면 부품으로 앱을 만든다 (/slipway:new, /slipway:screen, /slipway:resource, /slipway:deploy)"
     }
   ]
 }

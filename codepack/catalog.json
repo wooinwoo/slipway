@@ -706,6 +706,7 @@
       "summary": "사이드바 메뉴, 브레드크럼, Ctrl/⌘+K 빠른 이동, 사용자 메뉴",
       "inputs": [
         "brand: string",
+        "logo?: ReactNode (사용자가 준 로고만, 없으면 이름만)",
         "nav: { to, label, icon }[]",
         "user?: { name, email }",
         "onLogout?()",

@@ -9,6 +9,7 @@ const presets = new Set(["mono", "react", "next", "nest", "astro", "flutter"])
 const projectSkills = { react: ["screen", "resource", "deploy"], next: ["screen", "resource", "deploy"], mono: ["screen", "resource", "deploy"], nest: ["resource", "deploy"], astro: ["deploy"], flutter: [] }
 // Presets with an API or a mock API get the resource generator and the API-side docs.
 const dataPresets = new Set(["mono", "react", "next", "nest"])
+const webPresets = new Set(["mono", "react", "next", "astro"])
 const excluded = new Set([".git", "node_modules", "dist", "dist-demo", ".next", ".astro", ".lighthouseci", ".data", ".turbo", ".tanstack", ".shots", ".cache", ".tmp", "coverage", ".pnpm-store", "test-results", "playwright-report", "build", ".dart_tool", ".gradle", "Pods", ".flutter-plugins-dependencies", ".idea"])
 const inside = (parent, child) => {
   const rel = relative(parent, child)
@@ -53,6 +54,8 @@ export async function createProject(destination, { preset = "react", name, tagli
       manifest.packageManager = "pnpm@10.33.2"
       // `pnpm gen resource ...` writes the data layer from one field list.
       if (dataPresets.has(preset)) manifest.scripts = { ...manifest.scripts, gen: "node scripts/gen.mjs" }
+      // `pnpm brand logo.svg` wires the user's own logo (favicon, public/). Slipway never makes one.
+      if (webPresets.has(preset)) manifest.scripts = { ...manifest.scripts, brand: "node scripts/brand.mjs" }
       await writeFile(manifestPath, JSON.stringify(manifest, null, 2) + "\n")
       try {
         const lockPath = join(stage, "package-lock.json")
@@ -89,6 +92,10 @@ export async function createProject(destination, { preset = "react", name, tagli
         await cp(new URL("../docs/security.md", import.meta.url), join(stage, "SECURITY.md"))
         await mkdir(join(stage, "scripts"), { recursive: true })
         await cp(new URL("./gen.mjs", import.meta.url), join(stage, "scripts/gen.mjs"))
+      }
+      if (webPresets.has(preset)) {
+        await mkdir(join(stage, "scripts"), { recursive: true })
+        await cp(new URL("./brand.mjs", import.meta.url), join(stage, "scripts/brand.mjs"))
       }
       await writeFile(join(stage, "README.md"), projectReadme(slug, preset, name ?? slug))
     }
@@ -165,7 +172,9 @@ function projectReadme(slug, preset, name) {
   return `# ${name}\n\nSlipway ${preset} 프리셋으로 만든 ${slug} 프로젝트입니다. 화면은 \`AGENTS.md\`의 기준과 \`CODEPACK.md\`의 부품으로 조립합니다.\n\n`
     + "## 시작\n\nNode.js 22.23.4 이상과 pnpm 10.33.2를 씁니다. Corepack을 쓴다면 처음 한 번 `corepack enable`을 실행합니다.\n\n"
     + "```sh\ncorepack pnpm install --frozen-lockfile\ncorepack pnpm dev\n```\n\n"
-    + `${run}\n\n${identity}\n\n`
+    + `${run}\n\n${identity}`
+    + (webPresets.has(preset) ? " 로고는 제품의 실제 로고 파일을 `corepack pnpm brand logo.svg`로 연결합니다(`public/`, 파비콘). Slipway는 로고를 만들지 않습니다." : "")
+    + "\n\n"
     + (preset === "nest" ? "" : "## 화면과 디자인\n\nSlipway는 화면도 디자인 기준도 주지 않습니다. 부품(`src/patterns/`, `CODEPACK.md`)과 데이터 층만 있습니다. "
       + "화면의 방향과 모양은 디자인 하네스로 정합니다. 웹은 [Impeccable](https://impeccable.style)이 사용자와 함께 `PRODUCT.md`·`DESIGN.md`를 만들고 "
       + "화면을 짓고 다듬습니다. 모바일 소비자 앱 초안은 [k-style-ui-ux](https://github.com/vmc-inner-circle/k-style-ui-ux)를 씁니다. "

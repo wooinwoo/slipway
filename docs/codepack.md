@@ -52,7 +52,7 @@ AI 작업 도구에서도 읽을 수 있습니다. 목록의 원본은 `codepack
 | `src/lib/kr.ts` | 문자열·숫자·날짜 | 한국어 포맷과 검증 |
 | `src/api/client.ts` | 경로·JSON·RequestInit | JSON 응답·필드 오류·bearer 토큰 |
 | `src/patterns/auth-forms.tsx` | submit·onSelect·onClick 콜백 | 로그인 카드, 이메일 로그인·가입 폼, 카카오·네이버·게스트 버튼 |
-| `src/patterns/app-shell.tsx` | brand·nav·user·onLogout·children | 사이드바, 브레드크럼, Ctrl/⌘+K, 사용자 메뉴 |
+| `src/patterns/app-shell.tsx` | brand·logo?·nav·user·onLogout·children | 사이드바, 브레드크럼, Ctrl/⌘+K, 사용자 메뉴 |
 | `src/patterns/theme-settings.tsx` | defaultHue | 라이트·다크·시스템, 브랜드 색 |
 | `src/index.css` | 브랜드 hue·dark 클래스 | 공통 테마, 별도 파일로 선택 복사 |
 

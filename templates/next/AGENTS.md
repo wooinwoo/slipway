@@ -51,7 +51,7 @@ tools read them from there.
   harness with the user: the Impeccable skill (`/impeccable`, which writes `PRODUCT.md` and `DESIGN.md`)
   for web, a k-style-ui-ux draft for consumer mobile flows. If neither is installed, ask the user to
   install one rather than inventing a style. Every design passes `pnpm check:ui` and the e2e tests.
-- Never make up a logo, favicon or app icon (a letter in a shape, a stock icon standing in for the brand). Use only the logo file the user supplies (`AppShell`'s `logo` prop, `public/`); until then the product name stands as plain text and you ask the user for a logo.
+- Never make up a logo, favicon or app icon (a letter in a shape, a stock icon standing in for the brand). Use only the logo file the user supplies: `pnpm brand <file>` puts it in `public/` and makes it the favicon (`src/app/icon.*`), then pass it to `AppShell`'s `logo`. Until then the product name stands as plain text and you ask the user for a logo.
 - Interactive parts are client components (`"use client"`). Keep pages as server components when they
   only arrange parts; data comes from the TanStack Query hooks in `src/api/` on the client.
 - A signed-in area is a layout (`src/app/(app)/layout.tsx`, client) that reads `meQuery`, sends visitors

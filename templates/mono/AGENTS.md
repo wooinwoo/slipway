@@ -32,7 +32,7 @@ tools read them from there.
 
 ## Rules
 
-- Never make up a logo, favicon or app icon (a letter in a shape, a stock icon standing in for the brand). Use only the logo file the user supplies (`AppShell`'s `logo` prop, `apps/web/public/`); until then the product name stands as plain text and you ask the user for a logo.
+- Never make up a logo, favicon or app icon (a letter in a shape, a stock icon standing in for the brand). Use only the logo file the user supplies: `pnpm brand <file>` at the repo root puts it in `apps/web/public/` and makes it the favicon, then pass it to `AppShell`'s `logo`. Until then the product name stands as plain text and you ask the user for a logo.
 - A request or response shape changes in `packages/shared` first, then in the API, then in the
   web app, then in tests on both sides (API contract test and web e2e).
 - Never copy a schema into an app. Import it from `@slipway/shared/<module>`.
