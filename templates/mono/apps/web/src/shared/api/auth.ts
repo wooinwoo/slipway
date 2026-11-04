@@ -22,7 +22,25 @@ export const meQuery = queryOptions({
  * ("/today?x=1"), otherwise "/", so a crafted link can't send people to another site.
  */
 export function safeRedirect(value: unknown, fallback = "/") {
-  return typeof value === "string" && value.startsWith("/") && !value.startsWith("//") && !value.startsWith("/\\") ? value : fallback
+  if (
+    typeof value !== "string" ||
+    !value.startsWith("/") ||
+    value.startsWith("//") ||
+    value.includes("\\") ||
+    [...value].some(
+      (character) =>
+        character.charCodeAt(0) < 32 || character.charCodeAt(0) === 127
+    )
+  )
+    return fallback
+  try {
+    return new URL(value, "https://slipway.invalid").origin ===
+      "https://slipway.invalid"
+      ? value
+      : fallback
+  } catch {
+    return fallback
+  }
 }
 
 /**

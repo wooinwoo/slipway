@@ -5,7 +5,8 @@
 // Each page runs at desktop and mobile, light and dark. Without paths it takes every page in dist/.
 // Serves the existing build; `pnpm shots` builds first, `pnpm verify` builds before checking.
 import { spawn } from "node:child_process"
-import { mkdirSync, readdirSync, writeFileSync } from "node:fs"
+import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs"
+import { dirname, resolve } from "node:path"
 import { firefox } from "@playwright/test"
 
 import { accessibilityIssues, cursorIssues, focusIssues, overflowIssues } from "./ui-checks.mjs"
@@ -25,7 +26,11 @@ function builtPages() {
 
 const pages = paths.length ? paths : builtPages()
 mkdirSync(out, { recursive: true })
-const server = spawn("pnpm", ["exec", "astro", "preview", "--port", String(PORT), "--ignore-lock"], { stdio: "ignore" })
+// Launch the package's JavaScript directly, including on Windows (no .cmd/shell wrapper).
+const cliPackage = resolve("node_modules/astro/package.json")
+const cliManifest = JSON.parse(readFileSync(cliPackage, "utf8"))
+const cli = typeof cliManifest.bin === "string" ? cliManifest.bin : cliManifest.bin.astro
+const server = spawn(process.execPath, [resolve(dirname(cliPackage), cli), ...["preview", "--port", String(PORT), "--ignore-lock"]], { stdio: "ignore" })
 const failures = []
 
 try {

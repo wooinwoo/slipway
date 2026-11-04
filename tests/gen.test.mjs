@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import { execFileSync } from "node:child_process"
-import { mkdtemp, readFile, readdir, rm } from "node:fs/promises"
+import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { basename, dirname, join, resolve } from "node:path"
 import test from "node:test"
@@ -23,6 +23,28 @@ async function project(t, preset) {
 const fields = "title:text:주문_이름 phone?:phone:연락처 amount:won:금액 status:enum(접수|완료):상태 dueAt?:date:납기 pickupAt:time:수령_시각 memo?:textarea:메모"
 const gen = (cwd, ...args) => execFileSync(process.execPath, ["scripts/gen.mjs", ...args], { cwd, encoding: "utf8", stdio: "pipe" })
 const read = (cwd, file) => readFile(join(cwd, file), "utf8")
+
+for (const preset of ["react", "nest"]) {
+  test(`${preset}: installed package CLIs run with Node, including paths containing spaces`, async t => {
+    const cwd = await project(t, preset)
+    for (const name of preset === "nest" ? ["prettier", "drizzle-kit"] : ["prettier"]) {
+      const folder = join(cwd, "node_modules", name)
+      await mkdir(folder, { recursive: true })
+      await writeFile(join(folder, "package.json"), JSON.stringify({ name, bin: { [name]: "cli with space.cjs" } }))
+      await writeFile(join(folder, "cli with space.cjs"), `
+        const fs = require("node:fs");
+        fs.writeFileSync(${JSON.stringify(name + "-run.json")}, JSON.stringify(process.argv.slice(2)));
+        ${name === "drizzle-kit" ? 'fs.writeFileSync("drizzle/0001_generated.sql", "-- generated\\n");' : ""}
+      `)
+    }
+    gen(cwd, "resource", "records", "기록", "--fields", "title:text:제목")
+    assert.deepEqual(JSON.parse(await read(cwd, "prettier-run.json")).slice(0, 3), ["--write", "--log-level", "warn"])
+    if (preset === "nest") {
+      assert.deepEqual(JSON.parse(await read(cwd, "drizzle-kit-run.json")), ["generate", "--name", "records"])
+      assert.match(await read(cwd, "drizzle/0001_generated.sql"), /generated/)
+    }
+  })
+}
 
 test("react: data layer only, no screens", async t => {
   const cwd = await project(t, "react")

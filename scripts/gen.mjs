@@ -35,6 +35,17 @@ function pnpm(args) {
   else execFileSync("pnpm", args, { stdio: "inherit" })
 }
 
+// Run package JavaScript with Node directly. .bin launchers are shell scripts on Unix and
+// .cmd files on Windows; execFileSync cannot execute those portably.
+function packageBin(root, name) {
+  const file = resolve(root, "node_modules", name, "package.json")
+  if (!existsSync(file)) return null
+  const manifest = JSON.parse(readFileSync(file, "utf8"))
+  const bin = typeof manifest.bin === "string" ? manifest.bin : manifest.bin?.[name]
+  if (!bin) throw new Error(`No CLI registered for ${name}`)
+  return resolve(dirname(file), bin)
+}
+
 function exit(message) {
   console.error(message)
   process.exit(1)
@@ -797,9 +808,9 @@ describe('${plural}', () => {
 `)
 
   // Migration: drizzle-kit reads the schema and writes SQL into drizzle/.
-  const kit = join(api, "node_modules/.bin/drizzle-kit")
+  const kit = packageBin(api, "drizzle-kit")
   const manual = `${shared ? "pnpm --filter @slipway/shared build && " : ""}pnpm --dir ${api} db:generate`
-  if (!existsSync(kit)) {
+  if (!kit) {
     console.warn(`\nDependencies are not installed: run \`pnpm install\`, then \`${manual}\` for the migration.`)
     return
   }
@@ -807,7 +818,7 @@ describe('${plural}', () => {
   if (shared) pnpm(["--filter", "@slipway/shared", "build"])
   const migrations = join(api, "drizzle")
   const before = new Set(readdirSync(migrations))
-  execFileSync(resolve(kit), ["generate", "--name", plural], { cwd: api, stdio: "inherit" })
+  execFileSync(process.execPath, [kit, "generate", "--name", plural], { cwd: api, stdio: "inherit" })
   const added = readdirSync(migrations).filter((file) => !before.has(file))
   if (!added.some((file) => file.endsWith(".sql"))) exit(`drizzle-kit wrote no migration. Fix the error above, then run \`${manual}\`.`)
   created.push(...added.map((file) => join(migrations, file)))
@@ -825,10 +836,10 @@ console.log(`created or updated:\n  ${[...new Set(created)].join("\n  ")}\n\nnex
 /** Formats the generated TypeScript with each package's own prettier config, when installed. */
 function format() {
   for (const root of [web, api].filter(Boolean)) {
-    const prettier = join(root, "node_modules/.bin/prettier")
+    const prettier = packageBin(root, "prettier")
     const prefix = root === "." ? "" : `${root}/`
     const files = created.filter((f) => /\.tsx?$/.test(f) && f.startsWith(prefix) && !(root === "." && f.startsWith("packages/")))
       .map((f) => f.slice(prefix.length))
-    if (files.length && existsSync(prettier)) execFileSync(resolve(prettier), ["--write", "--log-level", "warn", ...new Set(files)], { cwd: root, stdio: "inherit" })
+    if (files.length && prettier) execFileSync(process.execPath, [prettier, "--write", "--log-level", "warn", ...new Set(files)], { cwd: root, stdio: "inherit" })
   }
 }

@@ -70,7 +70,7 @@ test("defaults to a React demo with no backend setup", async t => {
   assert.deepEqual((await readdir(join(target, "src/routes"))).sort(), ["__root.tsx", "auth", "index.tsx"])
   // Plain requests pick these up in Claude Code without the plugin.
   assert.deepEqual((await readdir(join(target, ".claude/skills"))).sort(), ["deploy", "resource", "screen"])
-  assert.match(await readFile(join(target, ".claude/skills/screen/SKILL.md"), "utf8"), /^---\nname: screen\n/)
+  assert.match(await readFile(join(target, ".claude/skills/screen/SKILL.md"), "utf8"), /^---\r?\nname: screen\r?\n/)
 })
 
 test("never overwrites an existing directory or file", async t => {

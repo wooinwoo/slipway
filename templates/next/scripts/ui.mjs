@@ -15,7 +15,7 @@
 import { spawn } from "node:child_process"
 import { createServer } from "node:net"
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs"
-import { join, resolve } from "node:path"
+import { dirname, join, resolve } from "node:path"
 import { pathToFileURL } from "node:url"
 import { firefox } from "@playwright/test"
 
@@ -70,7 +70,11 @@ const demo = (() => {
 })()
 mkdirSync(out, { recursive: true })
 const lightOnly = readFileSync("src/app/globals.css", "utf8").includes("@custom-variant dark (&:not(*))")
-const server = spawn("pnpm", ["exec", "next", "start", "-p", String(PORT)], { stdio: "ignore" })
+// Launch the package's JavaScript directly, including on Windows (no .cmd/shell wrapper).
+const cliPackage = resolve("node_modules/next/package.json")
+const cliManifest = JSON.parse(readFileSync(cliPackage, "utf8"))
+const cli = typeof cliManifest.bin === "string" ? cliManifest.bin : cliManifest.bin.next
+const server = spawn(process.execPath, [resolve(dirname(cliPackage), cli), ...["start", "-p", String(PORT)]], { stdio: "ignore" })
 const failures = []
 const notes = []
 

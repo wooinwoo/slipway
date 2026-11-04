@@ -126,7 +126,7 @@ async function nameFlutterApp(stage, name) {
   ]
   for (const [file, from, to] of edits) {
     const path = join(stage, file)
-    const text = await readFile(path, "utf8")
+    const text = (await readFile(path, "utf8")).replace(/\r\n/g, "\n")
     if (!text.includes(from)) throw new Error(`${file}: 앱 이름 위치를 찾지 못했습니다.`)
     await writeFile(path, text.replace(from, () => to))
   }

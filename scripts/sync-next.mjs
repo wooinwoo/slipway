@@ -28,6 +28,8 @@ const shared = [
   "public/mockServiceWorker.js",
   "public/robots.txt",
   "scripts/ui-checks.mjs",
+  "scripts/fsd.mjs",
+  "scripts/fsd.d.mts",
 ]
 // Next has its own version of these.
 const nextOnly = new Set(["src/shared/patterns/app-shell.tsx", "src/shared/patterns/mobile-shell.tsx"])
@@ -42,7 +44,7 @@ function files(path) {
 const clientDirs = ["src/shared/ui/", "src/shared/components/", "src/shared/patterns/", "src/shared/hooks/"]
 
 let count = 0
-for (const file of shared.flatMap(files)) {
+for (const file of shared.flatMap(files).map(file => file.replaceAll("\\", "/"))) {
   if (nextOnly.has(file)) continue
   const from = join(react, file)
   const to = join(next, file)
