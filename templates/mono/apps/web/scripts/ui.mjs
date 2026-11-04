@@ -13,6 +13,7 @@
 // (src/mocks/db.ts seeds it, so its rows are what the screens show), otherwise as a guest
 // (POST /api/auth/guest). Serves an existing build: `--dist dist-demo` picks another output folder.
 import { spawn } from "node:child_process"
+import { createServer } from "node:net"
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs"
 import { join, resolve } from "node:path"
 import { pathToFileURL } from "node:url"
@@ -38,7 +39,13 @@ const now = option("--now", process.env.SLIPWAY_NOW ?? config.now)
 const signedOut = []
 for (let at = args.indexOf("--signed-out"); at >= 0; at = args.indexOf("--signed-out")) signedOut.push(args.splice(at, 2)[1])
 const design = option("--design", ["out/screens", "../../out/screens"].find((dir) => existsSync(dir)))
-const PORT = 5199
+// A free port each run: another check, a dev server or a second agent may hold any fixed one.
+const PORT = await new Promise((resolve) => {
+  const probe = createServer().listen(0, () => {
+    const { port } = probe.address()
+    probe.close(() => resolve(port))
+  })
+})
 const base = `http://localhost:${PORT}`
 const out = ".shots"
 
@@ -65,9 +72,9 @@ const routes = args.length ? args : [...new Set([...staticRoutes(), ...listed])]
   const newest = Math.max(...readdirSync("src", { recursive: true }).map((file) => statSync(join("src", String(file))).mtimeMs))
   if (built && newest > built) console.log(`note: src changed after the build in ${dist}/; rebuild first (pnpm build) or this checks the old app`)
 }
-// The demo account the app and mock share (src/api/demo-account.ts).
+// The demo account the app and mock share (src/shared/api/demo-account.ts).
 const demo = (() => {
-  const source = existsSync("src/api/demo-account.ts") ? readFileSync("src/api/demo-account.ts", "utf8") : ""
+  const source = existsSync("src/shared/api/demo-account.ts") ? readFileSync("src/shared/api/demo-account.ts", "utf8") : ""
   const found = /demoAccount = \{ email: "([^"]+)", password: "([^"]+)" \}/.exec(source)
   return found ? { email: found[1], password: found[2] } : { email: "demo@slipway.dev", password: "demo1234" }
 })()
@@ -83,8 +90,9 @@ try {
     await new Promise((r) => setTimeout(r, 200))
   }
   // Firefox: headless Chromium renders no frames on some WSL setups.
-  // ko-KR for the browser UI too, so <input type="date|time"> draws Korean formats like a Korean phone.
-  const browser = await firefox.launch({ firefoxUserPrefs: { "intl.locale.requested": "ko-KR", "intl.accept_languages": "ko-KR, ko" } })
+  // Playwright's Firefox ships English only: <input type="date|time"> draws "mm/dd/yyyy" here while a
+  // Korean phone draws its own picker. Expect that difference in compare images.
+  const browser = await firefox.launch()
   if (mode === "compare") {
     await compare(browser)
     process.exit(0)

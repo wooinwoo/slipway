@@ -36,11 +36,11 @@ test("react: data layer only, no screens", async t => {
   assert.match(await read(cwd, "src/entities/orders/api.ts"), /pickupAt: z\.string\(\)\.regex\(\/\^\(\[01\]\\d\|2\[0-3\]\):\[0-5\]\\d\$\/, "수령 시각을 입력하세요"\)/)
   assert.match(await read(cwd, "src/mocks/browser.ts"), /\.\.\.orderHandlers,\n\s+\/\/ gen:handlers/)
   assert.match(await read(cwd, "src/mocks/db.ts"), /orders: OrderRow\[\]/)
-  // One folder per resource: the data layer and its mock side by side.
-  assert.match(await read(cwd, "src/entities/orders/mock.ts"), /export const orderHandlers = \[/)
-  assert.match(await read(cwd, "src/mocks/browser.ts"), /from "@\/entities\/orders\/mock"/)
+  // The data layer is the entity; the mock endpoints are app-level wiring.
+  assert.match(await read(cwd, "src/mocks/handlers/orders.ts"), /export const orderHandlers = \[/)
+  assert.match(await read(cwd, "src/mocks/browser.ts"), /from "\.\/handlers\/orders"/)
   assert.match(await read(cwd, "e2e/orders-api.e2e.ts"), /fetch\(path/)
-  // Screens are assembled from src/patterns/ by whoever builds the app.
+  // Screens are assembled from src/shared/patterns/ by whoever builds the app.
   assert.deepEqual((await readdir(join(cwd, "src/routes"))).sort(), ["__root.tsx", "auth", "index.tsx"])
   assert.doesNotMatch(await read(cwd, "docs/requirements.md"), /^## REQ-/m)
   const manifest = JSON.parse(await read(cwd, "package.json"))
@@ -77,9 +77,9 @@ test("a reference checks its target, deletes with it, and tests against a row it
   gen(cwd, "resource", "bookings", "예약", "--fields", "memberName:text:회원명 classId:ref(classes):수업")
   const api = await read(cwd, "src/entities/bookings/api.ts")
   assert.match(api, /classId: z\.string\(\)\.trim\(\)\.min\(1, "수업을 고르세요"\)/)
-  const mock = await read(cwd, "src/entities/bookings/mock.ts")
+  const mock = await read(cwd, "src/mocks/handlers/bookings.ts")
   assert.match(mock, /!db\.classes\.some\(\s*\(row\) => row\.id === data\.classId && row\.userId === userId\s*\)/)
-  assert.match(await read(cwd, "src/entities/classes/mock.ts"), /db\.bookings = db\.bookings\.filter\(\s*\(row\) => row\.classId !== params\.id\s*\)/)
+  assert.match(await read(cwd, "src/mocks/handlers/classes.ts"), /db\.bookings = db\.bookings\.filter\(\s*\(row\) => row\.classId !== params\.id\s*\)/)
   assert.match(await read(cwd, "e2e/bookings-api.e2e.ts"), /"path":"\/api\/classes"/)
   const manifest = JSON.parse(await read(cwd, "package.json"))
   assert.equal(manifest.slipway.resources.bookings.fields, "memberName:text:회원명 classId:ref(classes):수업")

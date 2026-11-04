@@ -4,7 +4,7 @@ The web app of the Slipway monorepo (read `../../AGENTS.md` first). By default i
 `apps/api` on the same origin; `pnpm dev:demo` swaps in the in-browser mock backend (MSW).
 
 The template ships no screens. Every screen, the sign-in page and the app frame included, is
-assembled per project from the parts in `src/patterns/`.
+assembled per project from the parts in `src/shared/patterns/`.
 
 For the common requests (build a screen, add a resource, deploy) follow the step-by-step flow in the
 project's `.claude/skills/<screen|resource|deploy>/SKILL.md`. Claude Code loads them on its own; other
@@ -32,26 +32,31 @@ tools read them from there.
 
 ## Map
 
-| Path | What lives there |
-|---|---|
-| `src/config.ts` | Product name and copy, `isDemo` flag |
-| `src/patterns/` | Screen parts: app shell, phone app frame (`mobile-shell`), sign-in forms, theme settings, table, filters, chart, board, form and more (see CODEPACK.md) |
-| `src/index.css` | Theme tokens. `--brand-h` and `--brand-c` re-skin the whole app |
-| `src/routes/` | Pages: TanStack Router file routes that compose features. Ships only the root, an empty `/` and `/auth/callback` (Kakao/Naver landing) |
-| `src/features/<action>/` | One thing a user does (take a booking, check attendance): its form, sheet, rules, hooks |
-| `src/entities/<resource>/` | `api.ts` (zod schema, queries, mutations) and `mock.ts` (mock endpoints), written by `pnpm gen` |
-| `src/api/` | `client.ts` (fetch, `ApiError`, `failureOf`) and `auth.ts` (session hooks, `currentUser`) |
-| `src/mocks/` | Mock backend wiring: `db.ts` (localStorage, demo account), `http.ts`, `browser.ts` |
-| `src/components/ui/` | shadcn, every component installed. Don't hand-edit; re-add with `pnpm dlx shadcn add <name> -o` |
-| `src/components/kr-inputs.tsx` | Korean inputs. Formatting and validation come from `@slipway/shared/kr` |
+The code follows Feature-Sliced Design: layers from the app down to shared code, each importing only
+the layers below it.
+
+| Path | Layer | What lives there |
+|---|---|---|
+| `src/main.tsx`, `src/index.css`, `src/mocks/` | app | Entry and providers; theme tokens (`pnpm design` rewrites them); the mock backend: `db.ts` (localStorage, demo account), `scenario.ts` (demo data), `handlers/<resource>.ts` |
+| `src/routes/` | pages | TanStack Router file routes that compose widgets and features. Ships only the root, an empty `/` and `/auth/callback` (Kakao/Naver landing) |
+| `src/widgets/` | widgets | Blocks several pages share (a schedule list, a tab bar) |
+| `src/features/<action>/` | features | One thing a user does (take a booking, check attendance): its form, sheet, rules, hooks |
+| `src/entities/<resource>/` | entities | `api.ts`: zod schema, queries, mutations, written by `pnpm gen` |
+| `src/shared/ui/` | shared | shadcn, every component installed. Don't hand-edit; re-add with `pnpm dlx shadcn add <name> -o` |
+| `src/shared/components/` | shared | `kr-inputs` (Korean inputs), `form-field`, `page-header`, `route-states`, `theme-provider` |
+| `src/shared/patterns/` | shared | Screen parts: app shell, phone app frame (`mobile-shell`), sign-in forms, theme settings, table, filters, chart, board, form and more (see CODEPACK.md) |
+| `src/shared/design/` | shared | `pnpm design` output: the harness's component CSS and `KField`/`KAvatar`/`KTabBar`/`KAppBar` |
+| `src/shared/lib/` | shared | `kr.ts` re-exports `@slipway/shared/kr` (Korean formatting, validation, dates, shared with the API); `utils`, csv, table and chart models |
+| `src/shared/api/` | shared | `client.ts` (fetch, `ApiError`, `failureOf`), `auth.ts` (session hooks, `currentUser`), `demo-account.ts` |
+| `src/shared/config.ts` | shared | Product name and copy, `isDemo` flag |
 | `docs/requirements.md` | The `REQ-n` list the demo must satisfy |
 
 ## Rules
 
-- Layers import downward only: `routes` -> `features` -> `entities` -> shared code (`components`,
-  `patterns`, `lib`, `api`, `hooks`). ESLint enforces it. A route composes features; a feature uses
-  entities and shared code, and relative paths inside its own folder; shared code knows no domain.
-  Keep a route file to layout and wiring: move a form, a sheet or a rule into its feature.
+- Layers import downward only: app -> `routes` (pages) -> `widgets` -> `features` -> `entities` ->
+  `shared`. ESLint enforces it. Slices on one layer don't import each other (a feature never imports
+  another feature); inside a slice use relative paths. Shared code knows no domain. Keep a route file to
+  layout and wiring: move a form, a sheet or a rule into its feature.
 
 - Requirements first. Add `## REQ-n title` to `docs/requirements.md`, start the route file that
   implements it with `// REQ-n title`, and name an e2e test `REQ-n ...`. `pnpm check:reqs` enforces all three.
@@ -70,15 +75,16 @@ the sign-in page and the app frame included, comes from a design harness working
   (`/k-style-ui-ux:go <PRD>`). Its `out/` (screens, palette, type, spacing, components) is the design.
   Don't copy its HTML files into the app; write each screen as JSX with the same markup. In this order:
   1. `pnpm design out` writes its tokens into the theme, its component styles into
-     `src/design/k-style.css` with a `k-` prefix, and its images into `public/k-style/`. For the palette
+     `src/shared/design/k-style.css` with a `k-` prefix, and its images into `public/k-style/`. For the palette
      picked on the canvas add `--palette <slug>` (`seed-mindbody` from `out/palettes.json`). It also
-     writes `src/design/k-style.tsx`: `KField` (label, control, error line with aria), `KAvatar` (a
+     writes `src/shared/design/k-style.tsx`: `KField` (label, control, error line with aria), `KAvatar` (a
      prepared drawing picked by name; the design never uses initials) and `KTabBar`.
   2. Write each `out/screens/<id>.html` as JSX with the same markup and the prefix (`class="row"` ->
      `className="k-row"`, `chip is-selected` -> `k-chip k-is-selected`):
      - App bar: `KAppBar` (back through `useBack`). Tab bar: `KTabBar` with the items defined once in
-       `src/routes/_app/-tabs.tsx`. Dates: `formatDateLong` ("11월 4일 수요일"), `formatDateShort`
-       ("11/4 수"), `formatDateWord` ("오늘", "내일") from `@/lib/kr`.
+       `src/widgets/tabs/`. Dates: `formatDateLong` ("11월 4일 수요일"), `formatDateShort`
+       ("11/4 수"), `formatMonthDay` ("11월 4일"), `formatDateWord` ("오늘", "내일") from `@/shared/lib/kr`.
+       Sign-in reads `?redirect=` with `safeRedirect()`.
      - Root: `<MobileShell className="k-screen k-has-tab">` with the `<body>`'s classes. The shell is
        the page's `<main>`, so the design's `<main class="page">` becomes `<div className="k-page">`.
      - Keep the design's own app bar, tab bar, bottom CTA and FAB markup (`k-appbar`, `k-tabbar`,
@@ -88,9 +94,9 @@ the sign-in page and the app frame included, comes from a design harness working
      - Sheets: `<BottomSheet className="k-sheet" overlayClassName="k-dim">` with the grip and
        `<BottomSheetTitle className="k-h2">` inside. To compare a sheet, open it from a search param.
      - Forms: `KField` around the design's `k-input` (`group` when the control is a button or a set of
-       options, so it keeps its own name), values checked with the resource's zod schema;
+       options, so it keeps its own name; `KSeg` for a segment), values checked with the resource's zod schema;
        show `failureOf(parsed.error)` or `failureOf(error)` from a failed save. Sign-in calls the hooks
-       in `src/api/auth.ts`: the design's "둘러보기" is `useDemoLogin()` (the seeded demo account),
+       in `src/shared/api/auth.ts`: the design's "둘러보기" is `useDemoLogin()` (the seeded demo account),
        `useSocialLogin()` handles the mock and the real redirect.
      - Data from the generated hooks: `<plural>Query` for a page, `all<Plural>Query()` when a screen
        counts or joins across the list, `<singular>Query(id)` for a detail; save one changed value
@@ -98,14 +104,14 @@ the sign-in page and the app frame included, comes from a design harness working
      - The home screen under the signed-in layout (`src/routes/_app/index.tsx`) replaces the empty
        `src/routes/index.tsx`: delete that file. Anything the design doesn't draw uses the token utilities
        (`bg-surface`, `text-ink-2`, `text-title`, `h-btn`, ...), never raw colors.
-  3. Seed the demo account in `src/mocks/scenario.ts` (`demoRow({...})` fills the owner and times; the
-     mock starts over each day, so count dates from today with `isoDaysFrom`). Give rows fixed ids for
-     the routes below. Avatars need no field: `KAvatar` picks a drawing by name, and a journey's
-     assigned drawing goes in a name-to-file map next to the seed. with the scenario in `out/journey.md`
-     (dates from today; invent plausible names where the table only gives counts). List its detail
-     routes, and sheets opened by a search param, under `"slipway": { "routes": [...] }` in package.json
-     and the screens seen before signing in under `"signedOut": ["/login"]`, so shots and check:ui
-     open them too. With the design's light-only theme they take light captures only.
+  3. Seed the demo account with the scenario in `out/journey.md`, in `src/mocks/scenario.ts`:
+     `demoRow({...})` fills the owner and times; the mock starts over each day, so count dates from
+     today with `isoDaysFrom`; invent plausible names where the table only gives counts; give rows
+     fixed ids. Avatars need no field: `KAvatar` picks a drawing by name; drawings a journey assigns go
+     in a name-to-file map in `src/shared/config.ts` (app code can't import `src/mocks`). List the
+     detail routes, and sheets opened by a search param, under `"slipway": { "routes": [...] }` in
+     package.json and the screens seen before signing in under `"signedOut": ["/login"]`, so shots and
+     check:ui open them too. With the design's light-only theme they take light captures only.
   4. Set the design's moment once as `"slipway": { "now": "2026-11-04T18:50" }` in package.json (shots,
      check:ui and compare freeze the clock there). `pnpm design:compare /route=<id>.html ...` for every screen
      (`--signed-out /login` for screens seen before signing in); fix what differs and repeat until
@@ -125,20 +131,20 @@ the sign-in page and the app frame included, comes from a design harness working
 - Desktop web, landing and docs sites: the Impeccable skill (`/impeccable`). Before the first screen it
   captures `PRODUCT.md` and `DESIGN.md` with the user; build screens with it, then `critique` and `polish`.
 - If the harness isn't installed, ask the user to install it rather than inventing a style.
-- Parts in `src/patterns/` are building blocks: use, edit, restyle or skip them. Theme tokens in
+- Parts in `src/shared/patterns/` are building blocks: use, edit, restyle or skip them. Theme tokens in
   `src/index.css` are technical defaults for shadcn; the harness rewrites them.
 - Never make up a logo, favicon or app icon (a letter in a shape, a stock icon standing in for the brand). Use only the logo file the user supplies: `pnpm brand <file>` puts it in `public/` and makes it the favicon, then pass it to `AppShell`'s `logo`. Until then the product name stands as plain text and you ask the user for a logo.
 - Whatever the design, it passes `pnpm check:ui` (accessibility, contrast, focus, overflow, cursor,
   console errors) and the e2e tests. Look at `pnpm shots` before calling a screen done.
 
-Wiring facts (not a layout): sign-in calls the hooks in `src/api/auth.ts`; a layout route's
+Wiring facts (not a layout): sign-in calls the hooks in `src/shared/api/auth.ts`; a layout route's
 `beforeLoad` calls `currentUser(context.queryClient)` and redirects when it returns null (only a 401
 signs out; other errors show the error screen); each route sets `staticData: { title }`
 for the tab and the `AppShell` breadcrumb. Details: CODEPACK.md ("인증 연결").
 
 ## Adding a resource
 
-Select independent components from `src/patterns/`. Do not preassemble business
+Select independent components from `src/shared/patterns/`. Do not preassemble business
 screens or register domain menus/APIs in the base template. Patterns must not import
 domain types or API clients.
 Read `CODEPACK.md` in a generated project (or `docs/codepack.md` in Slipway).
@@ -146,8 +152,8 @@ Define the acceptance criteria first. In a project made by Slipway, `pnpm gen re
 layer at once (run `node scripts/gen.mjs` for the field syntax). It never writes screens.
 
 1. `src/entities/<resource>/api.ts` holds the schema and queries.
-2. `src/entities/<resource>/mock.ts` holds the endpoints, registered in `src/mocks/browser.ts`; the
-   table and seed rows are in `src/mocks/db.ts`.
+2. `src/mocks/handlers/<resource>.ts` holds the mock endpoints, registered in `src/mocks/browser.ts`;
+   the table is in `src/mocks/db.ts`, the demo rows in `src/mocks/scenario.ts`.
 3. What users do with it goes in `src/features/<action>/`; the pages in `src/routes/_app/...`,
    including loading, empty, and error states.
 4. Add the page to the app's navigation (`AppShell`'s `nav`, `MobileShell`'s `tabs` or the design's tab bar).

@@ -7,9 +7,9 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
-import { meQuery } from "@/api/auth"
-import { token } from "@/api/client"
-import { Spinner } from "@/components/ui/spinner"
+import { meQuery } from "@/shared/api/auth"
+import { token } from "@/shared/api/client"
+import { Spinner } from "@/shared/ui/spinner"
 
 export default function AuthCallback() {
   const queryClient = useQueryClient()

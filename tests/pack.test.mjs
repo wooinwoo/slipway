@@ -24,7 +24,7 @@ test("catalog entries have usable contracts, public exports and resolvable depen
 
 test("a board stays independent from the form, router and business logic", async () => {
   const plan = await planParts(["board"])
-  assert.ok(plan.files.some(file => file.path === "patterns/status-board.tsx"))
+  assert.ok(plan.files.some(file => file.path === "shared/patterns/status-board.tsx"))
   assert.ok(!plan.files.some(file => /routes\/|features\/|mocks\/|record-form|main\.tsx|config\.ts/.test(file.path)))
   assert.equal(plan.packages["@tanstack/react-router"], undefined)
   assert.ok(plan.packages["radix-ui"])
@@ -35,7 +35,7 @@ test("selected files copy idempotently and metadata preserves prior style requir
   const target = join(root, "src")
   const first = await copyParts(["table", "metrics"], target)
   assert.ok(first.copied.includes("styles/slipway.css"))
-  assert.equal(first.files.filter(name => name === "components/ui/button.tsx").length, 1)
+  assert.equal(first.files.filter(name => name === "shared/ui/button.tsx").length, 1)
   assert.ok(!first.files.some(name => /routes\/|mocks\/|main\.tsx/.test(name)))
   const second = await copyParts(["table"], target)
   assert.equal(second.copied.length, 0)
@@ -51,12 +51,12 @@ test("selected files copy idempotently and metadata preserves prior style requir
 test("a file conflict aborts the whole copy before changing existing content", async t => {
   const root = await sandbox(t)
   const target = join(root, "src")
-  await mkdir(join(target, "components/ui"), { recursive: true })
-  await writeFile(join(target, "components/ui/table.tsx"), "keep my component")
+  await mkdir(join(target, "shared/ui"), { recursive: true })
+  await writeFile(join(target, "shared/ui/table.tsx"), "keep my component")
   await assert.rejects(copyParts(["table"], target), /기존 파일을 보존/)
-  assert.equal(await readFile(join(target, "components/ui/table.tsx"), "utf8"), "keep my component")
-  assert.deepEqual(await readdir(target), ["components"])
-  assert.deepEqual(await readdir(join(target, "components/ui")), ["table.tsx"])
+  assert.equal(await readFile(join(target, "shared/ui/table.tsx"), "utf8"), "keep my component")
+  assert.deepEqual(await readdir(target), ["shared"])
+  assert.deepEqual(await readdir(join(target, "shared/ui")), ["table.tsx"])
 })
 
 test("unknown parts fail before creating a destination", async t => {
@@ -68,14 +68,14 @@ test("unknown parts fail before creating a destination", async t => {
 test("copying every part includes dependencies but no application entry points", async t => {
   const root = await sandbox(t)
   const result = await copyParts(listParts().map(part => part.id), join(root, "src"))
-  assert.ok(result.files.includes("api/client.ts"))
-  assert.ok(result.files.includes("lib/kr.ts"))
-  assert.ok(result.files.includes("patterns/file-drop.tsx"))
+  assert.ok(result.files.includes("shared/api/client.ts"))
+  assert.ok(result.files.includes("shared/lib/kr.ts"))
+  assert.ok(result.files.includes("shared/patterns/file-drop.tsx"))
   for (const name of ["advanced-table", "filter-bar", "chart-panel", "step-form", "date-range", "timeline", "csv-transfer"]) {
-    assert.ok(result.files.includes(`patterns/${name}.tsx`))
+    assert.ok(result.files.includes(`shared/patterns/${name}.tsx`))
   }
-  assert.ok(result.files.includes("lib/csv.ts"))
-  assert.ok(!result.files.some(name => /^(routes|features|mocks)\/|routeTree|main\.|config\./.test(name)))
+  assert.ok(result.files.includes("shared/lib/csv.ts"))
+  assert.ok(!result.files.some(name => /^(routes|features|entities|widgets|mocks)\/|routeTree|main\.|config\./.test(name)))
 })
 
 test("directory junctions cannot redirect writes outside the destination", async t => {
@@ -83,7 +83,7 @@ test("directory junctions cannot redirect writes outside the destination", async
   const target = join(root, "src"), outside = join(root, "outside")
   await mkdir(target)
   await mkdir(outside)
-  await symlink(outside, join(target, "components"), process.platform === "win32" ? "junction" : "dir")
+  await symlink(outside, join(target, "shared"), process.platform === "win32" ? "junction" : "dir")
   await assert.rejects(copyParts(["table"], target), /디렉터리 연결/)
   assert.deepEqual(await readdir(outside), [])
   assert.ok(!(await readdir(target)).includes(".slipway-parts.lock"))
@@ -95,7 +95,7 @@ test("source templates cannot be used as a copy destination", async () => {
 
 test("the phone app frame brings the router it links with, and no business code", async () => {
   const plan = await planParts(["mobile-shell"])
-  assert.ok(plan.files.some(file => file.path === "patterns/mobile-shell.tsx"))
+  assert.ok(plan.files.some(file => file.path === "shared/patterns/mobile-shell.tsx"))
   assert.ok(!plan.files.some(file => /routes\/|features\/|mocks\/|app-shell|main\.tsx|config\.ts/.test(file.path)))
   assert.ok(plan.packages["@tanstack/react-router"])
 })

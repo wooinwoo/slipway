@@ -1,5 +1,5 @@
 // Request/response shapes shared with the web app. Keep in sync with
-// templates/react/src/api/auth.ts (in the mono preset both import one package).
+// templates/react/src/shared/api/auth.ts (in the mono preset both import one package).
 import { z } from 'zod';
 
 export const providers = ['email', 'guest', 'kakao', 'naver'] as const;

@@ -3,11 +3,11 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { useEffect, useState, type ReactNode } from "react"
 
-import { ApiError } from "@/api/client"
-import { ThemeProvider } from "@/components/theme-provider"
-import { Toaster } from "@/components/ui/sonner"
-import { TooltipProvider } from "@/components/ui/tooltip"
-import { isDemo } from "@/config"
+import { ApiError } from "@/shared/api/client"
+import { ThemeProvider } from "@/shared/components/theme-provider"
+import { Toaster } from "@/shared/ui/sonner"
+import { TooltipProvider } from "@/shared/ui/tooltip"
+import { isDemo } from "@/shared/config"
 
 /** App-wide providers. With no NEXT_PUBLIC_API_URL the in-browser mock API answers /api/* first. */
 export function Providers({ children }: { children: ReactNode }) {

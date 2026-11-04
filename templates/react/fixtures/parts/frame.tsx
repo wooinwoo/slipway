@@ -9,11 +9,11 @@ import {
   createRouter,
 } from "@tanstack/react-router"
 import { HouseIcon, ReceiptIcon } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { ThemeProvider } from "@/components/theme-provider"
-import { TooltipProvider } from "@/components/ui/tooltip"
-import { AppShell, type NavItem } from "@/patterns/app-shell"
-import { BottomSheet, BottomSheetTitle, MobileShell, TopBar, type TabItem } from "@/patterns/mobile-shell"
+import { Button } from "@/shared/ui/button"
+import { ThemeProvider } from "@/shared/components/theme-provider"
+import { TooltipProvider } from "@/shared/ui/tooltip"
+import { AppShell, type NavItem } from "@/shared/patterns/app-shell"
+import { BottomSheet, BottomSheetTitle, MobileShell, TopBar, type TabItem } from "@/shared/patterns/mobile-shell"
 import {
   AuthCard,
   AuthDivider,
@@ -21,8 +21,8 @@ import {
   LoginForm,
   SignupForm,
   SocialButtons,
-} from "@/patterns/auth-forms"
-import { ThemeSettings } from "@/patterns/theme-settings"
+} from "@/shared/patterns/auth-forms"
+import { ThemeSettings } from "@/shared/patterns/theme-settings"
 
 function LoginFixture() {
   const [log, setLog] = useState("")

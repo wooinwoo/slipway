@@ -75,11 +75,11 @@ react는 `corepack pnpm build && corepack pnpm preview`, mono는 `corepack pnpm 
 기능이 돌면 하네스의 디자인으로 모양을 짓는다. 이 스킬이 스타일을 덧붙이지 않는다.
 
 - k-style-ui-ux: 아래 순서로 옮긴다. 손으로 값을 옮기거나 눈대중으로 맞추지 않는다.
-  1. `corepack pnpm design out`: 토큰을 테마에, 부품 CSS를 `src/design/k-style.css`(클래스마다 `k-` 접두사)에, 이미지를 `public/k-style/`에
+  1. `corepack pnpm design out`: 토큰을 테마에, 부품 CSS를 `src/shared/design/k-style.css`(클래스마다 `k-` 접두사)에, 이미지를 `public/k-style/`에
      넣는다. 사용자가 캔버스에서 고른 팔레트는 `--palette <slug>`(`out/palettes.json`의 `seed-mindbody` 같은 값).
   2. `out/screens/<id>.html`을 마크업 그대로, 클래스에 접두사만 붙여 JSX로 옮긴다(`class="row"` → `className="k-row"`). HTML 파일을 앱에 복사하지 않는다.
-     같은 명령이 만든 `src/design/k-style.tsx`의 `KField`(라벨·입력·오류 줄과 aria), `KAvatar`(이름으로 고르는 준비된 그림, 이름 글자 금지), `KTabBar`를 쓴다.
-     - 앱 바는 `KAppBar`(뒤로는 `useBack`), 탭바는 `KTabBar`(항목은 `src/routes/_app/-tabs.tsx`에 한 번). 날짜 문구는 `@/lib/kr`의
+     같은 명령이 만든 `src/shared/design/k-style.tsx`의 `KField`(라벨·입력·오류 줄과 aria), `KAvatar`(이름으로 고르는 준비된 그림, 이름 글자 금지), `KTabBar`를 쓴다.
+     - 앱 바는 `KAppBar`(뒤로는 `useBack`), 탭바는 `KTabBar`(항목은 `src/widgets/tabs/`에 한 번). 날짜 문구는 `@/shared/lib/kr`의
        `formatDateLong`("11월 4일 수요일")·`formatDateShort`("11/4 수")·`formatDateWord`("오늘"·"내일").
      - 루트는 `<MobileShell className="k-screen k-has-tab">`(`<body>`의 클래스). 셸이 `<main>`이므로 디자인의 `<main class="page">`는 `<div className="k-page">`.
      - 디자인의 앱 바·탭바·하단 CTA·FAB 마크업(`k-appbar`·`k-tabbar`·`k-cta`·`k-fab`)을 그대로 쓴다. MobileShell의 `top`·`tabs`·`bottom`은

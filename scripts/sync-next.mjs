@@ -2,7 +2,7 @@
 // Copies what the Next preset shares with templates/react, so the React preset stays the one source:
 // shadcn components, Slipway parts, Korean helpers, the API client and auth hooks, the mock backend,
 // the theme tokens and the UI checks. Next-only files are hand-maintained in templates/next: src/app/,
-// src/proxy.ts, src/config.ts, src/patterns/app-shell.tsx and mobile-shell.tsx (next/link), scripts/ui.mjs, e2e/, configs.
+// src/proxy.ts, src/shared/config.ts, src/shared/patterns/app-shell.tsx and mobile-shell.tsx (next/link), scripts/ui.mjs, e2e/, configs.
 // Every rewrite asserts its anchor, so drift in the React preset fails loudly.
 import { cpSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
@@ -12,25 +12,25 @@ const react = join(root, "react")
 const next = join(root, "next")
 
 const shared = [
-  "src/components/ui",
-  "src/components/form-field.tsx",
-  "src/components/kr-inputs.tsx",
-  "src/components/page-header.tsx",
-  "src/components/theme-provider.tsx",
-  "src/hooks",
-  "src/lib",
-  "src/patterns",
-  "src/api/client.ts",
-  "src/api/client.test.ts",
-  "src/api/auth.ts",
-  "src/api/demo-account.ts",
+  "src/shared/ui",
+  "src/shared/components/form-field.tsx",
+  "src/shared/components/kr-inputs.tsx",
+  "src/shared/components/page-header.tsx",
+  "src/shared/components/theme-provider.tsx",
+  "src/shared/hooks",
+  "src/shared/lib",
+  "src/shared/patterns",
+  "src/shared/api/client.ts",
+  "src/shared/api/client.test.ts",
+  "src/shared/api/auth.ts",
+  "src/shared/api/demo-account.ts",
   "src/mocks",
   "public/mockServiceWorker.js",
   "public/robots.txt",
   "scripts/ui-checks.mjs",
 ]
 // Next has its own version of these.
-const nextOnly = new Set(["src/patterns/app-shell.tsx", "src/patterns/mobile-shell.tsx"])
+const nextOnly = new Set(["src/shared/patterns/app-shell.tsx", "src/shared/patterns/mobile-shell.tsx"])
 
 function files(path) {
   const full = join(react, path)
@@ -39,7 +39,7 @@ function files(path) {
 }
 
 // Components with state, effects or browser APIs run on the client in the App Router.
-const clientDirs = ["src/components/", "src/patterns/", "src/hooks/"]
+const clientDirs = ["src/shared/ui/", "src/shared/components/", "src/shared/patterns/", "src/shared/hooks/"]
 
 let count = 0
 for (const file of shared.flatMap(files)) {
@@ -63,4 +63,4 @@ for (const file of shared.flatMap(files)) {
 cpSync(join(react, "src/index.css"), join(next, "src/app/globals.css"))
 
 console.log(`templates/next synced from templates/react (${count} files). Next: cd templates/next && pnpm verify`)
-console.log(`  untouched, Next-only: src/app/, src/proxy.ts, src/config.ts, src/patterns/app-shell.tsx, src/patterns/mobile-shell.tsx, scripts/ui.mjs`)
+console.log(`  untouched, Next-only: src/app/, src/proxy.ts, src/shared/config.ts, src/shared/patterns/app-shell.tsx, src/shared/patterns/mobile-shell.tsx, scripts/ui.mjs`)

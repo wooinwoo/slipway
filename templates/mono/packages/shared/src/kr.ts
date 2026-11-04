@@ -123,6 +123,12 @@ export const formatDateLong = (date: Date | string) => {
   return `${d.getMonth() + 1}월 ${d.getDate()}일 ${weekdays[d.getDay()]}요일`
 }
 
+/** "11월 4일" */
+export const formatMonthDay = (date: Date | string) => {
+  const d = toDate(date)
+  return `${d.getMonth() + 1}월 ${d.getDate()}일`
+}
+
 /** "11/4 수": date chips, compact rows */
 export const formatDateShort = (date: Date | string) => {
   const d = toDate(date)

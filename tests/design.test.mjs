@@ -71,8 +71,8 @@ for (const [preset, theme] of [["react", "src/index.css"], ["mono", "apps/web/sr
 
     // The harness's component styles come in prefixed, the reset left to Tailwind; images land in public/.
     const web = preset === "mono" ? "apps/web/" : ""
-    const components = await readFile(join(cwd, `${web}src/design/k-style.css`), "utf8")
-    assert.match(css, preset === "next" ? /@import "\.\/\.\.\/design\/k-style\.css";/ : /@import "\.\/design\/k-style\.css";/)
+    const components = await readFile(join(cwd, `${web}src/shared/design/k-style.css`), "utf8")
+    assert.match(css, preset === "next" ? /@import "\.\/\.\.\/shared\/design\/k-style\.css";/ : /@import "\.\/shared\/design\/k-style\.css";/)
     assert.match(components, /@layer components \{/)
     assert.match(components, /\.k-block \{ display: flex;/)
     assert.match(components, /\.k-screen\.k-has-tab \.k-page, \.k-screen:has\(> \.k-cta\) \.k-page \{/)
@@ -85,7 +85,7 @@ for (const [preset, theme] of [["react", "src/index.css"], ["mono", "apps/web/sr
     assert.match(components, /\.k-tabbar, \.k-cta, \.k-sheet \{ max-width: var\(--shell-width, 480px\);/)
     assert.equal(await readFile(join(cwd, `${web}public/k-style/avatars/line/01.svg`), "utf8"), "<svg/>")
     // The markup every k-style screen repeats, for this preset's router.
-    const parts = await readFile(join(cwd, `${web}src/design/k-style.tsx`), "utf8")
+    const parts = await readFile(join(cwd, `${web}src/shared/design/k-style.tsx`), "utf8")
     assert.match(parts, /export function KField\(/)
     assert.match(parts, /export function KAvatar\(/)
     assert.match(parts, /"line":\["01\.svg"\]/)
@@ -95,7 +95,7 @@ for (const [preset, theme] of [["react", "src/index.css"], ["mono", "apps/web/sr
     design(cwd, "../out", "--palette", "seed-classpass")
     css = await readFile(join(cwd, theme), "utf8")
     assert.equal(css.match(/design:start/g).length, 1)
-    assert.equal(css.match(/design\/k-style\.css/g).length, 1)
+    assert.equal(css.match(/shared\/design\/k-style\.css/g).length, 1)
     assert.match(css, /--c-brand: #0055FF;/)
     assert.doesNotMatch(css, /#008363/)
   })

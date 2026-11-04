@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test"
 import { openAsDemo } from "./demo.js"
 
 // Smoke tests for the bare app. Add one `test("REQ-n ...")` per requirement in docs/requirements.md.
-test("the app boots and names the tab from src/config.ts", async ({ page }) => {
+test("the app boots and names the tab from src/shared/config.ts", async ({ page }) => {
   await page.goto("/")
   await expect(page).toHaveTitle(/.+ · .+/)
 })

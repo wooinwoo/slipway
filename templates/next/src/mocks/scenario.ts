@@ -1,5 +1,5 @@
 // The demo account's sample data: what the screens show before anyone types. Fill it from the
-// design's scenario (k-style: out/journey.md), dates counted from today (isoDaysFrom in @/lib/kr).
+// design's scenario (k-style: out/journey.md), dates counted from today (isoDaysFrom in @/shared/lib/kr).
 // Fixed ids keep detail routes stable for "slipway.routes" in package.json, shots and design:compare.
 //
 //   classes: [demoRow({ id: "c_morning", title: "모닝 매트", date: isoDaysFrom(0), ... })],

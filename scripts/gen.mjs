@@ -8,8 +8,8 @@
 // Fields are split on spaces, so write a space inside a label as `_`: `startTime:text:시작_시간` -> "시작 시간".
 // Writes the data layer of every part the project has, from one field list. No screens: build those
 // from src/patterns/ (see CODEPACK.md).
-//   web (react, mono):  src/entities/<plural>/api.ts (schema, query, save and delete hooks) and mock.ts
-//                       (mock handlers) plus the mock table,
+//   web (react, mono):  src/entities/<plural>/api.ts (schema, query, save and delete hooks), the mock
+//                       handlers in src/mocks/handlers/<plural>.ts plus the mock table,
 //                       e2e/<plural>-api.e2e.ts (the same requests against the mock or the real API)
 //   api (nest, mono):   zod contract, Drizzle table + migration, service/controller/module (scoped to the
 //                       signed-in user), contract test
@@ -232,7 +232,7 @@ function genResource(resource) {
   if (taken.length) exit(`already exists:\n  ${taken.join("\n  ")}`)
   const refs = resource.fields.filter((f) => f.type === "ref")
   for (const ref of refs) {
-    const parentMock = web && join(web, `src/entities/${ref.target}/mock.ts`)
+    const parentMock = web && join(web, `src/mocks/handlers/${ref.target}.ts`)
     if (parentMock && !/^[ \t]*\/\/ gen:cascade\b/m.test(readFileSync(parentMock, "utf8")))
       exit(`${parentMock} has no "// gen:cascade" line in its delete handler. Add it after the splice so deleting a ${ref.parent.label} deletes its ${resource.label}.`)
   }
@@ -263,11 +263,11 @@ function genWeb(resource) {
   // Schema and queries. In the monorepo the schema comes from packages/shared.
   const schema = layout === "mono"
     ? { imports: [`import { ${singular}InputSchema, type ${Single}, type ${Single}Input } from "@slipway/shared/${plural}"`], body: `export * from "@slipway/shared/${plural}"\n` }
-    : schemaParts(resource, "@/lib/kr")
+    : schemaParts(resource, "@/shared/lib/kr")
   write(join(src, `entities/${plural}/api.ts`), `import { queryOptions, useMutation, useQueryClient } from "@tanstack/react-query"
 ${schema.imports.join("\n")}
 
-import { api, type Page } from "@/api/client"
+import { api, type Page } from "@/shared/api/client"
 
 ${schema.body}
 /** One page, newest first. The API caps \`pageSize\` at 100. */
@@ -329,11 +329,11 @@ export function useDelete${Plural}() {
 `)
 
   // Mock backend
-  write(join(src, `entities/${plural}/mock.ts`), `import { HttpResponse, http } from "msw"
+  write(join(src, `mocks/handlers/${plural}.ts`), `import { HttpResponse, http } from "msw"
 
-import { db, save } from "@/mocks/db"
-import { API, currentUser, fail, parseBody } from "@/mocks/http"
-import { ${singular}InputSchema, type ${Single}${refs.length ? `, type ${Single}Input` : ""} } from "./api"
+import { ${singular}InputSchema, type ${Single}${refs.length ? `, type ${Single}Input` : ""} } from "@/entities/${plural}/api"
+import { db, save } from "../db"
+import { API, currentUser, fail, parseBody } from "../http"
 
 // Same routes and rules as the API: every row belongs to the signed-in user.
 const mine = (userId: string) => db.${plural}.filter((row) => row.userId === userId)
@@ -400,12 +400,12 @@ export const ${singular}Handlers = [
 
 export type ${Single}Row = ${Single} & { userId: string }
 `)
-  addImport(join(src, "mocks/browser.ts"), `import { ${singular}Handlers } from "@/entities/${plural}/mock"`)
+  addImport(join(src, "mocks/browser.ts"), `import { ${singular}Handlers } from "./handlers/${plural}"`)
   // Deleting the row a reference points at deletes the rows here too, like the API's foreign key.
   for (const ref of refs)
-    above(join(src, `entities/${ref.target}/mock.ts`), "cascade", `    db.${plural} = db.${plural}.filter((row) => row.${ref.name} !== params.id)`)
+    above(join(src, `mocks/handlers/${ref.target}.ts`), "cascade", `    db.${plural} = db.${plural}.filter((row) => row.${ref.name} !== params.id)`)
   above(join(src, "mocks/browser.ts"), "handlers", `  ...${singular}Handlers,`)
-  addImport(join(src, "mocks/db.ts"), `import type { ${Single}Row } from "@/entities/${plural}/mock"`)
+  addImport(join(src, "mocks/db.ts"), `import type { ${Single}Row } from "./handlers/${plural}"`)
   above(join(src, "mocks/db.ts"), "tables", `  ${plural}: ${Single}Row[]`)
   above(join(src, "mocks/db.ts"), "seed", `    ${plural}: [],`)
 

@@ -9,7 +9,7 @@
 Slipway는 도구다. 주는 것:
 
 - 프리셋별 셋업: 빌드, 인증, DB와 마이그레이션, Mock API, 보안 헤더, 배포 설정, CI
-- 기능 단위 부품(`src/patterns/`)과 데이터 층 생성기(`pnpm gen resource`)
+- 기능 단위 부품(`src/shared/patterns/`)과 데이터 층 생성기(`pnpm gen resource`)
 - 품질 검사: 접근성·대비·포커스·커서·넘침, 번들 예산, Lighthouse, 의존성 감사, E2E
 - 흔한 요청(새 앱, 화면, 리소스, 배포)을 따라가는 스킬과 사용자가 준 로고를 연결하는 `pnpm brand`
 

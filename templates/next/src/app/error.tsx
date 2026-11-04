@@ -2,8 +2,8 @@
 
 import { TriangleAlertIcon } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
-import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
+import { Button } from "@/shared/ui/button"
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/shared/ui/empty"
 
 export default function Error({ error, reset }: { error: Error; reset: () => void }) {
   return (

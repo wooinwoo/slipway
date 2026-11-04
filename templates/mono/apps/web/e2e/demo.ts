@@ -1,6 +1,6 @@
 import { expect, type Page } from "@playwright/test"
 
-import { demoAccount } from "../src/api/demo-account.js"
+import { demoAccount } from "../src/shared/api/demo-account.js"
 
 /**
  * Opens `path` signed in as the demo account (the seeded sample data), with the clock frozen at `now`

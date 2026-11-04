@@ -13,6 +13,7 @@
 // it (src/mocks/db.ts seeds it), otherwise as a guest (POST /api/auth/guest). Serves the existing build
 // with `next start`.
 import { spawn } from "node:child_process"
+import { createServer } from "node:net"
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs"
 import { join, resolve } from "node:path"
 import { pathToFileURL } from "node:url"
@@ -35,7 +36,13 @@ const now = nowAt >= 0 ? args.splice(nowAt, 2)[1] : (process.env.SLIPWAY_NOW ?? 
 // `--signed-out /login` (repeatable): routes compare opens without a session, like a sign-in screen.
 const signedOut = []
 for (let at = args.indexOf("--signed-out"); at >= 0; at = args.indexOf("--signed-out")) signedOut.push(args.splice(at, 2)[1])
-const PORT = 5199
+// A free port each run: another check, a dev server or a second agent may hold any fixed one.
+const PORT = await new Promise((resolve) => {
+  const probe = createServer().listen(0, () => {
+    const { port } = probe.address()
+    probe.close(() => resolve(port))
+  })
+})
 const base = `http://localhost:${PORT}`
 const out = ".shots"
 
@@ -55,9 +62,9 @@ const listed = config.routes ?? []
 // Routes seen before signing in (a sign-in screen): `"slipway": { "signedOut": ["/login"] }` or --signed-out.
 signedOut.push(...(config.signedOut ?? []))
 const routes = args.length ? args : [...new Set([...staticRoutes(), ...listed])]
-// The demo account the app and mock share (src/api/demo-account.ts).
+// The demo account the app and mock share (src/shared/api/demo-account.ts).
 const demo = (() => {
-  const source = existsSync("src/api/demo-account.ts") ? readFileSync("src/api/demo-account.ts", "utf8") : ""
+  const source = existsSync("src/shared/api/demo-account.ts") ? readFileSync("src/shared/api/demo-account.ts", "utf8") : ""
   const found = /demoAccount = \{ email: "([^"]+)", password: "([^"]+)" \}/.exec(source)
   return found ? { email: found[1], password: found[2] } : { email: "demo@slipway.dev", password: "demo1234" }
 })()
@@ -73,8 +80,9 @@ try {
     await new Promise((r) => setTimeout(r, 200))
   }
   // Firefox: headless Chromium renders no frames on some WSL setups.
-  // ko-KR for the browser UI too, so <input type="date|time"> draws Korean formats like a Korean phone.
-  const browser = await firefox.launch({ firefoxUserPrefs: { "intl.locale.requested": "ko-KR", "intl.accept_languages": "ko-KR, ko" } })
+  // Playwright's Firefox ships English only: <input type="date|time"> draws "mm/dd/yyyy" here while a
+  // Korean phone draws its own picker. Expect that difference in compare images.
+  const browser = await firefox.launch()
   if (mode === "compare") {
     await compare(browser)
     process.exit(0)

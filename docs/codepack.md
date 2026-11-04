@@ -32,32 +32,32 @@ AI 작업 도구에서도 읽을 수 있습니다. 목록의 원본은 `codepack
 
 | 파일 | 입력 | 역할 |
 |---|---|---|
-| `src/patterns/data-table.tsx` | 행, 열 렌더 함수, 선택 콜백 | 표, 빈 결과, 로컬 페이지 이동, 독립 검색 입력 |
-| `src/patterns/advanced-table.tsx` | 행, 정렬할 열, 선택 ID, 일괄 처리 콜백 | 정렬, 페이지별 선택, 비동기 일괄 처리 |
-| `src/patterns/filter-bar.tsx` | 필터 필드, 값, 변경 콜백 | 검색·선택·다중 선택·숫자·날짜 범위 |
-| `src/patterns/chart-panel.tsx` | 행, X축 키, 계열, 종류 | 막대·선·영역 차트와 원본 데이터 표 |
-| `src/patterns/step-form.tsx` | 초기값, 단계별 render·validate, 제출 | 단계별 검증, 입력 보존, 서버 오류 단계 이동 |
-| `src/patterns/date-range.tsx` | 날짜 범위, 변경 콜백, 프리셋 | 시작·종료일 검증과 기간 선택 |
-| `src/patterns/timeline.tsx` | 기록 목록, 상태, 액션 슬롯 | 완료·진행·예정 기록 |
-| `src/patterns/csv-transfer.tsx` | 가져오기 콜백 / 내보낼 행·열 | 검증·미리보기·재시도·다운로드 |
-| `src/lib/csv.ts` | CSV 문자열 / 열 정의와 행 | UI 없는 CSV 파싱·직렬화 |
-| `src/patterns/record-form.tsx` | 초기값, 필드 설정, 저장 콜백 | 입력·선택·메모·사용자 정의 필드, 제출 상태와 오류 |
-| `src/patterns/detail-panel.tsx` | 제목, 설명, 라벨·값, 액션 슬롯 | 상세 슬라이드 패널 |
-| `src/patterns/status-board.tsx` | 행, 그룹, 카드 렌더, 이동 콜백 | 상태별 보드와 키보드로 조작하는 상태 변경 |
-| `src/patterns/metric-grid.tsx` | 지표 라벨·값·설명·아이콘 | 반응형 지표 카드 |
-| `src/patterns/file-drop.tsx` | File 목록·onChange·형식·크기 제한 | 파일 선택·드롭·개수 검사·제거 |
-| `src/patterns/async-state.tsx` | pending·error·empty·retry·children | 로딩·오류·빈 상태·콘텐츠 |
-| `src/patterns/confirm-action.tsx` | 트리거·문구·비동기 콜백 | 확인·취소·실행 중 상태·실패 재시도 |
-| `src/components/kr-inputs.tsx` | value·onChange | 전화·사업자번호·금액·주소 입력 |
-| `src/lib/kr.ts` | 문자열·숫자·날짜 | 한국어 포맷과 검증. 날짜 문구 `formatDateLong`("11월 4일 수요일")·`formatDateShort`("11/4 수")·`formatDateWord`("오늘"), `toIsoDate`·`isoDaysFrom` |
-| `src/api/client.ts` | 경로·JSON·RequestInit | JSON 응답·필드 오류·bearer 토큰. `failureOf(error)`: zod 오류나 `ApiError`를 메시지와 칸별 메시지로 |
-| `src/patterns/auth-forms.tsx` | submit·onSelect·onClick 콜백 | 로그인 카드, 이메일 로그인·가입 폼, 카카오·네이버·게스트 버튼 |
-| `src/patterns/app-shell.tsx` | brand·logo?·nav·user·onLogout·children | 사이드바, 브레드크럼, Ctrl/⌘+K, 사용자 메뉴 |
-| `src/patterns/mobile-shell.tsx` | tabs?·top?·bottom?·className·children, TopBar(title·back·end), useBack(fallback), BottomSheet(open·onOpenChange·className·overlayClassName) | 휴대폰 폭 한 칸, 하단 탭, 뒤로 가기, 아래에 고정한 주 동작, 아래에서 올라오는 시트 |
-| `src/patterns/theme-settings.tsx` | defaultHue | 라이트·다크·시스템, 브랜드 색 |
+| `src/shared/patterns/data-table.tsx` | 행, 열 렌더 함수, 선택 콜백 | 표, 빈 결과, 로컬 페이지 이동, 독립 검색 입력 |
+| `src/shared/patterns/advanced-table.tsx` | 행, 정렬할 열, 선택 ID, 일괄 처리 콜백 | 정렬, 페이지별 선택, 비동기 일괄 처리 |
+| `src/shared/patterns/filter-bar.tsx` | 필터 필드, 값, 변경 콜백 | 검색·선택·다중 선택·숫자·날짜 범위 |
+| `src/shared/patterns/chart-panel.tsx` | 행, X축 키, 계열, 종류 | 막대·선·영역 차트와 원본 데이터 표 |
+| `src/shared/patterns/step-form.tsx` | 초기값, 단계별 render·validate, 제출 | 단계별 검증, 입력 보존, 서버 오류 단계 이동 |
+| `src/shared/patterns/date-range.tsx` | 날짜 범위, 변경 콜백, 프리셋 | 시작·종료일 검증과 기간 선택 |
+| `src/shared/patterns/timeline.tsx` | 기록 목록, 상태, 액션 슬롯 | 완료·진행·예정 기록 |
+| `src/shared/patterns/csv-transfer.tsx` | 가져오기 콜백 / 내보낼 행·열 | 검증·미리보기·재시도·다운로드 |
+| `src/shared/lib/csv.ts` | CSV 문자열 / 열 정의와 행 | UI 없는 CSV 파싱·직렬화 |
+| `src/shared/patterns/record-form.tsx` | 초기값, 필드 설정, 저장 콜백 | 입력·선택·메모·사용자 정의 필드, 제출 상태와 오류 |
+| `src/shared/patterns/detail-panel.tsx` | 제목, 설명, 라벨·값, 액션 슬롯 | 상세 슬라이드 패널 |
+| `src/shared/patterns/status-board.tsx` | 행, 그룹, 카드 렌더, 이동 콜백 | 상태별 보드와 키보드로 조작하는 상태 변경 |
+| `src/shared/patterns/metric-grid.tsx` | 지표 라벨·값·설명·아이콘 | 반응형 지표 카드 |
+| `src/shared/patterns/file-drop.tsx` | File 목록·onChange·형식·크기 제한 | 파일 선택·드롭·개수 검사·제거 |
+| `src/shared/patterns/async-state.tsx` | pending·error·empty·retry·children | 로딩·오류·빈 상태·콘텐츠 |
+| `src/shared/patterns/confirm-action.tsx` | 트리거·문구·비동기 콜백 | 확인·취소·실행 중 상태·실패 재시도 |
+| `src/shared/components/kr-inputs.tsx` | value·onChange | 전화·사업자번호·금액·주소 입력 |
+| `src/shared/lib/kr.ts` | 문자열·숫자·날짜 | 한국어 포맷과 검증. 날짜 문구 `formatDateLong`("11월 4일 수요일")·`formatDateShort`("11/4 수")·`formatDateWord`("오늘"), `toIsoDate`·`isoDaysFrom` |
+| `src/shared/api/client.ts` | 경로·JSON·RequestInit | JSON 응답·필드 오류·bearer 토큰. `failureOf(error)`: zod 오류나 `ApiError`를 메시지와 칸별 메시지로 |
+| `src/shared/patterns/auth-forms.tsx` | submit·onSelect·onClick 콜백 | 로그인 카드, 이메일 로그인·가입 폼, 카카오·네이버·게스트 버튼 |
+| `src/shared/patterns/app-shell.tsx` | brand·logo?·nav·user·onLogout·children | 사이드바, 브레드크럼, Ctrl/⌘+K, 사용자 메뉴 |
+| `src/shared/patterns/mobile-shell.tsx` | tabs?·top?·bottom?·className·children, TopBar(title·back·end), useBack(fallback), BottomSheet(open·onOpenChange·className·overlayClassName) | 휴대폰 폭 한 칸, 하단 탭, 뒤로 가기, 아래에 고정한 주 동작, 아래에서 올라오는 시트 |
+| `src/shared/patterns/theme-settings.tsx` | defaultHue | 라이트·다크·시스템, 브랜드 색 |
 | `src/index.css` | 브랜드 hue·dark 클래스 | 공통 테마, 별도 파일로 선택 복사. `pnpm design <out>`이 하네스 토큰으로 바꿈 |
 
-모노레포에서는 같은 파일이 `apps/web/src/patterns/`에 있습니다. 각 부품은 다른 부품이나
+모노레포에서는 같은 파일이 `apps/web/src/shared/patterns/`에 있습니다. 각 부품은 다른 부품이나
 업무 API를 자동으로 연결하지 않습니다. UI 기초 컴포넌트와 공통 테마만 사용합니다.
 
 ## 인증 연결
@@ -65,13 +65,14 @@ AI 작업 도구에서도 읽을 수 있습니다. 목록의 원본은 `codepack
 부품은 화면을 정하지 않습니다. 로그인 화면과 로그인 뒤 영역을 어떻게 구성할지는 프로젝트에서 디자인 하네스와 함께 정하고,
 연결에 필요한 사실만 여기에 적습니다.
 
-- 로그인·가입·게스트·소셜 요청은 `src/api/auth.ts`의 `useLogin`·`useSignup`·`useGuestLogin`·`useSocialLogin`이 보내고,
-  토큰 저장과 `meQuery` 캐시를 처리합니다. `auth-forms`의 `submit`에는 이 훅의 `mutateAsync`를 연결하고,
-  실패는 `ApiError`의 `message`·`fields`를 `AuthFailure`로 돌려줍니다.
-- 어떤 로그인 방식을 둘지는 제품이 정합니다. 소셜·게스트 버튼은 필요할 때만 씁니다.
-- 실제 API의 카카오·네이버는 `${BASE_URL}/api/auth/<provider>`로 이동했다가 `/auth/callback`으로 돌아옵니다. Mock(`isDemo`)은 바로 로그인합니다.
-- 로그인이 필요한 라우트는 레이아웃 라우트의 `beforeLoad`에서 `context.queryClient.ensureQueryData(meQuery)`로 확인하고,
-  사용자가 없으면 `token.clear()` 후 로그인 라우트로 `redirect`합니다. 반환한 `{ user }`는 `Route.useRouteContext()`로 읽습니다.
+- 로그인·가입·게스트·데모·소셜 요청은 `src/shared/api/auth.ts`의 `useLogin`·`useSignup`·`useGuestLogin`·`useDemoLogin`·`useSocialLogin`이 보내고,
+  토큰 저장과 `meQuery` 캐시를 처리합니다. 폼의 실패는 `failureOf(error)`(메시지와 칸별 메시지)로 보여 줍니다.
+- 어떤 로그인 방식을 둘지는 제품이 정합니다. 소셜·게스트·데모(둘러보기) 버튼은 필요할 때만 씁니다.
+- 카카오·네이버는 `useSocialLogin`이 가릅니다. 실제 API는 `${BASE_URL}/api/auth/<provider>`로 이동했다가 `/auth/callback`으로 돌아오고, Mock(`isDemo`)은 바로 로그인합니다.
+- 로그인이 필요한 라우트는 레이아웃 라우트의 `beforeLoad`에서 `currentUser(context.queryClient)`로 확인하고, null이면
+  `redirect({ to: "/login", search: { redirect: location.href } })`합니다. 401일 때만 토큰을 지우고, 다른 오류는 오류 화면으로 갑니다.
+  반환한 `{ user }`는 `Route.useRouteContext()`로 읽습니다.
+- 로그인 화면은 `?redirect=`를 `safeRedirect(search.redirect)`로 읽고 로그인 뒤 그 경로로 보냅니다(같은 사이트의 경로만, 아니면 `/`).
 - `app-shell`의 브레드크럼과 탭 제목은 각 라우트의 `staticData.title`에서 옵니다(next는 `metadata.title`).
 
 ## 표의 연결 규약
@@ -213,7 +214,7 @@ localStorage의 slipway.token을 사용하므로 자신의 환경에 맞게 바�
 - 필드·열·문구: 사용하는 화면의 설정과 렌더 콜백.
 - 데이터·권한·검증: 자신의 API·Mock·스키마. 패턴은 이를 import하지 않습니다.
 - 라우트·메뉴: 사용하는 사람이 필요한 부품을 선택한 뒤 등록합니다.
-- 제품 이름·브랜드: src/config.ts와 src/index.css.
+- 제품 이름·브랜드: src/shared/config.ts와 src/index.css.
 
 개별 부품의 조작 예시는 문서나 격리된 검증 환경에 둡니다. 고객 관리 같은 완성된 업무 앱을
 코드팩의 기본 산출물로 만들지 않습니다. 실제로 조립할 때의 검증 기준은 FEATURE-WORKFLOW.md를 참고하세요.

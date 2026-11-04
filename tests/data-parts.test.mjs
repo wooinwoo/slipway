@@ -1,9 +1,9 @@
 import assert from "node:assert/strict"
 import test from "node:test"
-import { sortRows, togglePageSelection } from "../templates/react/src/lib/table-model.ts"
-import { isDateOnly, validateDateRange, dateRangePresets } from "../templates/react/src/lib/date-range.ts"
-import { normalizeChartData } from "../templates/react/src/lib/chart-model.ts"
-import { parseCsv, stringifyCsv } from "../templates/react/src/lib/csv.ts"
+import { sortRows, togglePageSelection } from "../templates/react/src/shared/lib/table-model.ts"
+import { isDateOnly, validateDateRange, dateRangePresets } from "../templates/react/src/shared/lib/date-range.ts"
+import { normalizeChartData } from "../templates/react/src/shared/lib/chart-model.ts"
+import { parseCsv, stringifyCsv } from "../templates/react/src/shared/lib/csv.ts"
 
 test("stable numeric sorting keeps missing values last in both directions", () => {
   const rows = [{ id: "a", n: 2 }, { id: "b", n: null }, { id: "c", n: 2 }, { id: "d", n: -4 }, { id: "e", n: NaN }]

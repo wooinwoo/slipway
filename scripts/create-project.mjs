@@ -70,7 +70,7 @@ export async function createProject(destination, { preset = "react", name, tagli
       } catch (error) { if (error.code !== "ENOENT") throw error }
 
       if (preset !== "nest") {
-        const configPath = join(stage, preset === "mono" ? "apps/web/src/config.ts" : "src/config.ts")
+        const configPath = join(stage, preset === "mono" ? "apps/web/src/shared/config.ts" : preset === "astro" ? "src/config.ts" : "src/shared/config.ts")
         let config = await readFile(configPath, "utf8")
         config = config.replace(/name: "Slipway"/, () => `name: ${JSON.stringify(name ?? slug)}`)
         if (tagline !== undefined) config = config.replace(/tagline: "서비스 한 줄 소개"/, () => `tagline: ${JSON.stringify(tagline)}`)
@@ -148,9 +148,9 @@ function projectReadme(slug, preset, name) {
     astro: "사이트는 :4321에서 실행됩니다. 공개 주소는 빌드 환경 변수 `SITE_URL`로 정합니다(canonical, sitemap, Open Graph).",
   }[preset]
   const identity = {
-    react: "이름·소개 `src/config.ts`, 테마 토큰 `src/index.css`.",
-    next: "이름·소개 `src/config.ts`, 테마 토큰 `src/app/globals.css`.",
-    mono: "이름·소개 `apps/web/src/config.ts`, 테마 토큰 `apps/web/src/index.css`.",
+    react: "이름·소개 `src/shared/config.ts`, 테마 토큰 `src/index.css`.",
+    next: "이름·소개 `src/shared/config.ts`, 테마 토큰 `src/app/globals.css`.",
+    mono: "이름·소개 `apps/web/src/shared/config.ts`, 테마 토큰 `apps/web/src/index.css`.",
     nest: "설정 `src/config.ts`(환경 변수).",
     astro: "이름·소개 `src/config.ts`, 테마 토큰 `src/styles/global.css`.",
   }[preset]

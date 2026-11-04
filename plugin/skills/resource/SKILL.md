@@ -26,18 +26,18 @@ corepack pnpm gen resource <plural> <한글 이름> --fields "<name>[?]:<type>:<
 - 단수형은 자동으로 만든다(`classes` → `class`, `categories` → `category`). 다르면 `--singular person`.
 - 다른 리소스를 가리키는 필드(예약의 수업)는 `classId:ref(classes):수업`. 가리키는 리소스를 먼저 생성한다(`package.json`의 `slipway.resources`에 기록된다).
   API와 Mock이 같은 사용자의 행인지 확인하고("수업을 찾을 수 없습니다"), 그 행을 지우면 가리키던 행도 지운다(DB 외래 키, Mock). 생성 테스트는 가리킬 행을 먼저 만든다.
-  정원 같은 업무 규칙은 생성된 Mock 핸들러(`src/entities/<plural>/mock.ts`)와 API 서비스에 직접 넣는다.
+  정원 같은 업무 규칙은 생성된 Mock 핸들러(`src/mocks/handlers/<plural>.ts`)와 API 서비스에 직접 넣는다.
 - `node scripts/gen.mjs`를 인자 없이 돌리면 이 문법이 나온다.
 
 만들어지는 것(프리셋에 있는 층만). 화면은 만들지 않는다.
 
-- 웹: `src/entities/<plural>/api.ts`(스키마·조회·저장·삭제 훅), `src/entities/<plural>/mock.ts`(Mock 엔드포인트)와 Mock 테이블, `e2e/<plural>-api.e2e.ts`(Mock과 실제 API에 같은 요청)
+- 웹: `src/entities/<plural>/api.ts`(스키마·조회·저장·삭제 훅), `src/mocks/handlers/<plural>.ts`(Mock 엔드포인트)와 Mock 테이블, `e2e/<plural>-api.e2e.ts`(Mock과 실제 API에 같은 요청)
 - API: `src/contracts/<plural>.ts`, `src/db/schema.ts`의 테이블과 마이그레이션, `src/<plural>/` 모듈(사용자별로 분리), `test/<plural>.e2e-spec.ts`
 - mono: 스키마는 `packages/shared/src/<plural>.ts` 한 곳
 
 ## 3. 화면 조립
 
-화면은 이 스킬을 쓰는 AI가 요구사항에 맞게 `src/patterns/` 부품으로 조립한다. 생성된 훅(`<plural>Query`, `useSave<Single>`, `useDelete<Plural>`)을 연결한다.
+화면은 이 스킬을 쓰는 AI가 요구사항에 맞게 `src/shared/patterns/` 부품으로 조립한다. 생성된 훅(`<plural>Query`, `useSave<Single>`, `useDelete<Plural>`)을 연결한다.
 
 - 목록: `AdvancedTable`(정렬·선택·일괄 처리), `FilterBar`, `SearchInput`
 - 상세·수정: `DetailPanel`, `RecordForm`(필드 오류는 `ApiError.fields`), `ConfirmAction`

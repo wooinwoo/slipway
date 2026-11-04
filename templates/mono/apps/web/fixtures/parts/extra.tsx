@@ -1,20 +1,20 @@
 import { useState } from "react"
-import { AdvancedTable } from "@/patterns/advanced-table"
-import { FilterBar } from "@/patterns/filter-bar"
-import { ChartPanel } from "@/patterns/chart-panel"
-import { StepForm } from "@/patterns/step-form"
-import { DateRangePicker } from "@/patterns/date-range"
-import { Timeline } from "@/patterns/timeline"
-import { CsvImport, CsvExportButton } from "@/patterns/csv-transfer"
+import { AdvancedTable } from "@/shared/patterns/advanced-table"
+import { FilterBar } from "@/shared/patterns/filter-bar"
+import { ChartPanel } from "@/shared/patterns/chart-panel"
+import { StepForm } from "@/shared/patterns/step-form"
+import { DateRangePicker } from "@/shared/patterns/date-range"
+import { Timeline } from "@/shared/patterns/timeline"
+import { CsvImport, CsvExportButton } from "@/shared/patterns/csv-transfer"
 import {
   applyFilters,
   type FilterField,
   type FilterValues,
-} from "@/lib/filter-model"
-import { dateRangePresets, type DateRangeValue } from "@/lib/date-range"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
+} from "@/shared/lib/filter-model"
+import { dateRangePresets, type DateRangeValue } from "@/shared/lib/date-range"
+import { Input } from "@/shared/ui/input"
+import { Label } from "@/shared/ui/label"
+import { Button } from "@/shared/ui/button"
 
 function AdvancedFixture() {
   const rows = [

@@ -6,7 +6,7 @@
       "name": "표와 검색 입력",
       "category": "pattern",
       "entries": [
-        "patterns/data-table.tsx"
+        "shared/patterns/data-table.tsx"
       ],
       "exports": [
         "DataTable",
@@ -39,7 +39,7 @@
       "name": "레코드 폼",
       "category": "pattern",
       "entries": [
-        "patterns/record-form.tsx"
+        "shared/patterns/record-form.tsx"
       ],
       "exports": [
         "RecordForm",
@@ -74,7 +74,7 @@
       "name": "상세 패널",
       "category": "pattern",
       "entries": [
-        "patterns/detail-panel.tsx"
+        "shared/patterns/detail-panel.tsx"
       ],
       "exports": [
         "DetailPanel"
@@ -103,7 +103,7 @@
       "name": "상태 보드",
       "category": "pattern",
       "entries": [
-        "patterns/status-board.tsx"
+        "shared/patterns/status-board.tsx"
       ],
       "exports": [
         "StatusBoard",
@@ -134,7 +134,7 @@
       "name": "지표 카드",
       "category": "pattern",
       "entries": [
-        "patterns/metric-grid.tsx"
+        "shared/patterns/metric-grid.tsx"
       ],
       "exports": [
         "MetricGrid"
@@ -160,7 +160,7 @@
       "name": "파일 선택·드롭",
       "category": "interaction",
       "entries": [
-        "patterns/file-drop.tsx"
+        "shared/patterns/file-drop.tsx"
       ],
       "exports": [
         "FileDrop"
@@ -189,7 +189,7 @@
       "name": "비동기 상태",
       "category": "interaction",
       "entries": [
-        "patterns/async-state.tsx"
+        "shared/patterns/async-state.tsx"
       ],
       "exports": [
         "AsyncState"
@@ -219,7 +219,7 @@
       "name": "비동기 확인 동작",
       "category": "interaction",
       "entries": [
-        "patterns/confirm-action.tsx"
+        "shared/patterns/confirm-action.tsx"
       ],
       "exports": [
         "ConfirmAction"
@@ -248,7 +248,7 @@
       "name": "한국어 입력",
       "category": "input",
       "entries": [
-        "components/kr-inputs.tsx"
+        "shared/components/kr-inputs.tsx"
       ],
       "exports": [
         "PhoneInput",
@@ -278,7 +278,7 @@
       "name": "한국어 포맷·검증",
       "category": "utility",
       "entries": [
-        "lib/kr.ts"
+        "shared/lib/kr.ts"
       ],
       "exports": [
         "formatPhone",
@@ -314,7 +314,7 @@
       "name": "JSON API 클라이언트",
       "category": "adapter",
       "entries": [
-        "api/client.ts"
+        "shared/api/client.ts"
       ],
       "exports": [
         "api",
@@ -372,8 +372,8 @@
       "name": "정렬·선택·일괄 처리 표",
       "category": "pattern",
       "entries": [
-        "patterns/advanced-table.tsx",
-        "lib/table-model.ts"
+        "shared/patterns/advanced-table.tsx",
+        "shared/lib/table-model.ts"
       ],
       "exports": [
         "AdvancedTable",
@@ -412,8 +412,8 @@
       "name": "고급 필터",
       "category": "pattern",
       "entries": [
-        "patterns/filter-bar.tsx",
-        "lib/filter-model.ts"
+        "shared/patterns/filter-bar.tsx",
+        "shared/lib/filter-model.ts"
       ],
       "exports": [
         "FilterBar",
@@ -452,8 +452,8 @@
       "name": "막대·선·영역 차트",
       "category": "pattern",
       "entries": [
-        "patterns/chart-panel.tsx",
-        "lib/chart-model.ts"
+        "shared/patterns/chart-panel.tsx",
+        "shared/lib/chart-model.ts"
       ],
       "exports": [
         "ChartPanel",
@@ -486,7 +486,7 @@
       "name": "단계형 폼",
       "category": "pattern",
       "entries": [
-        "patterns/step-form.tsx"
+        "shared/patterns/step-form.tsx"
       ],
       "exports": [
         "StepForm",
@@ -521,8 +521,8 @@
       "name": "날짜 범위",
       "category": "pattern",
       "entries": [
-        "patterns/date-range.tsx",
-        "lib/date-range.ts"
+        "shared/patterns/date-range.tsx",
+        "shared/lib/date-range.ts"
       ],
       "exports": [
         "DateRangePicker",
@@ -557,7 +557,7 @@
       "name": "타임라인",
       "category": "pattern",
       "entries": [
-        "patterns/timeline.tsx"
+        "shared/patterns/timeline.tsx"
       ],
       "exports": [
         "Timeline",
@@ -586,7 +586,7 @@
       "name": "CSV 가져오기·내보내기 UI",
       "category": "pattern",
       "entries": [
-        "patterns/csv-transfer.tsx"
+        "shared/patterns/csv-transfer.tsx"
       ],
       "exports": [
         "CsvImport",
@@ -619,7 +619,7 @@
       "name": "CSV 파싱·직렬화",
       "category": "utility",
       "entries": [
-        "lib/csv.ts"
+        "shared/lib/csv.ts"
       ],
       "exports": [
         "parseCsv",
@@ -653,7 +653,7 @@
       "name": "로그인·회원가입 부품",
       "category": "pattern",
       "entries": [
-        "patterns/auth-forms.tsx"
+        "shared/patterns/auth-forms.tsx"
       ],
       "exports": [
         "AuthCard",
@@ -695,7 +695,7 @@
       "name": "앱 틀",
       "category": "pattern",
       "entries": [
-        "patterns/app-shell.tsx"
+        "shared/patterns/app-shell.tsx"
       ],
       "exports": [
         "AppShell",
@@ -734,7 +734,7 @@
       "name": "휴대폰 앱 틀",
       "category": "pattern",
       "entries": [
-        "patterns/mobile-shell.tsx"
+        "shared/patterns/mobile-shell.tsx"
       ],
       "exports": [
         "MobileShell",
@@ -778,7 +778,7 @@
       "name": "테마 설정",
       "category": "pattern",
       "entries": [
-        "patterns/theme-settings.tsx"
+        "shared/patterns/theme-settings.tsx"
       ],
       "exports": [
         "ThemeSettings"

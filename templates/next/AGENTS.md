@@ -13,7 +13,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 Next.js App Router setup with the same parts, theme, API client and mock backend as the Slipway React
 preset (copied by `scripts/sync-next.mjs` in Slipway). It runs with no backend: an in-browser mock API
 (MSW) answers `/api/*`. Set `NEXT_PUBLIC_API_URL` and the same calls go to a real server (the Nest
-preset). It ships no screens; build them per project from `src/patterns/`.
+preset). It ships no screens; build them per project from `src/shared/patterns/`.
 
 For the common requests (build a screen, add a resource, deploy) follow the step-by-step flow in the
 project's `.claude/skills/<screen|resource|deploy>/SKILL.md`. Claude Code loads them on its own; other
@@ -36,23 +36,25 @@ tools read them from there.
 
 | Path | What lives there |
 |---|---|
-| `src/config.ts` | Product name and copy, `isDemo` flag |
+| `src/shared/config.ts` | Product name and copy, `isDemo` flag |
 | `src/app/layout.tsx` | Metadata, the before-paint theme script, providers |
 | `src/app/providers.tsx` | React Query, theme, tooltips, toasts; starts the mock worker in demo mode |
 | `src/proxy.ts` | Per-request Content-Security-Policy nonce (pages render dynamically because of it) |
 | `next.config.ts` | Security headers, the msw/browser alias for server builds |
-| `src/patterns/` | Screen parts. `app-shell.tsx` is the Next version (next/link); the rest match the React preset |
-| `src/features/<action>/` | One thing a user does: its form, sheet, rules, hooks. Pages in `src/app/` compose features |
-| `src/entities/<resource>/` | `api.ts` (schema, queries, mutations) and `mock.ts` (mock endpoints), written by `pnpm gen` |
-| `src/api/`, `src/mocks/` | API client (`failureOf`), auth hooks (`currentUser`), mock backend wiring. Same `/api/*` contract as the Nest preset |
-| `src/components/ui/` | shadcn, every component installed |
+| `src/shared/patterns/` | Screen parts. `app-shell.tsx` is the Next version (next/link); the rest match the React preset |
+| `src/widgets/` | Blocks several pages share. Pages in `src/app/` compose widgets and features |
+| `src/features/<action>/` | One thing a user does: its form, sheet, rules, hooks |
+| `src/entities/<resource>/` | `api.ts` (schema, queries, mutations), written by `pnpm gen` |
+| `src/shared/api/` | API client (`failureOf`), auth hooks (`currentUser`), `demo-account.ts` |
+| `src/mocks/` | Mock backend: `db.ts`, `scenario.ts` (demo data), `handlers/<resource>.ts`. Same `/api/*` contract as the Nest preset |
+| `src/shared/ui/` | shadcn, every component installed |
 
 ## Rules
 
 - Slipway gives you parts and a data layer, not screens or a design. The look comes from a design
   harness with the user: k-style-ui-ux (`/k-style-ui-ux:go <PRD>`) for mobile apps, meaning screens used
   mainly on a phone (its `out/` is the design, don't paste its HTML: `pnpm design out` writes its tokens into
-  `src/app/globals.css` and its component styles into `src/design/k-style.css` (classes prefixed `k-`), write
+  `src/app/globals.css` and its component styles into `src/shared/design/k-style.css` (classes prefixed `k-`), write
   each `out/screens/<id>.html` as JSX with those classes: `MobileShell className="k-screen ..."` as the root and
   `<main>`, the design's own app bar/tab bar/CTA markup with `useBack("/list")` and `next/link`, `BottomSheet
   className="k-sheet" overlayClassName="k-dim"` for sheets, `failureOf` for form errors; seed the demo account in `src/mocks/db.ts` with `out/journey.md`'s scenario data, then
@@ -61,11 +63,11 @@ tools read them from there.
 - Never make up a logo, favicon or app icon (a letter in a shape, a stock icon standing in for the brand). Use only the logo file the user supplies: `pnpm brand <file>` puts it in `public/` and makes it the favicon (`src/app/icon.*`), then pass it to `AppShell`'s `logo`. Until then the product name stands as plain text and you ask the user for a logo.
 - Interactive parts are client components (`"use client"`). Keep pages as server components when they
   only arrange parts; data comes from the TanStack Query hooks in `src/entities/` on the client.
-- Layers import downward only: `src/app` -> `features` -> `entities` -> shared code (`components`,
-  `patterns`, `lib`, `api`, `hooks`); ESLint enforces it.
+- Layers follow Feature-Sliced Design and import downward only: `src/app` (pages) -> `widgets` ->
+  `features` -> `entities` -> `shared`; slices on one layer don't import each other. ESLint enforces it.
 - A signed-in area is a layout (`src/app/(app)/layout.tsx`, client) that reads `meQuery`, sends visitors
   without a user to `/login` with `router.replace`, and wraps `children` in `<AppShell>`. Sign-in pages
-  use `src/patterns/auth-forms.tsx` with the hooks in `src/api/auth.ts`.
+  use `src/shared/patterns/auth-forms.tsx` with the hooks in `src/shared/api/auth.ts`.
 - Give each page `export const metadata = { title }`; the layout appends the product name.
 - No inline `<script>` without the nonce (`headers().get("x-nonce")`): the CSP blocks it.
 - Money goes through `formatWon`; times through `formatRelative`.
@@ -73,4 +75,4 @@ tools read them from there.
 ## Adding a resource
 
 In a project made by Slipway, `pnpm gen resource <plural> <한글 이름> --fields "..."` writes the data
-layer (`src/entities/<resource>/api.ts` and `mock.ts`, an API contract test). It never writes screens.
+layer (`src/entities/<resource>/api.ts`, `src/mocks/handlers/<resource>.ts`, an API contract test). It never writes screens.

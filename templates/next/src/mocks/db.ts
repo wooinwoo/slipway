@@ -1,7 +1,7 @@
 // In-browser database for the mock backend, persisted to localStorage so a demo
 // survives reloads. It starts over each day, so sample data dated from today stays current.
 // Clear site data to start over sooner.
-import { demoAccount, type User } from "@/api/auth"
+import { demoAccount, type User } from "@/shared/api/auth"
 import { DEMO_USER_ID, scenario } from "./scenario"
 // Import domain resource types here as they are added.
 

@@ -1,6 +1,6 @@
 import { HttpResponse, http } from "msw"
 
-import { loginSchema, signupSchema, type User } from "@/api/auth"
+import { loginSchema, signupSchema, type User } from "@/shared/api/auth"
 import { db, save } from "../db"
 import { API, currentUser, fail, parseBody } from "../http"
 

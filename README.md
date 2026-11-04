@@ -105,17 +105,19 @@ slipway/                                  도구 상자 (이 레포). 앱 코드
 └─ plugin/                                Claude Code 플러그인 (/slipway:*)
 
 my-app/                                   만들어진 프로젝트 (react 프리셋). 자기 레포
-├─ src/
-│  ├─ config.ts                           이름·소개, Mock 여부(isDemo)
-│  ├─ index.css                           테마 토큰. --brand-h, --brand-c 두 숫자로 전체 색이 바뀜
-│  ├─ patterns/                           Slipway 부품 23개 (app-shell, auth-forms, advanced-table …)
-│  ├─ components/ui/                      shadcn 컴포넌트 전체
-│  ├─ routes/                             화면(pages). __root, 빈 /, /auth/callback만. 기능을 조립
+├─ src/                                  Feature-Sliced Design: 위 계층이 아래 계층만 import (ESLint가 막음)
+│  ├─ main.tsx  index.css  mocks/         app: 진입점, 테마 토큰(pnpm design이 바꿈), Mock(db·scenario·handlers/<리소스>.ts)
+│  ├─ routes/                             pages: __root, 빈 /, /auth/callback만. 위젯·기능을 조립
+│  ├─ widgets/                            여러 화면이 같이 쓰는 블록(일정 목록, 탭바)
 │  ├─ features/<동작>/                    사용자가 하는 일 하나(예약 받기, 출석 체크): 폼·시트·규칙
-│  ├─ entities/<리소스>/                  api.ts(스키마·조회·저장 훅), mock.ts(Mock 엔드포인트). gen이 씀
-│  ├─ api/                                client.ts(JSON·토큰·필드 오류·failureOf), auth.ts(세션 훅·currentUser)
-│  ├─ mocks/                              브라우저 Mock API 배선 (MSW): db.ts, http.ts, browser.ts
-│  └─ lib/                                kr.ts(한국어 포맷·검증), csv, 필터·날짜 모델
+│  ├─ entities/<리소스>/api.ts            스키마·조회·저장 훅. gen이 씀
+│  └─ shared/                             도메인을 모르는 공용 코드
+│     ├─ ui/  components/                 shadcn 전체, kr-inputs·form-field 등
+│     ├─ patterns/                        Slipway 부품 24개 (app-shell, mobile-shell, auth-forms, advanced-table …)
+│     ├─ design/                          pnpm design 결과(k-style CSS, KField·KAvatar·KTabBar·KAppBar)
+│     ├─ api/                             client.ts(JSON·토큰·필드 오류·failureOf), auth.ts(세션 훅·currentUser)
+│     ├─ lib/                             kr.ts(한국어 포맷·검증·날짜), csv, 필터·날짜 모델
+│     └─ config.ts                        이름·소개, Mock 여부(isDemo)
 ├─ e2e/  fixtures/parts/  parts-tests/    E2E, 부품 테스트
 ├─ scripts/                               ui.mjs(shots·check:ui), check-bundle, check-reqs, gen
 ├─ docs/requirements.md                   REQ-n 목록
@@ -126,7 +128,7 @@ my-app/                                   만들어진 프로젝트 (react 프�
 
 ### Mock에서 실제 API로
 
-웹 프리셋은 모든 요청을 `src/api/client.ts` 하나로 보냅니다. API 주소가 비어 있으면 브라우저 안의 Mock(MSW)이 `/api/*`에 답하고,
+웹 프리셋은 모든 요청을 `src/shared/api/client.ts` 하나로 보냅니다. API 주소가 비어 있으면 브라우저 안의 Mock(MSW)이 `/api/*`에 답하고,
 주소를 넣으면 같은 요청이 실제 서버로 갑니다. Mock과 NestJS는 같은 경로, 같은 응답 형식, 같은 오류 형식(`{ message, fields }`)을 씁니다.
 
 | 프리셋 | Mock | 실제 서버 |
@@ -165,7 +167,7 @@ corepack pnpm gen resource orders 주문 \
 |---|---|---|
 | 스키마 | `src/entities/orders/api.ts` (mono는 `packages/shared/src/orders.ts`) | `orderInputSchema`, `Order`, 상태 목록 `orderStatusOptions` |
 | 조회 훅 | `src/entities/orders/api.ts` | `ordersQuery(page, pageSize)`, `allOrdersQuery()`, `orderQuery(id)`, `useSaveOrder()`(id 유무로 생성·수정), `useDeleteOrders()`, `toOrderInput(row)` |
-| Mock | `src/entities/orders/mock.ts`, `src/mocks/db.ts` | 실제 API와 같은 경로와 규칙, 사용자별 데이터 |
+| Mock | `src/mocks/handlers/orders.ts`, `src/mocks/db.ts` | 실제 API와 같은 경로와 규칙, 사용자별 데이터 |
 | DB | `src/db/schema.ts`, `drizzle/0001_orders.sql` | 테이블, `user_id` 외래 키와 `(user_id, created_at)` 인덱스, 마이그레이션(서버 시작 시 적용) |
 | API | `src/orders/` | `AuthGuard` 뒤의 CRUD. 모든 조회·수정·삭제를 로그인한 사용자 기준으로 거름 |
 | 테스트 | `test/orders.e2e-spec.ts`, `e2e/orders-api.e2e.ts` | 로그인 필요, 생성·목록·수정·삭제, 다른 사용자 데이터 숨김, 페이지 크기 제한, 필드 오류 |
@@ -182,7 +184,7 @@ DELETE /api/orders/:id                  → 204
 
 ## 화면 조립
 
-화면은 `src/patterns/`의 부품과 생성된 훅으로 기능을 조립하고, 모양은 [디자인 하네스](#디자인-하네스)가 정합니다.
+화면은 `src/shared/patterns/`의 부품과 생성된 훅으로 기능을 조립하고, 모양은 [디자인 하네스](#디자인-하네스)가 정합니다.
 Slipway는 완성 화면, 레이아웃 예시, 디자인 기준을 주지 않습니다. 로그인 연결 같은 기술 사실은 [부품 사용법](docs/codepack.md#인증-연결)에 있습니다.
 
 ### 부품

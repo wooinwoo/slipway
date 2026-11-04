@@ -3,7 +3,7 @@ import { headers } from "next/headers"
 import type { ReactNode } from "react"
 
 import "./globals.css"
-import { product } from "@/config"
+import { product } from "@/shared/config"
 import { Providers } from "./providers"
 
 export const metadata: Metadata = {

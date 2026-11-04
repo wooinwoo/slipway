@@ -4,10 +4,10 @@ import { useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useEffect, useState } from "react"
 
-import { meQuery } from "@/api/auth"
-import { token } from "@/api/client"
-import { RouteNotFound } from "@/components/route-states"
-import { Spinner } from "@/components/ui/spinner"
+import { meQuery } from "@/shared/api/auth"
+import { token } from "@/shared/api/client"
+import { RouteNotFound } from "@/shared/components/route-states"
+import { Spinner } from "@/shared/ui/spinner"
 
 export const Route = createFileRoute("/auth/callback")({
   staticData: { title: "로그인 중" },

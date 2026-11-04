@@ -23,7 +23,7 @@ test("creates an independent mono project with branding and safe defaults", asyn
   const manifest = JSON.parse(await readFile(join(target, "package.json"), "utf8"))
   assert.equal(manifest.name, "my-service")
   assert.equal(manifest.packageManager, "pnpm@10.33.2")
-  const config = await readFile(join(target, "apps/web/src/config.ts"), "utf8")
+  const config = await readFile(join(target, "apps/web/src/shared/config.ts"), "utf8")
   assert.ok(config.includes(JSON.stringify('내 "서비스"')))
   assert.ok(config.includes('"첫 번째 제품"'))
   assert.match(await readFile(join(target, "apps/web/.env"), "utf8"), /VITE_API_URL=\//)
@@ -60,10 +60,10 @@ test("defaults to a React demo with no backend setup", async t => {
   assert.equal(manifest.dependencies.turbo, undefined)
   assert.match(await readFile(join(target, "README.md"), "utf8"), /Mock API로 실행/)
   assert.ok(!(await readdir(target)).includes("apps"))
-  const patterns = await readdir(join(target, "src/patterns"))
+  const patterns = await readdir(join(target, "src/shared/patterns"))
   assert.ok(patterns.includes("data-table.tsx"))
   for (const file of patterns) {
-    const source = await readFile(join(target, "src/patterns", file), "utf8")
+    const source = await readFile(join(target, "src/shared/patterns", file), "utf8")
     assert.doesNotMatch(source, /from ["']@\/(api|features|contracts)\//)
   }
   // Screens are assembled per project; the template ships only the router frame.
@@ -116,10 +116,10 @@ test("creates a next app with the shared parts, the generator and no screens", a
   const root = await sandbox(t)
   const target = join(root, "next-app")
   await createProject(target, { preset: "next", name: "넥스트 앱" })
-  assert.match(await readFile(join(target, "src/config.ts"), "utf8"), /name: "넥스트 앱"/)
+  assert.match(await readFile(join(target, "src/shared/config.ts"), "utf8"), /name: "넥스트 앱"/)
   assert.equal(JSON.parse(await readFile(join(target, "package.json"), "utf8")).scripts.gen, "node scripts/gen.mjs")
   assert.deepEqual((await readdir(join(target, "src/app"))).sort(), ["auth", "error.tsx", "globals.css", "layout.tsx", "loading.tsx", "not-found.tsx", "page.tsx", "providers.tsx"])
-  assert.ok((await readdir(join(target, "src/patterns"))).includes("app-shell.tsx"))
+  assert.ok((await readdir(join(target, "src/shared/patterns"))).includes("app-shell.tsx"))
   assert.ok(!(await readdir(target)).includes(".next"))
 })
 

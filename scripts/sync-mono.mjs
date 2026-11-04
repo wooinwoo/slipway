@@ -45,26 +45,26 @@ const shared = join(mono, "packages/shared/src")
 
 copy(join(root, "react"), web)
 copy(join(root, "nest"), api)
-cpSync(join(root, "react/src/lib/kr.ts"), join(shared, "kr.ts"))
-cpSync(join(root, "react/src/lib/kr.test.ts"), join(shared, "kr.test.ts"))
+cpSync(join(root, "react/src/shared/lib/kr.ts"), join(shared, "kr.ts"))
+cpSync(join(root, "react/src/shared/lib/kr.test.ts"), join(shared, "kr.test.ts"))
 cpSync(join(root, "nest/src/contracts/auth.ts"), join(shared, "auth.ts"))
 writeFileSync(join(shared, "index.ts"), 'export * from "./auth.js"\nexport * from "./kr.js"\n')
 patch(join(shared, "auth.ts"),
-  "// Request/response shapes shared with the web app. Keep in sync with\n// templates/react/src/api/auth.ts (in the mono preset both import one package).\n",
+  "// Request/response shapes shared with the web app. Keep in sync with\n// templates/react/src/shared/api/auth.ts (in the mono preset both import one package).\n",
   "// Request/response shapes both apps agree on.\n")
 
 // --- web
-writeFileSync(join(web, "src/lib/kr.ts"), '// Korean helpers live in packages/shared so the API validates with the same rules.\nexport * from "@slipway/shared/kr"\n')
-unlinkSync(join(web, "src/lib/kr.test.ts"))
-patch(join(web, "src/api/auth.ts"),
-  'import { z } from "zod"\n\nimport { isDemo } from "@/config"\nimport { ApiError, api, BASE_URL, token } from "./client"\nimport { demoAccount } from "./demo-account"\n\nexport { demoAccount }\n\nexport type User = { id: string; name: string; email: string; provider: "email" | "guest" | "kakao" | "naver" }\n',
-  'import type { z } from "zod"\n\nimport { loginSchema, signupSchema, type User } from "@slipway/shared/auth"\nimport { isDemo } from "@/config"\nimport { ApiError, api, BASE_URL, token } from "./client"\nimport { demoAccount } from "./demo-account"\n\nexport { demoAccount }\nexport { loginSchema, signupSchema, type User }\n')
+writeFileSync(join(web, "src/shared/lib/kr.ts"), '// Korean helpers live in packages/shared so the API validates with the same rules.\nexport * from "@slipway/shared/kr"\n')
+unlinkSync(join(web, "src/shared/lib/kr.test.ts"))
+patch(join(web, "src/shared/api/auth.ts"),
+  'import { z } from "zod"\n\nimport { isDemo } from "@/shared/config"\nimport { ApiError, api, BASE_URL, token } from "./client"\nimport { demoAccount } from "./demo-account"\n\nexport { demoAccount }\n\nexport type User = { id: string; name: string; email: string; provider: "email" | "guest" | "kakao" | "naver" }\n',
+  'import type { z } from "zod"\n\nimport { loginSchema, signupSchema, type User } from "@slipway/shared/auth"\nimport { isDemo } from "@/shared/config"\nimport { ApiError, api, BASE_URL, token } from "./client"\nimport { demoAccount } from "./demo-account"\n\nexport { demoAccount }\nexport { loginSchema, signupSchema, type User }\n')
 {
-  const file = join(web, "src/api/auth.ts")
+  const file = join(web, "src/shared/api/auth.ts")
   const text = readFileSync(file, "utf8").replace(/\r\n/g, "\n")
   const start = text.indexOf("export const loginSchema")
   const end = text.indexOf("export const meQuery")
-  if (start < 0 || end < 0) throw new Error("apps/web/src/api/auth.ts: schema block not found")
+  if (start < 0 || end < 0) throw new Error("apps/web/src/shared/api/auth.ts: schema block not found")
   writeFileSync(file, text.slice(0, start) + text.slice(end))
 }
 json(join(web, "package.json"), (pkg) => {
@@ -130,8 +130,8 @@ export default defineConfig({
 patch(join(web, "AGENTS.md"),
   "# Slipway React\n\nDemo-first React app. It runs with no backend: an in-browser mock API (MSW) answers `/api/*`\nwith seeded Korean data. Set `VITE_API_URL` and the same calls go to a real server instead.",
   "# Slipway Mono: web\n\nThe web app of the Slipway monorepo (read `../../AGENTS.md` first). By default it talks to\n`apps/api` on the same origin; `pnpm dev:demo` swaps in the in-browser mock backend (MSW).",
-  "| `src/components/kr-inputs.tsx`, `src/lib/kr.ts` | Korean inputs, formatting, validation |",
-  "| `src/components/kr-inputs.tsx` | Korean inputs. Formatting and validation come from `@slipway/shared/kr` |",
+  "| `src/shared/lib/` | shared | `kr.ts` (Korean formatting, validation, dates), `utils`, csv, table and chart models |",
+  "| `src/shared/lib/` | shared | `kr.ts` re-exports `@slipway/shared/kr` (Korean formatting, validation, dates, shared with the API); `utils`, csv, table and chart models |",
   "- `pnpm build && pnpm preview` serves the built app. Hand that to people, not `pnpm dev`: the dev server",
   "- `pnpm preview:demo` serves the mock build (after `pnpm build:demo`). Hand that to people, not `pnpm dev`: the dev server")
 

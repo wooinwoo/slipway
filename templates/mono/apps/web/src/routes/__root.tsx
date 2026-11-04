@@ -2,8 +2,8 @@ import type { QueryClient } from "@tanstack/react-query"
 import { Outlet, createRootRouteWithContext, useMatches } from "@tanstack/react-router"
 import { useEffect } from "react"
 
-import { RouteNotFound } from "@/components/route-states"
-import { product } from "@/config"
+import { RouteNotFound } from "@/shared/components/route-states"
+import { product } from "@/shared/config"
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   component: Root,

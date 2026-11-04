@@ -15,7 +15,7 @@ The full flow is `plugin/skills/new/SKILL.md` (the `/slipway:new` command; Claud
    (`<name>`: lowercase letters, digits and hyphens), then `corepack pnpm install --frozen-lockfile`.
 3. Generate each resource's data layer: `corepack pnpm gen resource <plural> <한글 이름> --fields "..."`.
    It writes the schema, table and migration, API, mock, query hooks and contract tests. No screens.
-4. Build every screen, the login and app frame included: the function from `src/patterns/` and the
+4. Build every screen, the login and app frame included: the function from `src/shared/patterns/` and the
    generated hooks, the look from the design harness (Impeccable writes `PRODUCT.md` and `DESIGN.md`
    with the user; k-style's `out/` goes in through `pnpm design out` and is matched screen by screen with
    `pnpm design:compare`; never invent a style or ship Slipway examples as the design). Then `corepack pnpm
