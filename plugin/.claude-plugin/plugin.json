@@ -1,9 +1,10 @@
 {
   "name": "slipway",
   "version": "0.1.0",
-  "description": "Slipway로 새 앱 만들기, 리소스(DB·API·화면) 추가, 배포. 시작할 때 프리셋·화면 초안·배포 대상을 먼저 묻는다.",
+  "description": "Slipway로 새 앱 만들기, 화면 조립, 리소스(DB·API·데이터 층) 추가, 배포. 시작할 때 프리셋·화면 초안·배포 대상을 먼저 묻는다.",
   "author": {
     "name": "wooinwoo"
   },
-  "repository": "https://github.com/wooinwoo/slipway"
+  "repository": "https://github.com/wooinwoo/slipway",
+  "license": "MIT"
 }

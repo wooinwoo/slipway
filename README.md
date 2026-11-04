@@ -15,6 +15,7 @@
   <img src="https://img.shields.io/badge/Flutter-3-02569b?logo=flutter&logoColor=white" alt="Flutter 3">
   <img src="https://img.shields.io/badge/TypeScript-6-3178c6?logo=typescript&logoColor=white" alt="TypeScript 6">
   <img src="https://img.shields.io/badge/Tailwind-4-06b6d4?logo=tailwindcss&logoColor=white" alt="Tailwind CSS 4">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-555555" alt="MIT License"></a>
 </p>
 
 <p align="center">
@@ -314,3 +315,7 @@ WSL의 헤드리스 Chromium은 화면을 그리지 못하는 경우가 있어 �
 - [개발·검증 기준](docs/feature-workflow.md): 요청 하나를 요구사항부터 E2E까지 끝내는 순서
 - [제품 기준](PRODUCT.md): Slipway가 지키는 방향
 - [Slipway 고치기](CONTRIBUTING.md): 템플릿 관계, 무엇을 어디서 고치나, 검증
+
+## 라이선스
+
+[MIT](LICENSE)
