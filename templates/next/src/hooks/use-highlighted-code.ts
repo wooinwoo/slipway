@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 
 import { loadHighlighter } from "@/lib/highlighter"

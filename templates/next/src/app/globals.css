@@ -1,130 +1,157 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+    --font-heading: var(--font-sans);
+    --font-sans: 'Pretendard Variable', Pretendard, system-ui, sans-serif;
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* Brand: change these two numbers to re-skin the whole app.
+   Neutrals carry a trace of the brand hue so surfaces never look default-gray. */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+    --brand-h: 262;
+    --brand-c: 0.16;
+
+    --background: oklch(0.993 0.002 var(--brand-h));
+    --foreground: oklch(0.2 0.012 var(--brand-h));
+    --card: oklch(1 0 0);
+    --card-foreground: var(--foreground);
+    --popover: oklch(1 0 0);
+    --popover-foreground: var(--foreground);
+    --primary: oklch(0.52 var(--brand-c) var(--brand-h));
+    --primary-foreground: oklch(0.99 0.005 var(--brand-h));
+    --secondary: oklch(0.965 0.006 var(--brand-h));
+    --secondary-foreground: oklch(0.27 0.02 var(--brand-h));
+    --muted: oklch(0.965 0.005 var(--brand-h));
+    --muted-foreground: oklch(0.52 0.015 var(--brand-h));
+    --accent: oklch(0.955 0.025 var(--brand-h));
+    --accent-foreground: oklch(0.38 0.12 var(--brand-h));
+    --destructive: oklch(0.58 0.22 27);
+    --border: oklch(0.92 0.006 var(--brand-h));
+    --input: oklch(0.9 0.008 var(--brand-h));
+    --ring: oklch(0.62 var(--brand-c) var(--brand-h));
+    --chart-1: oklch(0.52 var(--brand-c) var(--brand-h));
+    --chart-2: oklch(0.7 0.13 calc(var(--brand-h) + 40));
+    --chart-3: oklch(0.72 0.14 calc(var(--brand-h) - 90));
+    --chart-4: oklch(0.8 0.12 calc(var(--brand-h) - 170));
+    --chart-5: oklch(0.6 0.03 var(--brand-h));
+    --radius: 0.625rem;
+    --sidebar: oklch(0.982 0.004 var(--brand-h));
+    --sidebar-foreground: var(--foreground);
+    --sidebar-primary: var(--primary);
+    --sidebar-primary-foreground: var(--primary-foreground);
+    --sidebar-accent: oklch(0.945 0.012 var(--brand-h));
+    --sidebar-accent-foreground: oklch(0.22 0.02 var(--brand-h));
+    --sidebar-border: var(--border);
+    --sidebar-ring: var(--ring);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+    --background: oklch(0.17 0.01 var(--brand-h));
+    --foreground: oklch(0.97 0.004 var(--brand-h));
+    --card: oklch(0.205 0.012 var(--brand-h));
+    --card-foreground: var(--foreground);
+    --popover: oklch(0.22 0.012 var(--brand-h));
+    --popover-foreground: var(--foreground);
+    --primary: oklch(0.68 calc(var(--brand-c) * 0.85) var(--brand-h));
+    --primary-foreground: oklch(0.17 0.02 var(--brand-h));
+    --secondary: oklch(0.26 0.014 var(--brand-h));
+    --secondary-foreground: var(--foreground);
+    --muted: oklch(0.25 0.012 var(--brand-h));
+    --muted-foreground: oklch(0.7 0.015 var(--brand-h));
+    --accent: oklch(0.28 0.04 var(--brand-h));
+    --accent-foreground: oklch(0.9 0.05 var(--brand-h));
+    --destructive: oklch(0.68 0.19 24);
+    --border: oklch(1 0 0 / 9%);
+    --input: oklch(1 0 0 / 14%);
+    --ring: oklch(0.6 var(--brand-c) var(--brand-h));
+    --chart-1: oklch(0.68 calc(var(--brand-c) * 0.85) var(--brand-h));
+    --chart-2: oklch(0.74 0.12 calc(var(--brand-h) + 40));
+    --chart-3: oklch(0.76 0.13 calc(var(--brand-h) - 90));
+    --chart-4: oklch(0.82 0.11 calc(var(--brand-h) - 170));
+    --chart-5: oklch(0.6 0.03 var(--brand-h));
+    --sidebar: oklch(0.19 0.011 var(--brand-h));
+    --sidebar-foreground: var(--foreground);
+    --sidebar-primary: var(--primary);
+    --sidebar-primary-foreground: var(--primary-foreground);
+    --sidebar-accent: oklch(0.26 0.016 var(--brand-h));
+    --sidebar-accent-foreground: var(--foreground);
+    --sidebar-border: var(--border);
+    --sidebar-ring: var(--ring);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
-  }
+    }
   body {
     @apply bg-background text-foreground;
-  }
+    }
   html {
     @apply font-sans;
-  }
+    font-feature-settings: "ss06";
+    /* Korean wraps between words; a word too long for its box still breaks instead of overflowing. */
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    }
+  /* Keyboard focus is always visible. shadcn components draw their own ring; everything else gets this. */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    }
+  /* Tailwind 4 leaves buttons on the default cursor. Anything clickable shows the pointer. */
+  button:not(:disabled), [role="button"]:not([aria-disabled="true"]), a[href], summary, select, label[for],
+  [role="tab"], [role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"],
+  [role="checkbox"], [role="radio"], [role="switch"], [role="slider"],
+  input[type="checkbox"], input[type="radio"], input[type="range"], input[type="file"] {
+    cursor: pointer;
+    }
+  :disabled, [aria-disabled="true"] {
+    cursor: not-allowed;
+    }
 }

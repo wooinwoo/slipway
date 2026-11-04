@@ -2,7 +2,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { RouterProvider, createRouter } from "@tanstack/react-router"
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
-import { z } from "zod"
 
 import "./index.css"
 import { RouteError, RouteNotFound, RoutePending } from "@/components/route-states"
@@ -12,9 +11,6 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import { isDemo } from "@/config"
 import { applyBrandHue, savedBrandHue } from "@/lib/brand"
 import { routeTree } from "./routeTree.gen"
-
-// No eval-compiled parsers, so a strict Content-Security-Policy (no 'unsafe-eval') stays quiet.
-z.config({ jitless: true })
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 30_000, refetchOnWindowFocus: false } },
@@ -67,4 +63,6 @@ enableMocks().then(() => {
       </ThemeProvider>
     </StrictMode>,
   )
+  // Tests and scripts wait for this: the app (and the mock backend, when used) is ready for requests.
+  document.documentElement.dataset.ready = "true"
 })

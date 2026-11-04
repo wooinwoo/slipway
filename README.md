@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <b>React · NestJS 셋업 코드와 화면 부품</b><br>
+  <b>React · Next · NestJS · Astro · Flutter 셋업 코드와 화면 부품</b><br>
   서버 없이 첫 화면을 띄우고, 같은 코드로 제품까지 갑니다.
 </p>
 
@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <a href="#빠른-시작">빠른 시작</a> ·
+  <a href="#사용법">사용법</a> ·
   <a href="#리소스-생성">리소스 생성</a> ·
   <a href="#품질-관문">품질 관문</a> ·
   <a href="#부품">부품</a> ·
@@ -35,18 +35,53 @@
 - **품질 관문.** 접근성·대비·포커스·커서·넘침 검사, 번들 예산, Lighthouse 점수, 보안 헤더·요청 제한·운영 모드 보호가 `pnpm verify`와 CI에 들어 있습니다.
 - **AI와 같이 쓰는 하네스.** `AGENTS.md`(Claude Code는 `CLAUDE.md`로 같은 파일을 읽음), `PRODUCT.md`·`DESIGN.md`(Impeccable 디자인 스킬과 같은 형식), `REQ-n` 요구사항 추적, `pnpm shots`.
 
-## 빠른 시작
+## 사용법
+
+Slipway는 도구 상자입니다. 앱은 Slipway 밖, 지정한 폴더에 독립 프로젝트로 만들어지고 각자 자기 레포가 됩니다.
+화면은 미리 만들어 두지 않습니다. 부품을 쓰는 사람이나 AI가 요구에 맞게 조립합니다.
+
+### 1. Claude Code 플러그인 (추천)
+
+```
+/plugin marketplace add wooinwoo/slipway
+/plugin install slipway@slipway
+```
+
+대화는 이렇게 흘러갑니다.
+
+```
+/slipway:new 필라테스 예약 앱. 회원은 수업을 예약하고 강사는 일정과 출석을 관리해
+    → 프리셋·디자인 도구·배포 대상을 묻고, 프로젝트 생성과 데이터 층(DB·API·Mock)까지
+/slipway:screen 강사용 오늘 수업 목록. 예약 인원과 출석 체크
+    → 부품으로 화면 조립, 캡처를 보고 고친 뒤 UI 검사 통과
+/slipway:resource 수업 후기. 별점과 내용
+/slipway:deploy Vercel에 웹, Railway에 API
+```
+
+| 명령 | 하는 일 |
+|---|---|
+| `/slipway:new` | 무엇을 만들지, 프리셋, 디자인 도구(Impeccable·k-style), 배포 대상을 먼저 묻고 프로젝트 생성부터 검증까지 |
+| `/slipway:screen` | 화면 하나를 `PRODUCT.md`·`DESIGN.md` 기준으로 부품 조립. 캡처 확인, `check:ui`, REQ와 E2E까지 |
+| `/slipway:resource` | 리소스의 데이터 층(테이블·마이그레이션·API·Mock·훅·테스트) 생성과 화면 연결 |
+| `/slipway:deploy` | 정적·컨테이너·VPS·분리 배포 중 골라 준비하고, 확인을 받은 뒤 올림 |
+
+### 2. 다른 AI 도구 (Codex, Cursor 등)
+
+Slipway를 받은 폴더에서 "Slipway로 ○○ 앱 만들어 줘"라고 합니다. 루트 `AGENTS.md`에 같은 흐름(먼저 묻기 → 옆 폴더에 생성 →
+데이터 층 → 화면 조립 → 검증)이 있고, 만들어진 프로젝트에서는 그 프로젝트의 `AGENTS.md`를 따릅니다.
+
+### 3. 직접
 
 ```sh
-node scripts/create-project.mjs ../my-app --name "주문 관리"
+node scripts/create-project.mjs ../my-app --name "주문 관리"          # --preset react·next·mono·nest·astro·flutter
 cd ../my-app
 corepack pnpm install --frozen-lockfile
+corepack pnpm gen resource orders 주문 --fields "title:text:주문명 amount:won:금액"
 corepack pnpm dev
 ```
 
-Node.js 22.23.4 이상, pnpm 10.33.2가 필요합니다. 실제 API와 DB까지 함께 시작하려면 `--preset mono`를 붙입니다.
-
-앱은 Slipway 바깥, 지정한 폴더에 만들어집니다. Slipway 저장소에서 AI에게 "앱 만들어 줘"라고 해도 같은 명령으로 옆 폴더에 만들고 그 안에서 작업합니다.
+화면은 `src/patterns/`의 부품으로 만들고(`CODEPACK.md`), `pnpm shots`로 캡처를 보고, `pnpm verify`로 검증합니다.
+Node.js 22.23.4 이상, pnpm 10.33.2가 필요합니다.
 
 ## 리소스 생성
 
@@ -80,17 +115,6 @@ corepack pnpm gen resource orders 주문 \
 웹 화면 작업에는 [Impeccable](https://impeccable.style) 스킬을, 모바일 소비자 앱의 초안에는 [k-style-ui-ux](https://github.com/vmc-inner-circle/k-style-ui-ux)를 권합니다.
 보안 범위와 공개 전 점검표는 [보안](docs/security.md)에 있습니다.
 
-## Claude Code 플러그인
-
-```
-/plugin marketplace add wooinwoo/slipway
-/plugin install slipway@slipway
-```
-
-`/slipway:new`는 만들 앱, 프리셋, 화면 초안 여부, 배포 대상을 먼저 묻고 프로젝트 생성, 데이터 층 생성, 부품 조립, 검증까지 진행합니다.
-모바일 소비자 앱이라면 [k-style-ui-ux](https://github.com/vmc-inner-circle/k-style-ui-ux)로 화면 초안을 먼저 만들도록 권합니다.
-`/slipway:resource`는 리소스를, `/slipway:deploy`는 배포를 맡습니다. Codex·Cursor는 `AGENTS.md`의 같은 흐름을 따릅니다.
-
 ## 부품
 
 생성한 프로젝트의 `src/patterns/`에 모두 들어 있습니다. 부품은 값과 콜백만 받고, API 호출과 화면 이동은 라우트가 정합니다.
@@ -119,8 +143,10 @@ node scripts/pack.mjs copy app-shell auth --to ../my-app/src
 | `--preset` | 구성 |
 |---|---|
 | `react` (기본) | Vite 8 · React 19 · TanStack Router · TanStack Query · Tailwind CSS 4 · shadcn · MSW |
+| `next` | Next.js 16 App Router · 같은 부품 23개·Mock·API 클라이언트 · 요청마다 CSP nonce. SSR·SEO가 필요한 앱 |
 | `mono` | 웹 + NestJS API + 공통 zod 스키마 패키지, Turborepo |
 | `nest` | NestJS 12 · Drizzle · PGlite 또는 Postgres · 이메일·게스트·카카오·네이버 인증 |
+| `flutter` | Flutter 웹뷰 셸. Slipway 웹 앱을 Android·iOS 앱으로: 뒤로 가기, 진행 표시, 오프라인 화면, 외부 링크, 파일 업로드, `window.SlipwayApp` 브리지(공유·진동) |
 | `astro` | Astro 7 · 같은 테마 토큰 · SEO(canonical·Open Graph·sitemap·robots) · 해시 CSP · React 아일랜드. 소개·랜딩·문서 사이트 |
 
 ## 문서

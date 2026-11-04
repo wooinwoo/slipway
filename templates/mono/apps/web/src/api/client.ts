@@ -1,6 +1,12 @@
 // One fetch wrapper for every endpoint. With VITE_API_URL unset, requests go to the
 // in-browser mock backend (src/mocks); set it and the same calls hit a real server.
 // "/" means same origin (a dev proxy or one domain for both); no trailing slash either way.
+import { z } from "zod"
+
+// Every schema module imports this client, so this runs before any parse: no eval-compiled parsers,
+// so a strict Content-Security-Policy (no 'unsafe-eval') stays quiet.
+z.config({ jitless: true })
+
 export const BASE_URL = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "")
 const TOKEN_KEY = "slipway.token"
 

@@ -84,6 +84,8 @@ export function ThemeProvider({
   ...props
 }: ThemeProviderProps) {
   const [theme, setThemeState] = React.useState<Theme>(() => {
+    // Server rendering (the Next preset) has no storage; the inline theme script covers first paint.
+    if (typeof window === "undefined") return defaultTheme
     const storedTheme = localStorage.getItem(storageKey)
     if (isTheme(storedTheme)) {
       return storedTheme

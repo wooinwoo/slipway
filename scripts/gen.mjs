@@ -201,7 +201,7 @@ function genShared(resource) {
 // ---- web
 
 function genWeb(resource) {
-  const { plural, singular, label, fields } = resource
+  const { plural, singular, label } = resource
   const Single = cap(singular)
   const Plural = cap(plural)
   const src = join(web, "src")
@@ -342,7 +342,7 @@ function apiE2eSource({ plural, label, fields }) {
 // here and by the real API in the monorepo. Screen tests belong next to the screens you build.
 test(${q(`${label} API: 로그인한 사용자 것만 저장·조회·수정·삭제한다`)}, async ({ page }) => {
   await page.goto("/")
-  await expect(page).toHaveTitle(/.+ · .+/)
+  await expect(page.locator("html")).toHaveAttribute("data-ready", "true")
   const result = await page.evaluate(async (valid) => {
     const call = async <T,>(path: string, init: RequestInit = {}, token?: string) => {
       const response = await fetch(path, {

@@ -13,7 +13,7 @@ test("an unknown address shows the not-found state", async ({ page }) => {
 
 test("the API answers the auth contract", async ({ page }) => {
   await page.goto("/")
-  await expect(page).toHaveTitle(/.+ · .+/)
+  await expect(page.locator("html")).toHaveAttribute("data-ready", "true")
   // Same-origin request: the mock backend answers it here, the real API in the monorepo.
   const session = await page.evaluate(async () => {
     const response = await fetch("/api/auth/guest", { method: "POST" })

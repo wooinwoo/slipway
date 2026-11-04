@@ -1,6 +1,6 @@
 ---
 name: new
-description: Slipway로 새 앱이나 사이트를 만든다. 프리셋(react·mono·nest·astro), 화면 초안(k-style-ui-ux), 배포 대상을 먼저 묻고 프로젝트 생성, 리소스 데이터 층(DB·API·Mock), 부품으로 화면 조립, 검증까지 진행한다. 사용자가 "Slipway로 앱 만들어줘", "해커톤용으로 하나 띄워줘", PRD·기획서를 주며 앱을 만들라고 할 때 트리거.
+description: Slipway로 새 앱이나 사이트를 만든다. 프리셋(react·next·mono·nest·astro·flutter), 화면 초안(k-style-ui-ux), 배포 대상을 먼저 묻고 프로젝트 생성, 리소스 데이터 층(DB·API·Mock), 부품으로 화면 조립, 검증까지 진행한다. 사용자가 "Slipway로 앱 만들어줘", "해커톤용으로 하나 띄워줘", PRD·기획서를 주며 앱을 만들라고 할 때 트리거.
 ---
 
 # slipway:new
@@ -15,9 +15,11 @@ description: Slipway로 새 앱이나 사이트를 만든다. 프리셋(react·m
 1. **무엇을 만드는가**: 한 줄 설명이나 PRD. 없으면 "어떤 앱인지 한두 줄로 알려 주세요"를 먼저 묻는다.
 2. **프리셋**
    - `react`(추천: 빠른 시연): 서버 없이 브라우저 Mock으로 바로 동작
+   - `next`: React 대신 Next.js App Router. SSR·SEO가 필요하거나 Vercel 위주일 때
    - `mono`: 웹 + NestJS API + DB. 실제 저장·로그인이 필요할 때
    - `nest`: API만
    - `astro`: 소개·랜딩·문서 같은 정적 사이트. 리소스 생성기 없음
+   - `flutter`: 만든 웹 앱을 Android·iOS 앱으로 감싸는 셸. 웹 앱 프리셋과 함께 만든다
 3. **디자인 도구**
    - Impeccable(추천: 웹 화면). 비평·감사·다듬기, 프로젝트의 `PRODUCT.md`·`DESIGN.md`를 그대로 읽는다
    - k-style-ui-ux로 모바일 화면 초안 먼저: 소비자용 모바일 앱처럼 흐름과 미감이 중요할 때
@@ -64,7 +66,7 @@ cd <폴더> && corepack pnpm install --frozen-lockfile
    corepack pnpm gen resource orders 주문 --fields "title:text:주문명 amount:won:금액 status:enum(접수|배송중|완료):상태 dueAt?:date:납기 memo?:textarea:메모"
    ```
    타입: text, textarea, email, phone, number, won, date, enum(a|b). 이름 뒤 `?`는 선택 입력.
-3. 화면은 `src/patterns/`의 부품으로 직접 조립한다. 로그인·앱 틀은 `CODEPACK.md`의 "로그인과 앱 틀 조립",
+3. 화면은 `/slipway:screen`의 순서로 하나씩 `src/patterns/`의 부품으로 조립한다. 로그인·앱 틀은 `CODEPACK.md`의 "로그인과 앱 틀 조립",
    목록·상세·폼은 `AdvancedTable`·`FilterBar`·`DetailPanel`·`RecordForm`, 대시보드는 `MetricGrid`·`ChartPanel`.
    요구사항에 맞는 구성과 배치를 정하는 것이 이 단계의 일이다. 요구사항마다 `docs/requirements.md`에 `REQ-n`을 추가한다.
 4. `src/config.ts`의 이름·소개, `src/index.css`의 브랜드 색을 맞춘다.

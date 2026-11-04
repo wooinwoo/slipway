@@ -81,7 +81,7 @@ test("never overwrites an existing directory or file", async t => {
 
 test("rejects invalid presets and package names before writing", async t => {
   const root = await sandbox(t)
-  await assert.rejects(createProject(join(root, "valid"), { preset: "next" }), /프리셋/)
+  await assert.rejects(createProject(join(root, "valid"), { preset: "vue" }), /프리셋/)
   await assert.rejects(createProject(join(root, "Invalid Name")), /폴더 이름/)
   assert.deepEqual(await readdir(root), [])
 })
@@ -105,4 +105,27 @@ test("creates a static astro site without the API-side generator and docs", asyn
   const manifest = JSON.parse(await readFile(join(target, "package.json"), "utf8"))
   assert.equal(manifest.scripts.gen, undefined)
   assert.ok(!files.includes("dist") && !files.includes(".astro") && !files.includes("node_modules"))
+})
+
+test("creates a next app with the shared parts, the generator and no screens", async t => {
+  const root = await sandbox(t)
+  const target = join(root, "next-app")
+  await createProject(target, { preset: "next", name: "넥스트 앱" })
+  assert.match(await readFile(join(target, "src/config.ts"), "utf8"), /name: "넥스트 앱"/)
+  assert.equal(JSON.parse(await readFile(join(target, "package.json"), "utf8")).scripts.gen, "node scripts/gen.mjs")
+  assert.deepEqual((await readdir(join(target, "src/app"))).sort(), ["auth", "error.tsx", "globals.css", "layout.tsx", "loading.tsx", "not-found.tsx", "page.tsx", "providers.tsx"])
+  assert.ok((await readdir(join(target, "src/patterns"))).includes("app-shell.tsx"))
+  assert.ok(!(await readdir(target)).includes(".next"))
+})
+
+test("creates a flutter shell named for the app, without build output", async t => {
+  const root = await sandbox(t)
+  const target = join(root, "shop-app")
+  await createProject(target, { preset: "flutter", name: `가게 "앱" 's $x` })
+  assert.ok((await readFile(join(target, "lib/config.dart"), "utf8")).includes(`static const name = '가게 "앱" \\'s \\$x';`))
+  assert.ok((await readFile(join(target, "android/app/src/main/AndroidManifest.xml"), "utf8")).includes(`android:label="가게 &quot;앱&quot; 's $x"`))
+  assert.ok((await readFile(join(target, "ios/Runner/Info.plist"), "utf8")).includes(`<string>가게 "앱" 's $x</string>`))
+  const files = await readdir(target)
+  for (const dir of ["build", ".dart_tool", "package.json"]) assert.ok(!files.includes(dir), dir)
+  assert.match(await readFile(join(target, "README.md"), "utf8"), /flutter run --dart-define=APP_URL/)
 })

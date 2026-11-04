@@ -50,7 +50,7 @@ try {
       // Sign in once per context so routes under a login guard render their real screen.
       const start = await context.newPage()
       await start.goto(base)
-      await start.waitForLoadState("networkidle")
+      await start.locator('html[data-ready="true"]').waitFor()
       const token = await start.evaluate(async () => {
         const response = await fetch("/api/auth/guest", { method: "POST" }).catch(() => null)
         const body = response?.ok ? await response.json() : null
