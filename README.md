@@ -43,6 +43,14 @@ cd ../my-app && corepack pnpm install --frozen-lockfile && corepack pnpm dev
 
 ## 화면 패턴
 
+<img src="docs/images/patterns-overview.png" alt="metrics, chart, timeline 패턴">
+
+<img src="docs/images/patterns-list.png" alt="filters, advanced-table 패턴">
+
+<img src="docs/images/patterns-board-dark.png" alt="board 패턴, 다크 모드">
+
+<sub>패턴만 조합한 화면입니다. 데이터는 예시이고, 원본은 <code>templates/react/fixtures/gallery/</code>에 있습니다.</sub>
+
 ```sh
 node scripts/pack.mjs list
 node scripts/pack.mjs show table form
