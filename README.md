@@ -18,6 +18,7 @@
 <p align="center">
   <a href="#빠른-시작">빠른 시작</a> ·
   <a href="#리소스-생성">리소스 생성</a> ·
+  <a href="#품질-관문">품질 관문</a> ·
   <a href="#부품">부품</a> ·
   <a href="#프리셋">프리셋</a> ·
   <a href="docs/codepack.md">문서</a>
@@ -31,7 +32,8 @@
 - **화면은 부품으로.** 템플릿에 완성된 화면은 없습니다. 앱 틀, 로그인, 표, 필터, 차트, 보드, 폼 등 23개 부품으로 조립합니다.
 - **한국어 기본값.** 카카오·네이버 로그인, 전화번호·사업자번호·금액·주소 입력, 한국어 검증 메시지.
 - **어디든 배포.** 한 이미지로(`Dockerfile`), 웹·API 따로(`Dockerfile.api` + 정적 호스팅), VPS 한 대로(`compose.yaml`). AWS, Cloudflare, Vercel, Railway, iwinv 어디든 올라갑니다.
-- **AI와 같이 쓰는 하네스.** `AGENTS.md`(Claude Code는 `CLAUDE.md`로 같은 파일을 읽음), `REQ-n` 요구사항 추적, `pnpm verify`, `pnpm shots`.
+- **품질 관문.** 접근성·대비·포커스·커서·넘침 검사, 번들 예산, Lighthouse 점수, 보안 헤더·요청 제한·운영 모드 보호가 `pnpm verify`와 CI에 들어 있습니다.
+- **AI와 같이 쓰는 하네스.** `AGENTS.md`(Claude Code는 `CLAUDE.md`로 같은 파일을 읽음), `PRODUCT.md`·`DESIGN.md`(Impeccable 디자인 스킬과 같은 형식), `REQ-n` 요구사항 추적, `pnpm shots`.
 
 ## 빠른 시작
 
@@ -61,6 +63,22 @@ corepack pnpm gen resource orders 주문 \
 | 스키마 | zod 규칙 한 벌. mono는 `packages/shared`에 두고 웹과 API가 같이 씁니다 |
 | DB·API | Drizzle 테이블과 마이그레이션, 로그인한 사용자 데이터만 다루는 CRUD, 계약 테스트 |
 | 웹 | 조회·저장·삭제 훅(TanStack Query), Mock 핸들러, Mock과 실제 API에 같은 요청을 보내는 계약 테스트 |
+
+## 품질 관문
+
+생성한 프로젝트의 `pnpm verify`와 GitHub Actions(`.github/workflows/verify.yml`)가 돌립니다. 검사를 통과하지 못하면 실패합니다.
+
+| 관문 | 명령 | 기준 |
+|---|---|---|
+| 디자인 | `pnpm check:ui` | 모든 라우트 × 데스크톱·모바일 × 라이트·다크. axe(WCAG 2.1 AA, 대비 포함), 가로 넘침, 클릭 요소의 포인터 커서, Tab 포커스 표시, 콘솔 오류 |
+| 화면 확인 | `pnpm shots` | 같은 조합의 캡처를 `.shots/`에 저장. AI가 직접 보고 고칩니다 |
+| 성능 | `pnpm check:bundle` | 첫 화면 JS 200KB·CSS 60KB, 지연 로드 파일 250KB(gzip) |
+| 웹 점수 | `pnpm check:score` | Lighthouse 성능 90, 접근성·권장 사항·SEO 95. 크롬이 필요해 CI에서 잽니다 |
+| 보안 | `pnpm verify`, `pnpm audit:deps` | CSP·보안 헤더, 로그인 요청 제한, 운영 모드에서 데모 계정·게스트 꺼짐, 의존성 취약점 |
+
+디자인 기준은 프로젝트의 `DESIGN.md`(토큰·타이포·레이아웃·부품 규칙)와 `PRODUCT.md`(사용자·목적·톤)입니다.
+웹 화면 작업에는 [Impeccable](https://impeccable.style) 스킬을, 모바일 소비자 앱의 초안에는 [k-style-ui-ux](https://github.com/vmc-inner-circle/k-style-ui-ux)를 권합니다.
+보안 범위와 공개 전 점검표는 [보안](docs/security.md)에 있습니다.
 
 ## Claude Code 플러그인
 
@@ -109,6 +127,7 @@ node scripts/pack.mjs copy app-shell auth --to ../my-app/src
 - [부품 사용법](docs/codepack.md): 부품 규약, 로그인·앱 틀 조립, 조합 예시
 - [개발·검증 기준](docs/feature-workflow.md): 요청 하나를 요구사항부터 E2E까지 끝내는 순서
 - [배포](docs/deploy.md): 정적 호스팅, 컨테이너, VPS 한 대
+- [보안](docs/security.md): 기본으로 막는 것, 공개 전 점검표
 - [제품 기준](PRODUCT.md): Slipway가 지키는 방향
 
 <details>

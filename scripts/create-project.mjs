@@ -55,6 +55,13 @@ export async function createProject(destination, { preset = "react", name, tagli
       config = config.replace(/name: "Slipway"/, () => `name: ${JSON.stringify(name ?? slug)}`)
       if (tagline !== undefined) config = config.replace(/tagline: "서비스 한 줄 소개"/, () => `tagline: ${JSON.stringify(tagline)}`)
       await writeFile(configPath, config)
+      // The HTML shell shows the same name before the app runs (tab title, link previews).
+      const htmlPath = join(stage, preset === "mono" ? "apps/web/index.html" : "index.html")
+      const escape = value => value.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c])
+      let html = await readFile(htmlPath, "utf8")
+      html = html.replace("<title>Slipway</title>", () => `<title>${escape(name ?? slug)}</title>`)
+      if (tagline !== undefined) html = html.replace('content="서비스 한 줄 소개"', () => `content="${escape(tagline)}"`)
+      await writeFile(htmlPath, html)
     }
     if (preset === "mono") {
       await writeFile(join(stage, "apps/web/.env"), "# Same origin; Vite proxies /api to the local API.\nVITE_API_URL=/\n")
@@ -63,9 +70,11 @@ export async function createProject(destination, { preset = "react", name, tagli
     await cp(new URL("../docs/feature-workflow.md", import.meta.url), join(stage, "FEATURE-WORKFLOW.md"))
     await cp(new URL("../docs/codepack.md", import.meta.url), join(stage, "CODEPACK.md"))
     await cp(new URL("../docs/deploy.md", import.meta.url), join(stage, "DEPLOY.md"))
+    await cp(new URL("../docs/security.md", import.meta.url), join(stage, "SECURITY.md"))
     await mkdir(join(stage, "scripts"), { recursive: true })
     await cp(new URL("./gen.mjs", import.meta.url), join(stage, "scripts/gen.mjs"))
     await writeFile(join(stage, "README.md"), projectReadme(slug, preset, name ?? slug))
+    await writeFile(join(stage, "PRODUCT.md"), productBrief(preset, name ?? slug, tagline))
     // The target was checked above; recheck just before the atomic publish as well.
     try { await lstat(target); throw new Error("생성 도중 대상 경로가 만들어졌습니다. 다른 경로를 사용하세요.") }
     catch (error) { if (error.code !== "ENOENT") throw error }
@@ -76,6 +85,61 @@ export async function createProject(destination, { preset = "react", name, tagli
     if (dirname(stage) !== parent || !basename(stage).startsWith(".slipway-")) throw new Error("Invalid staging path")
     await rm(stage, { recursive: true, force: true })
   }
+}
+
+/** Product truth for whoever builds the screens (people, or AI with the Impeccable design skill). */
+function productBrief(preset, name, tagline) {
+  const todo = "(작성 필요)"
+  return `# Product
+
+${name}${tagline ? `: ${tagline}` : ""}
+
+화면을 만들기 전에 채웁니다. 화면 구성·문구·톤은 이 파일과 디자인 기준(${preset === "mono" ? "\`apps/web/DESIGN.md\`" : preset === "react" ? "\`DESIGN.md\`" : "웹 앱의 DESIGN.md"})을 따릅니다.
+
+## Platform
+
+${preset === "nest" ? "api" : "web"}
+
+## Stack
+
+${{ react: "React 19, TanStack Router·Query, Tailwind CSS 4, shadcn, Slipway 부품. Mock API로 시작", mono: "웹(React 19, TanStack, Tailwind CSS 4, shadcn, Slipway 부품) + NestJS API + Postgres(Drizzle)", nest: "NestJS, Drizzle, Postgres 또는 PGlite" }[preset]}
+
+## Users
+
+누가, 어떤 상황에서 쓰는가. ${todo}
+
+## Product Purpose
+
+무엇을 해결하는가. 첫 화면에서 사용자가 해야 할 일 하나. ${todo}
+
+## Positioning
+
+비슷한 서비스와 다른 점. ${todo}
+
+## Operating Context
+
+어디서 보는가(사무실 PC, 현장 휴대폰, 발표 화면), 하루에 얼마나 쓰는가. ${todo}
+
+## Capabilities and Constraints
+
+꼭 되어야 하는 것과 이번에 하지 않는 것. 요구사항 목록은 \`docs/requirements.md\`(REQ-n). ${todo}
+
+## Brand Commitments
+
+브랜드 색(\`--brand-h\`), 말투(합니다체·해요체), 피해야 할 표현. ${todo}
+
+## Evidence on Hand
+
+받은 자료: PRD, 화면 초안(k-style-ui-ux), 참고 서비스, 로고. ${todo}
+
+## Product Principles
+
+결정이 갈릴 때의 기준 세 가지. ${todo}
+
+## Accessibility & Inclusion
+
+WCAG 2.1 AA(대비, 키보드 포커스, 이름 있는 버튼). \`pnpm check:ui\`가 자동으로 검사합니다. 그 밖의 요구 ${todo}
+`
 }
 
 function projectReadme(slug, preset, name) {

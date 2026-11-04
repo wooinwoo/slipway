@@ -31,15 +31,17 @@ the same demo account as the web mock (demo@slipway.dev / demo1234).
 - Inject with an explicit token, `@Inject(Service)`, not by type alone.
 - Every route that touches user data sits behind `@UseGuards(AuthGuard)`.
 - Passwords and tokens go through `src/common/crypto.ts` only. Never log a token.
+- Security defaults live in `src/config.ts` (production mode), `src/setup.ts` (headers, CSP) and
+  `app.module.ts` (rate limits); `test/security.e2e-spec.ts` covers them. Loosen one only with a
+  reason in the code, and update SECURITY.md.
 - Social identity is the provider plus provider ID. Never merge accounts just because emails match.
 - Each guest receives a separate account. New domain data must be scoped to the current user.
 - Imports use the `.js` suffix (ESM, `nodenext`).
 
 ## Adding a resource
 
-In a project made by Slipway, `pnpm gen resource <plural> <한글 이름> --fields "..."` writes all of
-this at once (run `node scripts/gen.mjs` for the field syntax). The steps describe what it produces,
-for editing the result or doing it by hand.
+In a project made by Slipway, `pnpm gen resource <plural> <한글 이름> --fields "..."` writes the data
+layer at once (run `node scripts/gen.mjs` for the field syntax). It never writes screens.
 
 1. Add the zod schema to `src/contracts/<resource>.ts` (Korean validators are in `src/contracts/kr.ts`).
 2. Add the table to `src/db/schema.ts`, then `pnpm db:generate`.

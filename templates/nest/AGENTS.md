@@ -32,6 +32,9 @@ the same demo account as the web mock (demo@slipway.dev / demo1234).
 - Inject with an explicit token, `@Inject(Service)`, not by type alone.
 - Every route that touches user data sits behind `@UseGuards(AuthGuard)`.
 - Passwords and tokens go through `src/common/crypto.ts` only. Never log a token.
+- Security defaults live in `src/config.ts` (production mode), `src/setup.ts` (headers, CSP) and
+  `app.module.ts` (rate limits); `test/security.e2e-spec.ts` covers them. Loosen one only with a
+  reason in the code, and update SECURITY.md.
 - Social identity is the provider plus provider ID. Never merge accounts just because emails match.
 - Each guest receives a separate account. New domain data must be scoped to the current user.
 - Imports use the `.js` suffix (ESM, `nodenext`).

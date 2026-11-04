@@ -8,7 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Slider } from "@/components/ui/slider"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { applyBrandHue, savedBrandHue } from "@/lib/brand"
 import { cn } from "@/lib/utils"
@@ -75,13 +74,15 @@ export function ThemeSettings({ defaultHue = 262 }: { defaultHue?: number }) {
               />
             ))}
           </div>
-          <Slider
+          <input
+            type="range"
             min={0}
             max={360}
             step={1}
-            value={[hue]}
-            onValueChange={([value]) => pickHue(value)}
+            value={hue}
+            onChange={(event) => pickHue(Number(event.target.value))}
             aria-label="브랜드 색상"
+            className="w-full accent-primary"
           />
         </div>
       </CardContent>

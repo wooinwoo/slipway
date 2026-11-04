@@ -13,7 +13,10 @@ template they are ordinary code; edit them freely.
 - `pnpm dev` builds `packages/shared`, then runs it in watch mode, the API on :3000, and the web
   app on :5173. The web app proxies `/api` to the API, so there is no CORS setup.
 - `pnpm dev:demo` runs only the web app, on its in-browser mock backend.
-- `pnpm verify` runs every package's checks. The web e2e suite runs against a fresh in-memory API.
+- `pnpm verify` runs every package's checks. The web e2e suite runs against a fresh in-memory API and
+  against the mock; UI checks and the bundle budget run on the web build (see `apps/web/AGENTS.md`).
+- `pnpm --filter @slipway/web check:score` runs Lighthouse (needs Chrome; CI runs it). `pnpm audit:deps`
+  checks dependencies.
 
 ## Where a change goes
 

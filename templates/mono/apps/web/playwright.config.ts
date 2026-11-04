@@ -26,7 +26,7 @@ export default defineConfig({
     {
       command: "pnpm --dir ../api start",
       url: "http://localhost:3017/api/health",
-      env: { PORT: "3017", DATABASE_URL: "memory", DEMO: "true", ALLOW_GUEST: "true" },
+      env: { PORT: "3017", DATABASE_URL: "memory", DEMO: "true", ALLOW_GUEST: "true", AUTH_RATE_LIMIT: "10000", RATE_LIMIT: "10000" },
       reuseExistingServer: false,
     },
     {

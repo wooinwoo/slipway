@@ -13,8 +13,10 @@ The full flow is `plugin/skills/new/SKILL.md` (the `/slipway:new` command). In s
    (`<name>`: lowercase letters, digits and hyphens), then `corepack pnpm install --frozen-lockfile`.
 3. Generate each resource's data layer: `corepack pnpm gen resource <plural> <한글 이름> --fields "..."`.
    It writes the schema, table and migration, API, mock, query hooks and contract tests. No screens.
-4. Build every screen, the login and app frame included, from `src/patterns/` (CODEPACK.md recipes).
-   Screen design is this step's job. Then `corepack pnpm verify` and look at `pnpm shots`.
+4. Fill `PRODUCT.md` with the user, then build every screen, the login and app frame included, from
+   `src/patterns/` (CODEPACK.md recipes) following `DESIGN.md`. Screen design is this step's job; use the
+   Impeccable skill for web design work when available. Then `corepack pnpm verify` (UI, bundle, e2e) and
+   look at `pnpm shots`. CI adds the Lighthouse score.
 
 Follow the generated project's AGENTS.md from step 2 on.
 

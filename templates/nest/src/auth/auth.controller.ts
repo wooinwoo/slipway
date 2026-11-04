@@ -11,12 +11,13 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import type { Request, Response } from 'express';
 import { randomBytes } from 'node:crypto';
 
 import { loginSchema, signupSchema, type User } from '../contracts/auth.js';
 import { fail, parse } from '../common/http.js';
-import { webOrigins } from '../config.js';
+import { config, webOrigins } from '../config.js';
 import { AuthGuard, CurrentUser } from './auth.guard.js';
 import { AuthService } from './auth.service.js';
 import {
@@ -28,6 +29,9 @@ import {
 } from './oauth.js';
 
 const STATE_COOKIE = 'slipway_oauth_state';
+// Password guessing and account creation get a tighter per-IP limit than the rest of the API.
+const authLimit = () =>
+  Throttle({ default: { limit: config.AUTH_RATE_LIMIT, ttl: 60_000 } });
 
 function socialProvider(value: string): SocialProvider {
   const provider = socialProviders.find((p) => p === value);
@@ -48,18 +52,21 @@ export class AuthController {
   constructor(@Inject(AuthService) private readonly auth: AuthService) {}
 
   @Post('login')
+  @authLimit()
   @HttpCode(200)
   login(@Body() body: unknown) {
     return this.auth.login(parse(loginSchema, body));
   }
 
   @Post('signup')
+  @authLimit()
   @HttpCode(200)
   signup(@Body() body: unknown) {
     return this.auth.signup(parse(signupSchema, body));
   }
 
   @Post('guest')
+  @authLimit()
   @HttpCode(200)
   guest() {
     return this.auth.guest();

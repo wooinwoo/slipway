@@ -11,7 +11,8 @@
     "test": "turbo test test:e2e",
     "verify": "turbo verify",
     "build:web": "turbo build --filter=@slipway/web",
-    "build:api": "turbo build --filter=@slipway/api"
+    "build:api": "turbo build --filter=@slipway/api",
+    "audit:deps": "pnpm audit --prod --audit-level high"
   },
   "devDependencies": {
     "turbo": "^2.11.10"

@@ -17,9 +17,10 @@ description: Slipway로 새 앱을 만든다. 프리셋(react·mono·nest), 화�
    - `react`(추천: 빠른 시연): 서버 없이 브라우저 Mock으로 바로 동작
    - `mono`: 웹 + NestJS API + DB. 실제 저장·로그인이 필요할 때
    - `nest`: API만
-3. **화면 초안**
-   - 바로 만들기(추천: 관리·업무형 화면)
+3. **디자인 도구**
+   - Impeccable(추천: 웹 화면). 비평·감사·다듬기, 프로젝트의 `PRODUCT.md`·`DESIGN.md`를 그대로 읽는다
    - k-style-ui-ux로 모바일 화면 초안 먼저: 소비자용 모바일 앱처럼 흐름과 미감이 중요할 때
+   - 둘 다 없이 Slipway 기준(`DESIGN.md`)만으로
 4. **배포**: 나중에(추천) / 정적 호스팅(Vercel·Cloudflare·Netlify) / 컨테이너(Railway·Fly.io·AWS·Cloud Run) / VPS 한 대(iwinv·EC2)
 
 ## 2. Slipway 소스 준비
@@ -39,7 +40,11 @@ cd <폴더> && corepack pnpm install --frozen-lockfile
 
 폴더 이름은 영문 소문자·숫자·하이픈. 이후 작업은 그 폴더의 `AGENTS.md`를 따른다.
 
-## 4. 화면 초안 (골랐을 때만)
+## 4. 제품 정보와 디자인 도구
+
+- 생성된 `PRODUCT.md`의 빈칸(사용자, 목적, 맥락, 톤)을 1단계 답으로 채우고, 모자라면 한 번 더 묻는다.
+- Impeccable을 골랐고 설치돼 있지 않으면 설치 방법(impeccable.style)을 안내한다. 설치돼 있으면 화면을 만든 뒤
+  `/impeccable critique`·`audit`·`polish`로 다듬는다.
 
 - k-style-ui-ux 플러그인이 있으면 PRD로 `/k-style-ui-ux:go <PRD 파일>`을 실행한다. 결과는 `out/index.html`.
 - 없으면 설치 명령을 알려 주고, 설치할지 이번엔 건너뛸지 묻는다.
@@ -68,10 +73,11 @@ nest 프리셋도 `corepack pnpm gen resource ...`로 테이블·마이그레이
 ## 6. 검증
 
 ```sh
-corepack pnpm verify
+corepack pnpm verify                # 타입·린트·테스트·요구사항·번들 예산·E2E·UI 검사(접근성·대비·넘침·커서·포커스)
 corepack pnpm shots / /<리소스>     # react·mono 웹. .shots/의 캡처를 직접 열어 본다
 ```
 
+웹 점수(Lighthouse)는 CI(`.github/workflows/verify.yml`)가 잰다. 크롬이 되는 환경이면 `pnpm check:score`로 직접 잰다.
 실패하면 원인을 고친다. 검사를 약하게 바꾸지 않는다. 캡처를 보기 전에는 화면 품질을 보고하지 않는다.
 
 ## 7. 배포 (골랐을 때만)

@@ -13,11 +13,15 @@
     "test": "vitest run",
     "e2e": "playwright test",
     "check:reqs": "node scripts/check-reqs.mjs",
-    "verify": "pnpm typecheck && pnpm lint && pnpm test && pnpm check:reqs && pnpm build && pnpm e2e",
-    "shots": "node scripts/shots.mjs",
+    "verify": "pnpm typecheck && pnpm lint && pnpm test && pnpm check:reqs && pnpm build && pnpm check:bundle && pnpm e2e && pnpm check:ui",
+    "shots": "pnpm build && node scripts/ui.mjs shots",
     "parts:typecheck": "tsc -p tsconfig.parts.json",
     "parts:test": "playwright test --config playwright.parts.config.ts",
-    "parts:verify": "pnpm parts:typecheck && pnpm parts:test"
+    "parts:verify": "pnpm parts:typecheck && pnpm parts:test",
+    "audit:deps": "pnpm audit --prod --audit-level high",
+    "check:bundle": "node scripts/check-bundle.mjs",
+    "check:ui": "node scripts/ui.mjs check",
+    "check:score": "npx --yes @lhci/cli@0.16.0 autorun --config=lighthouserc.cjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
@@ -50,6 +54,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@eslint/js": "^10",
     "@playwright/test": "^1.64.1",
     "@tanstack/router-cli": "^1.167.46",

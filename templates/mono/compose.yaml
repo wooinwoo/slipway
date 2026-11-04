@@ -8,8 +8,9 @@ services:
       DATABASE_URL: postgres://slipway:${POSTGRES_PASSWORD:-slipway}@db:5432/slipway
       WEB_URL: ${PUBLIC_URL:-http://localhost}
       API_URL: ${PUBLIC_URL:-http://localhost}
-      DEMO: ${DEMO:-true}
-      ALLOW_GUEST: ${ALLOW_GUEST:-true}
+      # Off for a real service. DEMO=true ALLOW_GUEST=true docker compose up -d for a public demo.
+      DEMO: ${DEMO:-false}
+      ALLOW_GUEST: ${ALLOW_GUEST:-false}
     depends_on:
       db:
         condition: service_healthy

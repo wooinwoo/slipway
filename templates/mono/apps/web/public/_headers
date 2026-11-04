@@ -1,0 +1,6 @@
+# Netlify and Cloudflare Pages. connect-src allows any https API; narrow it to your API origin.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://t1.daumcdn.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https:; frame-src https://postcode.map.daum.net; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Cross-Origin-Opener-Policy: same-origin-allow-popups

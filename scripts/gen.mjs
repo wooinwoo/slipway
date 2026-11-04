@@ -213,13 +213,15 @@ function genWeb(resource) {
   write(join(src, `api/${plural}.ts`), `import { queryOptions, useMutation, useQueryClient } from "@tanstack/react-query"
 ${schema.imports.join("\n")}
 
-import { api } from "./client"
+import { api, type Page } from "./client"
 
 ${schema.body}
-export const ${plural}Query = queryOptions({
-  queryKey: [${q(plural)}],
-  queryFn: () => api<${Single}[]>("/api/${plural}"),
-})
+/** One page, newest first. The API caps \`pageSize\` at 100. */
+export const ${plural}Query = (page = 1, pageSize = 20) =>
+  queryOptions({
+    queryKey: [${q(plural)}, { page, pageSize }],
+    queryFn: () => api<Page<${Single}>>(\`/api/${plural}?page=\${page}&pageSize=\${pageSize}\`),
+  })
 
 /** Creates when \`id\` is missing, updates otherwise. */
 export function useSave${Single}() {
@@ -229,7 +231,7 @@ export function useSave${Single}() {
       id
         ? api<${Single}>(\`/api/${plural}/\${id}\`, { method: "PATCH", json: input })
         : api<${Single}>("/api/${plural}", { method: "POST", json: input }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ${plural}Query.queryKey }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: [${q(plural)}] }),
   })
 }
 
@@ -237,7 +239,7 @@ export function useDelete${Plural}() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (ids: string[]) => Promise.all(ids.map((id) => api<void>(\`/api/${plural}/\${id}\`, { method: "DELETE" }))),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ${plural}Query.queryKey }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: [${q(plural)}] }),
   })
 }
 `)
@@ -257,7 +259,11 @@ export const ${singular}Handlers = [
   http.get(\`\${API}/${plural}\`, ({ request }) => {
     const user = currentUser(request)
     if (user instanceof Response) return user
-    return HttpResponse.json(mine(user.id).toSorted((a, b) => b.createdAt.localeCompare(a.createdAt)))
+    const url = new URL(request.url)
+    const page = Math.max(1, Math.floor(Number(url.searchParams.get("page"))) || 1)
+    const pageSize = Math.min(100, Math.max(1, Math.floor(Number(url.searchParams.get("pageSize"))) || 20))
+    const rows = mine(user.id).toSorted((a, b) => b.createdAt.localeCompare(a.createdAt))
+    return HttpResponse.json({ items: rows.slice((page - 1) * pageSize, page * pageSize), total: rows.length, page, pageSize })
   }),
 
   http.get(\`\${API}/${plural}/:id\`, ({ request, params }) => {
@@ -353,7 +359,7 @@ test(${q(`${label} API: 로그인한 사용자 것만 저장·조회·수정·�
     return {
       signedOut: (await call("/api/${plural}")).status,
       created: created.status,
-      list: (await call<unknown[]>("/api/${plural}", {}, owner)).body.length,
+      list: (await call<{ items: unknown[]; total: number }>("/api/${plural}?pageSize=1", {}, owner)).body,
       hidden: (await call(\`/api/${plural}/\${id}\`, {}, other)).status,
       invalid: await call<{ fields: Record<string, string> }>("/api/${plural}", { method: "POST", body: JSON.stringify({ ...valid, ${required.name}: ${required.type === "won" || required.type === "number" ? '"abc"' : '""'} }) }, owner),
       updated: (await call(\`/api/${plural}/\${id}\`, { method: "PATCH", body: JSON.stringify(valid) }, owner)).status,
@@ -361,7 +367,8 @@ test(${q(`${label} API: 로그인한 사용자 것만 저장·조회·수정·�
       gone: (await call(\`/api/${plural}/\${id}\`, {}, owner)).status,
     }
   }, ${JSON.stringify(valid)})
-  expect(result).toMatchObject({ signedOut: 401, created: 201, list: 1, hidden: 404, updated: 200, deleted: 204, gone: 404 })
+  expect(result).toMatchObject({ signedOut: 401, created: 201, hidden: 404, updated: 200, deleted: 204, gone: 404 })
+  expect(result.list).toMatchObject({ total: 1, items: [expect.objectContaining({ id: expect.any(String) })] })
   expect(result.invalid.status).toBe(400)
   expect(result.invalid.body.fields.${required.name}).toEqual(expect.any(String))
 })
@@ -393,7 +400,7 @@ function genApi(resource) {
     }
   }
   const schemaFile = join(src, "db/schema.ts")
-  const needs = ["pgTable", "text", "timestamp", ...new Set(fields.map((f) => ({ number: "integer", won: "bigint", date: "date" })[f.type]).filter(Boolean))]
+  const needs = ["index", "pgTable", "text", "timestamp", ...new Set(fields.map((f) => ({ number: "integer", won: "bigint", date: "date" })[f.type]).filter(Boolean))]
   edit(schemaFile, (source) => source.replace(/import \{([^}]+)\} from 'drizzle-orm\/pg-core';/, (_, names) => {
     const all = [...new Set([...names.split(",").map((n) => n.trim()).filter(Boolean), ...needs])].sort()
     return `import { ${all.join(", ")} } from 'drizzle-orm/pg-core';`
@@ -410,15 +417,18 @@ export const ${plural} = pgTable('${snake(plural)}', {
 ${fields.map((f) => `  ${f.name}: ${column(f)},`).join("\n")}
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-});
+}, (t) => [
+  // Lists read one user's rows newest first.
+  index('${snake(plural)}_user_created_idx').on(t.userId, t.createdAt),
+]);
 `)
 
   const notFound = sq(particle(label, ["을", "를"]) + " 찾을 수 없습니다")
   write(join(src, `${plural}/${plural}.service.ts`), `import { Inject, Injectable } from '@nestjs/common';
-import { and, desc, eq } from 'drizzle-orm';
+import { and, count, desc, eq } from 'drizzle-orm';
 
 import { newId } from '../common/crypto.js';
-import { fail } from '../common/http.js';
+import { fail, type Page } from '../common/http.js';
 import type { ${Single}Input } from '../contracts/${plural}.js';
 import { DB, type Db } from '../db/client.js';
 import { ${plural} } from '../db/schema.js';
@@ -428,12 +438,22 @@ import { ${plural} } from '../db/schema.js';
 export class ${Plural}Service {
   constructor(@Inject(DB) private readonly db: Db) {}
 
-  list(userId: string) {
-    return this.db
-      .select()
-      .from(${plural})
-      .where(eq(${plural}.userId, userId))
-      .orderBy(desc(${plural}.createdAt));
+  async list(
+    userId: string,
+    { page, pageSize }: { page: number; pageSize: number },
+  ): Promise<Page<typeof ${plural}.$inferSelect>> {
+    const mine = eq(${plural}.userId, userId);
+    const [items, [{ total }]] = await Promise.all([
+      this.db
+        .select()
+        .from(${plural})
+        .where(mine)
+        .orderBy(desc(${plural}.createdAt))
+        .limit(pageSize)
+        .offset((page - 1) * pageSize),
+      this.db.select({ total: count() }).from(${plural}).where(mine),
+    ]);
+    return { items, total, page, pageSize };
   }
 
   async get(userId: string, id: string) {
@@ -482,11 +502,12 @@ export class ${Plural}Service {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 
 import { AuthGuard, CurrentUser } from '../auth/auth.guard.js';
-import { parse } from '../common/http.js';
+import { pageQuery, parse } from '../common/http.js';
 import type { User } from '../contracts/auth.js';
 import { ${singular}InputSchema } from '../contracts/${plural}.js';
 import { ${Plural}Service } from './${plural}.service.js';
@@ -497,8 +518,8 @@ export class ${Plural}Controller {
   constructor(@Inject(${Plural}Service) private readonly ${plural}: ${Plural}Service) {}
 
   @Get()
-  list(@CurrentUser() user: User) {
-    return this.${plural}.list(user.id);
+  list(@CurrentUser() user: User, @Query() query: unknown) {
+    return this.${plural}.list(user.id, parse(pageQuery, query));
   }
 
   @Get(':id')
@@ -585,7 +606,8 @@ describe('${plural}', () => {
     expect(created.body).toMatchObject({ ...valid, id: expect.any(String) });
 
     const list = await api().get('/api/${plural}').set('Authorization', auth).expect(200);
-    expect(list.body).toHaveLength(1);
+    expect(list.body).toMatchObject({ total: 1, page: 1, pageSize: 20 });
+    expect(list.body.items).toHaveLength(1);
 
     await api()
       .patch(\`/api/${plural}/\${created.body.id}\`)
@@ -615,7 +637,28 @@ describe('${plural}', () => {
       .set('Authorization', other)
       .expect(404);
     const list = await api().get('/api/${plural}').set('Authorization', other).expect(200);
-    expect(list.body).toHaveLength(0);
+    expect(list.body.total).toBe(0);
+  });
+
+  it('pages newest first and caps the page size', async () => {
+    const auth = await guest();
+    for (let i = 0; i < 3; i++)
+      await api().post('/api/${plural}').set('Authorization', auth).send(valid).expect(201);
+    const first = await api()
+      .get('/api/${plural}?page=1&pageSize=2')
+      .set('Authorization', auth)
+      .expect(200);
+    expect(first.body).toMatchObject({ total: 3, page: 1, pageSize: 2 });
+    expect(first.body.items).toHaveLength(2);
+    const second = await api()
+      .get('/api/${plural}?page=2&pageSize=2')
+      .set('Authorization', auth)
+      .expect(200);
+    expect(second.body.items).toHaveLength(1);
+    await api()
+      .get('/api/${plural}?pageSize=1000')
+      .set('Authorization', auth)
+      .expect(400);
   });
 
   it('rejects invalid input with a message on the field', async () => {

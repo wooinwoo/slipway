@@ -63,7 +63,8 @@ const providers = {
   },
   naver: {
     label: "네이버로 계속하기",
-    className: "bg-[#03C75A] text-white",
+    // Naver's white button variant: white text on #03C75A is below WCAG AA contrast.
+    className: "border bg-background text-foreground [&_svg]:text-[#03C75A]",
     icon: "M16.27 12.84 7.38 0H0v24h7.73V11.16L16.62 24H24V0h-7.73z",
   },
 } as const

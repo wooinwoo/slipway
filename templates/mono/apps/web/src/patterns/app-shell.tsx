@@ -322,7 +322,7 @@ function CommandMenu({ nav }: { nav: readonly NavItem[] }) {
         onClick={() => toggle(true)}
       >
         <SearchIcon />
-        <span className="hidden sm:inline">이동</span>
+        <span className="sr-only sm:not-sr-only">이동</span>
         <KbdGroup className="hidden sm:inline-flex">
           <Kbd>{isMac ? "⌘" : "Ctrl"}</Kbd>
           <Kbd>K</Kbd>

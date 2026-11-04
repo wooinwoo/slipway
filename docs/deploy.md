@@ -37,8 +37,12 @@ docker run -p 3000:3000 -e DATABASE_URL=postgres://... -e WEB_URL=https://my-app
 | `DATABASE_URL` | 호스트가 주는 Postgres 주소(Railway·Render Postgres, Neon, Supabase, RDS 등) |
 | `WEB_URL`, `API_URL` | 배포된 공개 주소. 둘 다 같은 값 |
 | `PORT` | 호스트가 정하면 그대로 둡니다(기본 3000) |
-| `DEMO`, `ALLOW_GUEST` | 공개 서비스라면 `false` |
+| `DEMO`, `ALLOW_GUEST` | 이미지(`NODE_ENV=production`)에서는 기본 꺼짐. 공개 시연이라면 `true` |
+| `TRUST_PROXY` | 앞단 프록시 수. PaaS는 보통 1(기본값), 직접 연결이면 0 |
+| `AUTH_RATE_LIMIT`, `RATE_LIMIT` | IP당 분당 요청 수. 기본 20(로그인·가입), 300(그 밖) |
 | `KAKAO_*`, `NAVER_*` | 소셜 로그인을 쓸 때. 콜백 주소는 `${API_URL}/api/auth/<kakao|naver>/callback` |
+
+운영 모드에서는 `WEB_URL`·`API_URL`이 없으면 서버가 시작하지 않습니다. 공개 전 점검은 `SECURITY.md`를 봅니다.
 
 `DATABASE_URL`이 없으면 컨테이너 안의 PGlite(`/app/apps/api/.data`)에 저장합니다. 시연용이라면 그대로 써도 되지만,
 컨테이너를 다시 만들면 데이터가 사라지므로 볼륨을 붙이거나 Postgres를 연결합니다. 마이그레이션은 서버가 시작할 때 적용합니다.

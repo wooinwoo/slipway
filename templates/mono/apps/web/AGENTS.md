@@ -9,8 +9,17 @@ assembled per project from the parts in `src/patterns/`.
 ## Commands
 
 - `pnpm dev` starts http://localhost:5173.
-- `pnpm verify` runs typecheck, lint, unit tests, the requirements check, build, and e2e.
-  Run it before reporting a task as done. Fix the cause of a failure; do not weaken a check.
+- `pnpm verify` runs typecheck, lint, unit tests, the requirements check, build, the bundle budget,
+  e2e, and the UI check. Run it before reporting a task as done. Fix the cause of a failure; do not
+  weaken a check.
+- `pnpm shots [route ...]` builds and screenshots routes (desktop and mobile, light and dark) into
+  `.shots/`. Open the images before calling UI work done.
+- `pnpm check:ui [route ...]` checks the same pages: accessibility and contrast (axe, WCAG 2.1 AA),
+  sideways overflow, pointer cursor on clickables, visible keyboard focus, console errors.
+- `pnpm check:bundle` keeps the gzipped build within `slipway.budget` in package.json.
+- `pnpm check:score` runs Lighthouse (performance 90, accessibility/best practices/SEO 95). It needs
+  Chrome, so CI runs it (`.github/workflows/verify.yml`); WSL cannot.
+- `pnpm audit:deps` fails on high-severity dependency advisories.
 
 ## Map
 
@@ -42,6 +51,14 @@ assembled per project from the parts in `src/patterns/`.
 
 ## Building screens
 
+Screens and their design are yours to build here; Slipway ships parts, not screens.
+
+- Read `PRODUCT.md` (who, why, tone) and `DESIGN.md` (tokens, type, layout, component rules) first.
+  Fill `PRODUCT.md` with the user before the first screen.
+- For design work, use the Impeccable skill if it is available (`/impeccable` critique, audit, polish;
+  it reads the same PRODUCT.md and DESIGN.md). For consumer mobile flows, a k-style-ui-ux draft is a
+  good starting point; translate it into these parts, don't copy its HTML.
+- Loop: build → `pnpm shots` → look at every image → fix → `pnpm check:ui`.
 - Sign-in: `src/routes/login.tsx` renders `AuthCard` with `LoginForm`, `SocialButtons` and
   `GuestButton` from `src/patterns/auth-forms.tsx`, and calls the hooks in `src/api/auth.ts`.
 - Signed-in area: a layout route `src/routes/_app.tsx`. Its `beforeLoad` ensures `meQuery` and
@@ -55,9 +72,8 @@ Select independent components from `src/patterns/`. Do not preassemble business
 screens or register domain menus/APIs in the base template. Patterns must not import
 domain types or API clients.
 Read `CODEPACK.md` in a generated project (or `docs/codepack.md` in Slipway).
-Define the acceptance criteria first. In a project made by Slipway, `pnpm gen resource <plural> <한글 이름> --fields "..."` writes all of
-this at once (run `node scripts/gen.mjs` for the field syntax). The steps describe what it produces,
-for editing the result or doing it by hand.
+Define the acceptance criteria first. In a project made by Slipway, `pnpm gen resource <plural> <한글 이름> --fields "..."` writes the data
+layer at once (run `node scripts/gen.mjs` for the field syntax). It never writes screens.
 
 1. `src/api/<resource>.ts` holds the schema and queries.
 2. `src/mocks/handlers/<resource>.ts` holds the endpoints. Register it in `src/mocks/browser.ts`,

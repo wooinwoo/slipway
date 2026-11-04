@@ -7,7 +7,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import type { Response } from 'express';
-import type { z } from 'zod';
+import { z } from 'zod';
 
 export function fail(
   status: number,
@@ -30,10 +30,18 @@ export function parse<T extends z.ZodType>(
   throw fail(400, '입력값을 확인해 주세요', fields);
 }
 
+/** `?page=1&pageSize=20` on list endpoints. Pages start at 1; at most 100 rows per page. */
+export const pageQuery = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).default(20),
+});
+export type Page<T> = { items: T[]; total: number; page: number; pageSize: number };
+
 const defaults: Record<number, string> = {
   401: '로그인이 필요합니다',
   403: '권한이 없습니다',
   404: '찾을 수 없습니다',
+  429: '요청이 너무 많습니다. 잠시 후 다시 시도해 주세요',
 };
 
 @Catch()

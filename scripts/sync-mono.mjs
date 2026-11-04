@@ -10,7 +10,7 @@ import { basename, join, relative } from "node:path"
 
 const root = join(import.meta.dirname, "..", "templates")
 const mono = join(root, "mono")
-const skip = new Set(["node_modules", "dist", "dist-demo", "test-results", "playwright-report", ".tanstack", ".shots", ".data", ".turbo", "pnpm-lock.yaml", "pnpm-workspace.yaml", ".env", "Dockerfile", ".dockerignore"])
+const skip = new Set(["node_modules", "dist", "dist-demo", "test-results", "playwright-report", ".tanstack", ".shots", ".data", ".turbo", "pnpm-lock.yaml", "pnpm-workspace.yaml", ".env", "Dockerfile", ".dockerignore", ".github", ".lighthouseci"])
 
 function copy(from, to) {
   // Preserve dependencies, databases and local settings in existing checkouts.
@@ -74,7 +74,11 @@ json(join(web, "package.json"), (pkg) => {
   pkg.scripts.test = "vitest run --passWithNoTests"
   pkg.scripts["build:demo"] = "tsc -b && vite build --mode demo --outDir dist-demo"
   pkg.scripts["e2e:demo"] = "pnpm build:demo && playwright test --config playwright.demo.config.ts"
-  pkg.scripts.verify += " && pnpm e2e:demo"
+  // UI checks, screenshots and the web score use the mock build, which needs no API running.
+  pkg.scripts.verify = pkg.scripts.verify.replace(" && pnpm check:ui", "") + " && pnpm e2e:demo && pnpm check:ui"
+  pkg.scripts["check:ui"] = "node scripts/ui.mjs check --dist dist-demo"
+  pkg.scripts.shots = "pnpm build:demo && node scripts/ui.mjs shots --dist dist-demo"
+  pkg.scripts["check:score"] = "LHCI_DIST=dist-demo npx --yes @lhci/cli@0.16.0 autorun --config=lighthouserc.cjs"
 })
 if (!existsSync(join(web, ".env"))) writeFileSync(join(web, ".env"), "# In the monorepo the web app talks to apps/api on the same origin (Vite proxies /api in dev and preview).\n# `pnpm dev:demo` runs it on the in-browser mock instead.\nVITE_API_URL=/\n")
 writeFileSync(join(web, ".env.demo"), "VITE_API_URL=\n")
@@ -95,7 +99,7 @@ patch(join(web, "playwright.config.ts"),
     {
       command: "pnpm --dir ../api start",
       url: "http://localhost:3017/api/health",
-      env: { PORT: "3017", DATABASE_URL: "memory", DEMO: "true", ALLOW_GUEST: "true" },
+      env: { PORT: "3017", DATABASE_URL: "memory", DEMO: "true", ALLOW_GUEST: "true", AUTH_RATE_LIMIT: "10000", RATE_LIMIT: "10000" },
       reuseExistingServer: false,
     },
     {

@@ -13,11 +13,15 @@
     "test": "vitest run --passWithNoTests",
     "e2e": "playwright test",
     "check:reqs": "node scripts/check-reqs.mjs",
-    "verify": "pnpm typecheck && pnpm lint && pnpm test && pnpm check:reqs && pnpm build && pnpm e2e && pnpm e2e:demo",
-    "shots": "node scripts/shots.mjs",
+    "verify": "pnpm typecheck && pnpm lint && pnpm test && pnpm check:reqs && pnpm build && pnpm check:bundle && pnpm e2e && pnpm e2e:demo && pnpm check:ui",
+    "shots": "pnpm build:demo && node scripts/ui.mjs shots --dist dist-demo",
     "parts:typecheck": "tsc -p tsconfig.parts.json",
     "parts:test": "playwright test --config playwright.parts.config.ts",
     "parts:verify": "pnpm parts:typecheck && pnpm parts:test",
+    "audit:deps": "pnpm audit --prod --audit-level high",
+    "check:bundle": "node scripts/check-bundle.mjs",
+    "check:ui": "node scripts/ui.mjs check --dist dist-demo",
+    "check:score": "LHCI_DIST=dist-demo npx --yes @lhci/cli@0.16.0 autorun --config=lighthouserc.cjs",
     "dev:demo": "vite --mode demo",
     "build:demo": "tsc -b && vite build --mode demo --outDir dist-demo",
     "e2e:demo": "pnpm build:demo && playwright test --config playwright.demo.config.ts"
@@ -54,6 +58,7 @@
     "@slipway/shared": "workspace:*"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@eslint/js": "^10",
     "@playwright/test": "^1.64.1",
     "@tanstack/router-cli": "^1.167.46",
