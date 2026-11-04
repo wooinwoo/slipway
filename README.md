@@ -26,7 +26,7 @@
 ## 특징
 
 - **바로 실행.** 서버, DB, API 키 없이 브라우저 Mock API로 뜹니다.
-- **명령 하나로 DB·API·화면.** `pnpm gen resource orders 주문 --fields "..."`가 테이블과 마이그레이션, NestJS API, Mock, 목록·상세·폼 화면, 테스트를 한 번에 만듭니다. 결과는 바로 고칠 수 있는 평범한 코드입니다.
+- **명령 하나로 DB·API.** `pnpm gen resource orders 주문 --fields "..."`가 테이블과 마이그레이션, NestJS API, Mock, 조회·저장 훅, 테스트를 한 번에 만듭니다. 화면은 만들지 않습니다. 부품으로 조립합니다.
 - **제품까지 같은 코드.** Mock과 NestJS 서버가 같은 `/api/*` 계약을 씁니다. `VITE_API_URL` 하나로 전환합니다.
 - **화면은 부품으로.** 템플릿에 완성된 화면은 없습니다. 앱 틀, 로그인, 표, 필터, 차트, 보드, 폼 등 23개 부품으로 조립합니다.
 - **한국어 기본값.** 카카오·네이버 로그인, 전화번호·사업자번호·금액·주소 입력, 한국어 검증 메시지.
@@ -49,18 +49,18 @@ Node.js 22.23.4 이상, pnpm 10.33.2가 필요합니다. 실제 API와 DB까지 
 ## 리소스 생성
 
 ```sh
-corepack pnpm gen resource orders 주문 --icon Receipt \
+corepack pnpm gen resource orders 주문 \
   --fields "title:text:주문명 customer:text:고객 amount:won:금액 status:enum(접수|배송중|완료):상태 dueAt?:date:납기"
 ```
 
 필드 타입은 `text` `textarea` `email` `phone` `number` `won` `date` `enum(a|b)`이고, 이름 뒤 `?`는 선택 입력입니다.
-프리셋에 있는 층만 만듭니다. 처음 실행하면 로그인·회원가입·앱 틀도 함께 생깁니다.
+프리셋에 있는 층만 만들고, 화면은 만들지 않습니다. 화면과 디자인은 `src/patterns/` 부품으로 직접(또는 AI가) 조립합니다.
 
 | 층 | 만들어지는 것 |
 |---|---|
 | 스키마 | zod 규칙 한 벌. mono는 `packages/shared`에 두고 웹과 API가 같이 씁니다 |
 | DB·API | Drizzle 테이블과 마이그레이션, 로그인한 사용자 데이터만 다루는 CRUD, 계약 테스트 |
-| 웹 | Mock 핸들러, 검색·정렬·일괄 삭제 목록, 상세 패널, 추가·수정 폼, 메뉴, E2E 테스트, `REQ-n` |
+| 웹 | 조회·저장·삭제 훅(TanStack Query), Mock 핸들러, Mock과 실제 API에 같은 요청을 보내는 계약 테스트 |
 
 ## Claude Code 플러그인
 
@@ -69,7 +69,7 @@ corepack pnpm gen resource orders 주문 --icon Receipt \
 /plugin install slipway@slipway
 ```
 
-`/slipway:new`는 만들 앱, 프리셋, 화면 초안 여부, 배포 대상을 먼저 묻고 프로젝트 생성부터 검증까지 진행합니다.
+`/slipway:new`는 만들 앱, 프리셋, 화면 초안 여부, 배포 대상을 먼저 묻고 프로젝트 생성, 데이터 층 생성, 부품 조립, 검증까지 진행합니다.
 모바일 소비자 앱이라면 [k-style-ui-ux](https://github.com/vmc-inner-circle/k-style-ui-ux)로 화면 초안을 먼저 만들도록 권합니다.
 `/slipway:resource`는 리소스를, `/slipway:deploy`는 배포를 맡습니다. Codex·Cursor는 `AGENTS.md`의 같은 흐름을 따릅니다.
 

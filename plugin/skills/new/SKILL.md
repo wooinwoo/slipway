@@ -1,11 +1,12 @@
 ---
 name: new
-description: Slipway로 새 앱을 만든다. 프리셋(react·mono·nest), 화면 초안(k-style-ui-ux), 배포 대상을 먼저 묻고 프로젝트 생성, 로그인·앱 틀, 리소스(DB·API·화면), 검증까지 진행한다. 사용자가 "Slipway로 앱 만들어줘", "해커톤용으로 하나 띄워줘", PRD·기획서를 주며 앱을 만들라고 할 때 트리거.
+description: Slipway로 새 앱을 만든다. 프리셋(react·mono·nest), 화면 초안(k-style-ui-ux), 배포 대상을 먼저 묻고 프로젝트 생성, 리소스 데이터 층(DB·API·Mock), 부품으로 화면 조립, 검증까지 진행한다. 사용자가 "Slipway로 앱 만들어줘", "해커톤용으로 하나 띄워줘", PRD·기획서를 주며 앱을 만들라고 할 때 트리거.
 ---
 
 # slipway:new
 
-요구사항을 받아 Slipway 프로젝트를 만들고, 화면과 데이터를 조립해 검증까지 끝낸다.
+요구사항을 받아 Slipway 프로젝트를 만들고, 데이터 층은 생성기로, 화면은 부품으로 조립해 검증까지 끝낸다.
+화면 디자인은 이 스킬을 쓰는 AI의 몫이다. 생성기는 화면을 만들지 않는다.
 
 ## 1. 먼저 묻는다
 
@@ -51,13 +52,15 @@ cd <폴더> && corepack pnpm install --frozen-lockfile
 
 ## 5. 조립 (react·mono)
 
-1. 요구사항에서 사용자가 만들고 고치는 대상(리소스)과 필드를 뽑는다. 첫 필드는 이름 역할의 필수 text.
-2. 리소스마다 생성기를 돌린다. 처음 한 번 로그인·앱 틀도 같이 만들어진다.
+1. 요구사항에서 사용자가 만들고 고치는 대상(리소스)과 필드를 뽑는다. 필수 필드는 하나 이상.
+2. 리소스마다 데이터 층을 생성한다(스키마, 테이블·마이그레이션, API, Mock, 조회·저장 훅, 계약 테스트).
    ```sh
-   corepack pnpm gen resource orders 주문 --icon Receipt --fields "title:text:주문명 amount:won:금액 status:enum(접수|배송중|완료):상태 dueAt?:date:납기 memo?:textarea:메모"
+   corepack pnpm gen resource orders 주문 --fields "title:text:주문명 amount:won:금액 status:enum(접수|배송중|완료):상태 dueAt?:date:납기 memo?:textarea:메모"
    ```
    타입: text, textarea, email, phone, number, won, date, enum(a|b). 이름 뒤 `?`는 선택 입력.
-3. 대시보드·보드·차트 같은 화면은 `src/patterns/`의 부품으로 직접 조립한다(`CODEPACK.md`). 요구사항마다 `docs/requirements.md`에 `REQ-n`을 추가한다.
+3. 화면은 `src/patterns/`의 부품으로 직접 조립한다. 로그인·앱 틀은 `CODEPACK.md`의 "로그인과 앱 틀 조립",
+   목록·상세·폼은 `AdvancedTable`·`FilterBar`·`DetailPanel`·`RecordForm`, 대시보드는 `MetricGrid`·`ChartPanel`.
+   요구사항에 맞는 구성과 배치를 정하는 것이 이 단계의 일이다. 요구사항마다 `docs/requirements.md`에 `REQ-n`을 추가한다.
 4. `src/config.ts`의 이름·소개, `src/index.css`의 브랜드 색을 맞춘다.
 
 nest 프리셋도 `corepack pnpm gen resource ...`로 테이블·마이그레이션·API·계약 테스트를 만든다.

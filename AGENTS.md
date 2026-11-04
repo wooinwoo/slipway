@@ -11,9 +11,10 @@ The full flow is `plugin/skills/new/SKILL.md` (the `/slipway:new` command). In s
 2. Create the project next to this repository and work only there:
    `node scripts/create-project.mjs ../<name> --preset <preset> --name "<서비스 이름>"`
    (`<name>`: lowercase letters, digits and hyphens), then `corepack pnpm install --frozen-lockfile`.
-3. Generate each resource: `corepack pnpm gen resource <plural> <한글 이름> --fields "..."`.
-   It writes the schema, table and migration, API, mock, screens and tests, plus the login and app frame.
-4. Compose the rest from `src/patterns/`, then `corepack pnpm verify` and look at `pnpm shots`.
+3. Generate each resource's data layer: `corepack pnpm gen resource <plural> <한글 이름> --fields "..."`.
+   It writes the schema, table and migration, API, mock, query hooks and contract tests. No screens.
+4. Build every screen, the login and app frame included, from `src/patterns/` (CODEPACK.md recipes).
+   Screen design is this step's job. Then `corepack pnpm verify` and look at `pnpm shots`.
 
 Follow the generated project's AGENTS.md from step 2 on.
 

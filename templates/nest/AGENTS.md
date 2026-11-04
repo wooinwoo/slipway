@@ -38,9 +38,8 @@ the same demo account as the web mock (demo@slipway.dev / demo1234).
 
 ## Adding a resource
 
-In a project made by Slipway, `pnpm gen resource <plural> <한글 이름> --fields "..."` writes all of
-this at once (run `node scripts/gen.mjs` for the field syntax). The steps describe what it produces,
-for editing the result or doing it by hand.
+In a project made by Slipway, `pnpm gen resource <plural> <한글 이름> --fields "..."` writes the data
+layer at once (run `node scripts/gen.mjs` for the field syntax). It never writes screens.
 
 1. Add the zod schema to `src/contracts/<resource>.ts` (Korean validators are in `src/contracts/kr.ts`).
 2. Add the table to `src/db/schema.ts`, then `pnpm db:generate`.

@@ -32,8 +32,9 @@ template they are ordinary code; edit them freely.
 
 ## Adding a resource
 
-Run `pnpm gen resource ...` at the repo root: it writes every step below across `packages/shared`,
-`apps/api` and `apps/web`, including the migration. The steps describe what it produces.
+Run `pnpm gen resource ...` at the repo root: it writes steps 1 and 2 and the web data layer
+(queries, mock handler, contract test) across `packages/shared`, `apps/api` and `apps/web`, including
+the migration. Screens are built by hand from `apps/web/src/patterns/`.
 
 1. `packages/shared/src/<resource>.ts`: zod schema and types. Export it from `index.ts`.
 2. `apps/api`: table in `src/db/schema.ts` and `pnpm db:generate`, then a module behind `AuthGuard`

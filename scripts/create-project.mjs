@@ -86,7 +86,7 @@ function projectReadme(slug, preset, name) {
     + (preset === "react" ? "웹은 :5173에서 Mock API로 실행됩니다. 실제 API를 연결할 때 `.env`의 `VITE_API_URL`을 설정하고 다시 빌드하세요.\n\n" : "")
     + (preset === "nest" ? "API는 :3000/api에서 실행됩니다. `.env.example`과 내장 PGlite로 시작할 수 있습니다.\n\n" : "")
     + (preset !== "nest" ? `제품 이름·설명: \`${web}src/config.ts\`, 테마: \`${web}src/index.css\`.\n\n` : "")
-    + ("## 리소스 생성\n\n```sh\ncorepack pnpm gen resource orders 주문 --fields \"title:text:주문명 amount:won:금액 status:enum(접수|배송중|완료):상태\"\n```\n\n스키마, DB 테이블과 마이그레이션, API, Mock, 화면, 테스트 가운데 이 프리셋에 있는 층을 한 번에 만듭니다. 처음 실행하면 로그인과 앱 틀도 생깁니다. 사용법은 `node scripts/gen.mjs`를 인자 없이 실행해 확인합니다.\n\n")
+    + ("## 리소스 생성\n\n```sh\ncorepack pnpm gen resource orders 주문 --fields \"title:text:주문명 amount:won:금액 status:enum(접수|배송중|완료):상태\"\n```\n\n스키마, DB 테이블과 마이그레이션, API, Mock, 조회·저장 훅, 테스트 가운데 이 프리셋에 있는 층을 한 번에 만듭니다. 화면은 만들지 않습니다. `CODEPACK.md`의 부품으로 조립합니다. 사용법은 `node scripts/gen.mjs`를 인자 없이 실행해 확인합니다.\n\n")
     + "## 조립과 검증\n\n`CODEPACK.md`에서 독립 표·폼·상세·보드 부품의 입력과 콜백 규약을 확인하세요. `AGENTS.md`와 `FEATURE-WORKFLOW.md`에서 요구사항·권한·검증 기준을 이어갑니다.\n\n```sh\n"
     + (preset === "mono" ? "corepack pnpm --filter @slipway/web exec playwright install firefox\n" : preset === "react" ? "corepack pnpm exec playwright install firefox\n" : "")
     + "corepack pnpm verify\n```\n\n"
