@@ -53,8 +53,11 @@ cd <폴더> && corepack pnpm install --frozen-lockfile
 - Impeccable(https://impeccable.style)이면 프로젝트에서 `/impeccable init`으로 사용자와 `PRODUCT.md`(누가·왜·톤)를, 첫 화면 전에 `DESIGN.md`(시각 방향·토큰)를
   만든다. 토큰은 하네스가 `src/index.css`에 반영한다.
 - k-style-ui-ux면 프로젝트 폴더에서 PRD로 `/k-style-ui-ux:go <PRD 파일>`을 실행한다. 결과 `out/`가 디자인이다: 화면 흐름과 목록은
-  요구사항(`REQ-n`)으로, 고른 팔레트·글자·여백은 테마 토큰(`src/index.css`)으로, 화면 구성은 부품 조립으로 옮긴다. HTML은 붙여 넣지 않는다.
-  팔레트는 캔버스의 색 점 3개 중 사용자가 고른 것을 쓴다.
+  요구사항(`REQ-n`)으로, 토큰은 `corepack pnpm design out`(사용자가 캔버스에서 고른 팔레트면 `--palette <이름>`)으로 테마에,
+  부품 CSS는 같은 명령이 `k-` 접두사를 붙여 가져오고, 반복되는 마크업은 `src/design/k-style.tsx`(`KField`·`KAvatar`·`KTabBar`)로 만든다. 화면은 `out/screens/<id>.html`을 그 클래스 그대로 JSX로 옮기고 데이터·링크·동작을 훅과
+  부품(`MobileShell`·`TopBar`·`drawer`)으로 잇는다. 화면마다 `corepack pnpm design:compare /<route>=<id>.html`로
+  디자인과 나란히 찍어 맞을 때까지 고친다(screen 스킬 5단계).
+  k-style 스크립트는 Pillow와 Playwright가 있는 Python 3.12가 필요하다. 없으면 `uv venv --python 3.12`로 만들어 쓴다.
   ```
   /plugin marketplace add vmc-inner-circle/k-style-ui-ux
   /plugin install k-style-ui-ux@k-style-ui-ux
@@ -67,7 +70,7 @@ cd <폴더> && corepack pnpm install --frozen-lockfile
    ```sh
    corepack pnpm gen resource orders 주문 --fields "title:text:주문명 amount:won:금액 status:enum(접수|배송중|완료):상태 dueAt?:date:납기 memo?:textarea:메모"
    ```
-   타입: text, textarea, email, phone, number, won, date, enum(a|b). 이름 뒤 `?`는 선택 입력.
+   타입: text, textarea, email, phone, number, won, date, time(HH:MM), enum(a|b), ref(<plural>)(먼저 만든 리소스를 가리킴). 이름 뒤 `?`는 선택 입력. 라벨 안 띄어쓰기는 `_`. 문법 전체는 `node scripts/gen.mjs`.
 3. 화면은 screen 스킬(`/slipway:screen`, 프로젝트의 `.claude/skills/screen`) 순서로 하나씩 만든다. 기능은 부품과 훅으로 조립하고
    (인증 연결은 `CODEPACK.md`), 모양은 디자인 하네스가 정한다. 요구사항마다 `docs/requirements.md`에 `REQ-n`을 추가한다.
 4. `src/config.ts`의 이름·소개를 맞춘다.

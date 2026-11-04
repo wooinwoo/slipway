@@ -51,3 +51,17 @@ export async function api<T>(path: string, { json, headers, ...init }: ApiInit =
 }
 
 export type Page<T> = { items: T[]; total: number; page: number; pageSize: number }
+
+export type Failure = { message: string; fields: Record<string, string> }
+
+/**
+ * What a form shows after a failed submit, from either side: a zod error from `schema.safeParse`
+ * or an `ApiError` from the server, as one message plus messages keyed by field name.
+ * `const parsed = schema.safeParse(values); if (!parsed.success) return setFailure(failureOf(parsed.error))`
+ */
+export function failureOf(error: unknown): Failure {
+  if (error instanceof z.ZodError)
+    return { message: "입력값을 확인해 주세요", fields: Object.fromEntries(error.issues.map((issue) => [issue.path.join("."), issue.message])) }
+  if (error instanceof ApiError) return { message: error.message, fields: error.fields }
+  return { message: "잠시 후 다시 시도해 주세요", fields: {} }
+}

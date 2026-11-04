@@ -8,6 +8,8 @@ export default defineConfig({
   fullyParallel: true,
   retries: process.env.CI ? 1 : 0,
   // Generous on busy machines (several agents building at once); a real hang still fails.
+  // A loaded machine (other builds, agents) slows Firefox; 60s per test keeps a slow pass from failing.
+  timeout: 60_000,
   expect: { timeout: 10_000 },
   reporter: process.env.CI ? "github" : "list",
   use: {

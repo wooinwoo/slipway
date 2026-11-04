@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview",
+    "preview": "vite preview --host",
     "typecheck": "tsr generate && tsc -b",
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
@@ -15,6 +15,7 @@
     "check:reqs": "node scripts/check-reqs.mjs",
     "verify": "pnpm typecheck && pnpm lint && pnpm test && pnpm check:reqs && pnpm build && pnpm check:bundle && pnpm e2e && pnpm check:ui",
     "shots": "pnpm build && node scripts/ui.mjs shots",
+    "design:compare": "pnpm build && node scripts/ui.mjs compare",
     "parts:typecheck": "tsc -p tsconfig.parts.json",
     "parts:test": "playwright test --config playwright.parts.config.ts",
     "parts:verify": "pnpm parts:typecheck && pnpm parts:test",

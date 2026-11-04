@@ -29,6 +29,7 @@ const parts = [
   "login",
   "signup",
   "shell",
+  "mobile",
   "theme-settings",
 ]
 

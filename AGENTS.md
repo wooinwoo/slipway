@@ -17,9 +17,10 @@ The full flow is `plugin/skills/new/SKILL.md` (the `/slipway:new` command; Claud
    It writes the schema, table and migration, API, mock, query hooks and contract tests. No screens.
 4. Build every screen, the login and app frame included: the function from `src/patterns/` and the
    generated hooks, the look from the design harness (Impeccable writes `PRODUCT.md` and `DESIGN.md`
-   with the user; never invent a style or ship Slipway examples as the design). Then `corepack pnpm
+   with the user; k-style's `out/` goes in through `pnpm design out` and is matched screen by screen with
+   `pnpm design:compare`; never invent a style or ship Slipway examples as the design). Then `corepack pnpm
    verify` (UI, bundle, e2e), look at `pnpm shots`, and click through the main flow at the exact URL you
-   hand over. CI adds the Lighthouse score.
+   hand over: a built preview, not the dev server. CI adds the Lighthouse score.
 
 Follow the generated project's AGENTS.md from step 2 on.
 

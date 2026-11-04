@@ -41,16 +41,31 @@ export async function focusIssues(page, stops = 30) {
   const issues = []
   const seen = new Set()
   await page.evaluate(() => (document.activeElement instanceof HTMLElement ? document.activeElement.blur() : undefined))
+  // How each focusable element looks unfocused: a focus style may change the border or background
+  // color instead of drawing an outline or ring (a filled input whose border turns the brand color).
+  await page.evaluate(() => {
+    const look = (node) => {
+      const s = getComputedStyle(node)
+      return `${s.borderTopColor} ${s.borderBottomColor} ${s.backgroundColor}`
+    }
+    window.__slipwayLook = look
+    window.__slipwayUnfocused = new Map(
+      [...document.querySelectorAll("a[href], button, input, select, textarea, summary, [tabindex]")].map((node) => [node, look(node)])
+    )
+  })
   for (let i = 0; i < stops; i++) {
     await page.keyboard.press("Tab")
     const stop = await page.evaluate(() => {
       const el = document.activeElement
       if (!el || el === document.body) return null
+      // A modal's focus guard (Radix, vaul) is an invisible stop that hands focus back inside the dialog.
+      if (el.hasAttribute("data-radix-focus-guard")) return { key: "guard", guard: true }
       const shows = (node) => {
         const s = getComputedStyle(node)
         return (s.outlineStyle !== "none" && parseFloat(s.outlineWidth) > 0) || (s.boxShadow !== "none" && s.boxShadow !== "")
       }
-      let visible = false
+      const before = window.__slipwayUnfocused?.get(el)
+      let visible = before !== undefined && before !== window.__slipwayLook(el)
       for (let node = el, depth = 0; node instanceof Element && depth < 4; node = node.parentElement, depth++) {
         if (shows(node)) {
           visible = true
@@ -60,6 +75,7 @@ export async function focusIssues(page, stops = 30) {
       const name = (el.getAttribute("aria-label") ?? el.textContent ?? el.getAttribute("name") ?? "").trim().slice(0, 30)
       return { key: `${el.tagName}|${name}|${el.id}`, name: `<${el.tagName.toLowerCase()}> "${name}"`, visible }
     })
+    if (stop?.guard) continue
     if (!stop || seen.has(stop.key)) break
     seen.add(stop.key)
     if (!stop.visible) issues.push(`no visible focus: ${stop.name}`)

@@ -18,7 +18,7 @@ async function sandbox(t) {
 
 test("catalog entries have usable contracts, public exports and resolvable dependencies", async () => {
   const result = await checkCatalog()
-  assert.equal(result.parts, 23)
+  assert.equal(result.parts, 24)
   assert.equal(result.parts, listParts().length)
 })
 
@@ -91,4 +91,11 @@ test("directory junctions cannot redirect writes outside the destination", async
 
 test("source templates cannot be used as a copy destination", async () => {
   await assert.rejects(copyParts(["table"], fileURLToPath(new URL("../templates/react/src", import.meta.url))), /원본 src/)
+})
+
+test("the phone app frame brings the router it links with, and no business code", async () => {
+  const plan = await planParts(["mobile-shell"])
+  assert.ok(plan.files.some(file => file.path === "patterns/mobile-shell.tsx"))
+  assert.ok(!plan.files.some(file => /routes\/|features\/|mocks\/|app-shell|main\.tsx|config\.ts/.test(file.path)))
+  assert.ok(plan.packages["@tanstack/react-router"])
 })

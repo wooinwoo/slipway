@@ -85,6 +85,7 @@ node scripts/create-project.mjs ../my-app --name "주문 관리" --tagline "주�
 cd ../my-app
 corepack pnpm install --frozen-lockfile
 corepack pnpm gen resource orders 주문 --fields "title:text:주문명 amount:won:금액 status:enum(접수|배송중|완료):상태"
+corepack pnpm gen resource payments 결제 --fields "orderId:ref(orders):주문 amount:won:금액"
 corepack pnpm dev                     # http://localhost:5173, Mock API
 ```
 
@@ -109,10 +110,12 @@ my-app/                                   만들어진 프로젝트 (react 프�
 │  ├─ index.css                           테마 토큰. --brand-h, --brand-c 두 숫자로 전체 색이 바뀜
 │  ├─ patterns/                           Slipway 부품 23개 (app-shell, auth-forms, advanced-table …)
 │  ├─ components/ui/                      shadcn 컴포넌트 전체
-│  ├─ api/                                client.ts(JSON·토큰·필드 오류), auth.ts, <resource>.ts(생성)
-│  ├─ mocks/                              브라우저 Mock API (MSW). handlers/<resource>.ts(생성)
-│  ├─ lib/                                kr.ts(한국어 포맷·검증), csv, 필터·날짜 모델
-│  └─ routes/                             __root, 빈 /, /auth/callback만. 화면은 여기에 조립
+│  ├─ routes/                             화면(pages). __root, 빈 /, /auth/callback만. 기능을 조립
+│  ├─ features/<동작>/                    사용자가 하는 일 하나(예약 받기, 출석 체크): 폼·시트·규칙
+│  ├─ entities/<리소스>/                  api.ts(스키마·조회·저장 훅), mock.ts(Mock 엔드포인트). gen이 씀
+│  ├─ api/                                client.ts(JSON·토큰·필드 오류·failureOf), auth.ts(세션 훅·currentUser)
+│  ├─ mocks/                              브라우저 Mock API 배선 (MSW): db.ts, http.ts, browser.ts
+│  └─ lib/                                kr.ts(한국어 포맷·검증), csv, 필터·날짜 모델
 ├─ e2e/  fixtures/parts/  parts-tests/    E2E, 부품 테스트
 ├─ scripts/                               ui.mjs(shots·check:ui), check-bundle, check-reqs, gen
 ├─ docs/requirements.md                   REQ-n 목록
@@ -160,9 +163,9 @@ corepack pnpm gen resource orders 주문 \
 
 | 층 | 파일 | 내용 |
 |---|---|---|
-| 스키마 | `src/api/orders.ts` (mono는 `packages/shared/src/orders.ts`) | `orderInputSchema`, `Order`, 상태 목록 `orderStatusOptions` |
-| 조회 훅 | `src/api/orders.ts` | `ordersQuery(page, pageSize)`, `useSaveOrder()`(id 유무로 생성·수정), `useDeleteOrders()` |
-| Mock | `src/mocks/handlers/orders.ts`, `db.ts` | 실제 API와 같은 경로와 규칙, 사용자별 데이터 |
+| 스키마 | `src/entities/orders/api.ts` (mono는 `packages/shared/src/orders.ts`) | `orderInputSchema`, `Order`, 상태 목록 `orderStatusOptions` |
+| 조회 훅 | `src/entities/orders/api.ts` | `ordersQuery(page, pageSize)`, `allOrdersQuery()`, `orderQuery(id)`, `useSaveOrder()`(id 유무로 생성·수정), `useDeleteOrders()`, `toOrderInput(row)` |
+| Mock | `src/entities/orders/mock.ts`, `src/mocks/db.ts` | 실제 API와 같은 경로와 규칙, 사용자별 데이터 |
 | DB | `src/db/schema.ts`, `drizzle/0001_orders.sql` | 테이블, `user_id` 외래 키와 `(user_id, created_at)` 인덱스, 마이그레이션(서버 시작 시 적용) |
 | API | `src/orders/` | `AuthGuard` 뒤의 CRUD. 모든 조회·수정·삭제를 로그인한 사용자 기준으로 거름 |
 | 테스트 | `test/orders.e2e-spec.ts`, `e2e/orders-api.e2e.ts` | 로그인 필요, 생성·목록·수정·삭제, 다른 사용자 데이터 숨김, 페이지 크기 제한, 필드 오류 |
@@ -227,7 +230,7 @@ Slipway는 디자인을 정하지 않습니다. 각 프로젝트에서 디자인
 
 | 하네스 | 하는 일 |
 |---|---|
-| [k-style-ui-ux](https://github.com/vmc-inner-circle/k-style-ui-ux) (모바일 앱: 휴대폰에서 주로 쓰는 화면, flutter 셸 포함) | PRD 한 장으로 화면 흐름, 팔레트 3벌, 글자·여백, 부품까지 정한 디자인(`out/`). 그 결과를 부품과 테마 토큰으로 옮김(HTML을 붙여 넣지 않음) |
+| [k-style-ui-ux](https://github.com/vmc-inner-circle/k-style-ui-ux) (모바일 앱: 휴대폰에서 주로 쓰는 화면, flutter 셸 포함) | PRD 한 장으로 화면 흐름, 팔레트 3벌, 글자·여백, 부품까지 정한 디자인(`out/`). `pnpm design out`이 토큰과 부품 CSS(`k-` 접두사)를 가져오고, 화면은 디자인 HTML을 같은 클래스의 JSX로 옮겨 데이터·동작을 훅과 `MobileShell` 같은 부품으로 잇고, `pnpm design:compare`로 디자인 화면과 나란히 찍어 맞춤 |
 | [Impeccable](https://impeccable.style) (데스크톱 웹, 랜딩, 문서) | 사용자와 `PRODUCT.md`(누가·왜·톤)와 `DESIGN.md`(시각 방향·토큰)를 만들고, 화면을 짓고, 비평·감사·다듬기 |
 
 부품과 테마 토큰은 기술 기본값이라 하네스가 고쳐 쓰거나 바꿉니다. 어떤 디자인이든 품질 관문(접근성·대비·포커스·넘침, E2E)은 통과해야 합니다.
@@ -242,8 +245,9 @@ Slipway는 디자인을 정하지 않습니다. 각 프로젝트에서 디자인
 | 타입·린트·단위 | `pnpm verify` | 로컬·CI | TypeScript, ESLint, Vitest |
 | 요구사항 | `pnpm check:reqs` | 로컬·CI | `REQ-n`마다 라우트 첫 줄 주석과 같은 이름의 E2E가 있어야 함 |
 | E2E | `pnpm e2e` | 로컬·CI | 운영 빌드 + Mock(mono는 실제 API와 Mock 양쪽), Firefox |
-| 디자인 | `pnpm check:ui` | 로컬·CI | 모든 라우트 × 데스크톱·모바일 × 라이트·다크. axe(WCAG 2.1 AA, 대비), 가로 넘침, 포인터 커서, Tab 포커스 표시, 콘솔 오류. 로그인이 필요한 화면은 게스트로 들어감 |
+| 디자인 | `pnpm check:ui` | 로컬·CI | 모든 라우트 × 데스크톱·모바일 × 라이트·다크. axe(WCAG 2.1 AA, 대비), 가로 넘침, 포인터 커서, Tab 포커스 표시, 콘솔 오류. 로그인이 필요한 화면은 데모 계정(없으면 게스트)으로 들어감 |
 | 화면 확인 | `pnpm shots` | 화면 작업 후 | 같은 조합의 캡처를 `.shots/`에 저장. 사람이나 AI가 직접 봄 |
+| 디자인 대조 | `pnpm design:compare /경로=화면.html` | k-style 화면을 옮긴 뒤 | 앱 화면과 하네스 화면을 휴대폰 크기로 나란히 `.shots/compare-*.png`에 저장. 데모 계정으로 들어감 |
 | 번들 | `pnpm check:bundle` | 로컬·CI | 첫 화면 JS 200KB(next 300KB)·CSS 60KB, 지연 로드 파일 250KB(gzip). `package.json`의 `slipway.budget`에서 조정 |
 | 웹 점수 | `pnpm check:score` | CI | Lighthouse 성능 90, 접근성·권장 사항·SEO 95. 크롬이 필요해 CI에서 잼(설치 없이 npx로 실행) |
 | 보안 | `pnpm verify`, `pnpm audit:deps` | 로컬·CI | CSP·보안 헤더, 로그인 요청 제한, 운영 모드 기본값 테스트, 높음 이상 의존성 취약점 |

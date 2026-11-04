@@ -2,12 +2,17 @@ import { describe, expect, it } from "vitest"
 
 import {
   formatBizNo,
+  formatDateLong,
+  formatDateShort,
+  formatDateWord,
   formatPhone,
   formatRelative,
   formatWonCompact,
   formatWonKorean,
+  isoDaysFrom,
   isValidBizNo,
   phoneSchema,
+  toIsoDate,
 } from "./kr"
 
 describe("phone", () => {
@@ -54,5 +59,23 @@ describe("relative time", () => {
     expect(formatRelative(new Date(now.getTime() - 30_000), now)).toBe("방금 전")
     expect(formatRelative(new Date(now.getTime() - 5 * 60_000), now)).toBe("5분 전")
     expect(formatRelative(new Date(now.getTime() - 30 * 3600_000), now)).toBe("어제")
+  })
+})
+
+describe("calendar days", () => {
+  const now = new Date(2026, 10, 4, 18, 50)
+  it("writes days the way Korean screens do", () => {
+    expect(formatDateLong("2026-11-04")).toBe("11월 4일 수요일")
+    expect(formatDateShort("2026-11-05")).toBe("11/5 목")
+    expect(formatDateWord("2026-11-04", now)).toBe("오늘")
+    expect(formatDateWord("2026-11-05", now)).toBe("내일")
+    expect(formatDateWord("2026-11-03", now)).toBe("어제")
+    expect(formatDateWord("2026-11-08", now)).toBe("11월 8일")
+    expect(formatDateWord("2027-01-02", now)).toBe("2027년 1월 2일")
+  })
+  it("counts days in local time", () => {
+    expect(toIsoDate(now)).toBe("2026-11-04")
+    expect(isoDaysFrom(1, now)).toBe("2026-11-05")
+    expect(isoDaysFrom(-4, now)).toBe("2026-10-31")
   })
 })

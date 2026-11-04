@@ -42,19 +42,27 @@ tools read them from there.
 | `src/proxy.ts` | Per-request Content-Security-Policy nonce (pages render dynamically because of it) |
 | `next.config.ts` | Security headers, the msw/browser alias for server builds |
 | `src/patterns/` | Screen parts. `app-shell.tsx` is the Next version (next/link); the rest match the React preset |
-| `src/api/`, `src/mocks/` | API client, auth hooks, mock backend. Same `/api/*` contract as the Nest preset |
+| `src/features/<action>/` | One thing a user does: its form, sheet, rules, hooks. Pages in `src/app/` compose features |
+| `src/entities/<resource>/` | `api.ts` (schema, queries, mutations) and `mock.ts` (mock endpoints), written by `pnpm gen` |
+| `src/api/`, `src/mocks/` | API client (`failureOf`), auth hooks (`currentUser`), mock backend wiring. Same `/api/*` contract as the Nest preset |
 | `src/components/ui/` | shadcn, every component installed |
 
 ## Rules
 
 - Slipway gives you parts and a data layer, not screens or a design. The look comes from a design
   harness with the user: k-style-ui-ux (`/k-style-ui-ux:go <PRD>`) for mobile apps, meaning screens used
-  mainly on a phone (its `out/` is the design: port it into the parts and `src/app/globals.css`, don't paste
-  its HTML); the Impeccable skill (`/impeccable`, which writes `PRODUCT.md` and `DESIGN.md`) for desktop web
-  and landing pages. If the harness isn't installed, ask the user to install it rather than inventing a style. Every design passes `pnpm check:ui` and the e2e tests.
+  mainly on a phone (its `out/` is the design, don't paste its HTML: `pnpm design out` writes its tokens into
+  `src/app/globals.css` and its component styles into `src/design/k-style.css` (classes prefixed `k-`), write
+  each `out/screens/<id>.html` as JSX with those classes: `MobileShell className="k-screen ..."` as the root and
+  `<main>`, the design's own app bar/tab bar/CTA markup with `useBack("/list")` and `next/link`, `BottomSheet
+  className="k-sheet" overlayClassName="k-dim"` for sheets, `failureOf` for form errors; seed the demo account in `src/mocks/db.ts` with `out/journey.md`'s scenario data, then
+  `pnpm design:compare --now <the journey's time> /route=<id>.html ...` and fix what differs); the Impeccable skill (`/impeccable`, which writes `PRODUCT.md` and `DESIGN.md`) for desktop web
+  and landing pages. Hand people the built app (`pnpm build && pnpm start`), not `pnpm dev`. If the harness isn't installed, ask the user to install it rather than inventing a style. Every design passes `pnpm check:ui` and the e2e tests.
 - Never make up a logo, favicon or app icon (a letter in a shape, a stock icon standing in for the brand). Use only the logo file the user supplies: `pnpm brand <file>` puts it in `public/` and makes it the favicon (`src/app/icon.*`), then pass it to `AppShell`'s `logo`. Until then the product name stands as plain text and you ask the user for a logo.
 - Interactive parts are client components (`"use client"`). Keep pages as server components when they
-  only arrange parts; data comes from the TanStack Query hooks in `src/api/` on the client.
+  only arrange parts; data comes from the TanStack Query hooks in `src/entities/` on the client.
+- Layers import downward only: `src/app` -> `features` -> `entities` -> shared code (`components`,
+  `patterns`, `lib`, `api`, `hooks`); ESLint enforces it.
 - A signed-in area is a layout (`src/app/(app)/layout.tsx`, client) that reads `meQuery`, sends visitors
   without a user to `/login` with `router.replace`, and wraps `children` in `<AppShell>`. Sign-in pages
   use `src/patterns/auth-forms.tsx` with the hooks in `src/api/auth.ts`.
@@ -65,4 +73,4 @@ tools read them from there.
 ## Adding a resource
 
 In a project made by Slipway, `pnpm gen resource <plural> <한글 이름> --fields "..."` writes the data
-layer (schema and hooks in `src/api/`, the mock handler, an API contract test). It never writes screens.
+layer (`src/entities/<resource>/api.ts` and `mock.ts`, an API contract test). It never writes screens.

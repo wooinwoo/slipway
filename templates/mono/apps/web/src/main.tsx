@@ -8,12 +8,16 @@ import { RouteError, RouteNotFound, RoutePending } from "@/components/route-stat
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { ApiError } from "@/api/client"
 import { isDemo } from "@/config"
 import { applyBrandHue, savedBrandHue } from "@/lib/brand"
 import { routeTree } from "./routeTree.gen"
 
 const queryClient = new QueryClient({
-  defaultOptions: { queries: { staleTime: 30_000, refetchOnWindowFocus: false } },
+  defaultOptions: {
+    // A 4xx (not found, no access, bad input) won't change on retry; network and 5xx errors get three tries.
+    queries: { staleTime: 30_000, refetchOnWindowFocus: false, retry: (failures, error) => !(error instanceof ApiError && error.status < 500) && failures < 3 },
+  },
 })
 
 const router = createRouter({

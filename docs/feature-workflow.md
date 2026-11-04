@@ -33,7 +33,7 @@ Nest 단독이면 API까지, 모노레포면 양쪽을 같은 계약으로 구�
 | 보존 | 삭제 방식, 관련 데이터 처리, 게스트 데이터 수명 |
 
 모노레포는 `packages/shared/src/<resource>.ts`에 Zod 스키마와 타입을 정의하고 `index.ts`에서
-내보냅니다. React 단독은 `src/api/`, Nest 단독은 `src/contracts/`가 계약의 위치입니다.
+내보냅니다. React 단독은 `src/entities/<리소스>/api.ts`, Nest 단독은 `src/contracts/`가 계약의 위치입니다.
 
 API 오류는 `{ message, fields? }`, 목록 응답은 `{ items, total, page, pageSize }` 형태를 기준으로
 설계합니다. 화면의 비활성 버튼만으로 권한을 처리하지 않습니다. 서버의 조회·수정·삭제 쿼리가

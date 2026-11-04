@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test"
 
+import { openAsDemo } from "./demo.js"
+
 // Smoke tests for the bare app. Add one `test("REQ-n ...")` per requirement in docs/requirements.md.
 test("the app boots and names the tab from src/config.ts", async ({ page }) => {
   await page.goto("/")
@@ -23,4 +25,14 @@ test("the API answers the auth contract", async ({ page }) => {
   expect(session.status).toBe(200)
   expect(session.body.token).toEqual(expect.any(String))
   expect(session.body.user.provider).toBe("guest")
+})
+
+test("the demo account signs in with its sample data", async ({ page }) => {
+  await openAsDemo(page, "/")
+  const me = await page.evaluate(() =>
+    fetch("/api/auth/me", { headers: { Authorization: `Bearer ${localStorage.getItem("slipway.token")}` } }).then(
+      (r) => r.json() as Promise<{ email: string }>
+    )
+  )
+  expect(me.email).toBe("demo@slipway.dev")
 })

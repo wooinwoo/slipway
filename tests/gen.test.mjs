@@ -20,18 +20,25 @@ async function project(t, preset) {
   return target
 }
 
-const fields = "title:text:주문명 phone?:phone:연락처 amount:won:금액 status:enum(접수|완료):상태 dueAt?:date:납기 memo?:textarea:메모"
+const fields = "title:text:주문_이름 phone?:phone:연락처 amount:won:금액 status:enum(접수|완료):상태 dueAt?:date:납기 pickupAt:time:수령_시각 memo?:textarea:메모"
 const gen = (cwd, ...args) => execFileSync(process.execPath, ["scripts/gen.mjs", ...args], { cwd, encoding: "utf8", stdio: "pipe" })
 const read = (cwd, file) => readFile(join(cwd, file), "utf8")
 
 test("react: data layer only, no screens", async t => {
   const cwd = await project(t, "react")
   gen(cwd, "resource", "orders", "주문", "--fields", fields)
-  assert.match(await read(cwd, "src/api/orders.ts"), /export const orderInputSchema = z\.object/)
-  assert.match(await read(cwd, "src/api/orders.ts"), /title: z\.string\(\)\.trim\(\)\.min\(1, "주문명을 입력하세요"\)/)
-  assert.match(await read(cwd, "src/api/orders.ts"), /export function useSaveOrder\(\)/)
+  assert.match(await read(cwd, "src/entities/orders/api.ts"), /export const orderInputSchema = z\.object/)
+  assert.match(await read(cwd, "src/entities/orders/api.ts"), /title: z\.string\(\)\.trim\(\)\.min\(1, "주문 이름을 입력하세요"\)/)
+  assert.match(await read(cwd, "src/entities/orders/api.ts"), /export function useSaveOrder\(\)/)
+  assert.match(await read(cwd, "src/entities/orders/api.ts"), /export const orderQuery = \(id: string\) =>/)
+  assert.match(await read(cwd, "src/entities/orders/api.ts"), /export const allOrdersQuery = \(\) =>/)
+  assert.match(await read(cwd, "src/entities/orders/api.ts"), /removeQueries\(\{ queryKey: \["orders", id\] \}\)/)
+  assert.match(await read(cwd, "src/entities/orders/api.ts"), /pickupAt: z\.string\(\)\.regex\(\/\^\(\[01\]\\d\|2\[0-3\]\):\[0-5\]\\d\$\/, "수령 시각을 입력하세요"\)/)
   assert.match(await read(cwd, "src/mocks/browser.ts"), /\.\.\.orderHandlers,\n\s+\/\/ gen:handlers/)
   assert.match(await read(cwd, "src/mocks/db.ts"), /orders: OrderRow\[\]/)
+  // One folder per resource: the data layer and its mock side by side.
+  assert.match(await read(cwd, "src/entities/orders/mock.ts"), /export const orderHandlers = \[/)
+  assert.match(await read(cwd, "src/mocks/browser.ts"), /from "@\/entities\/orders\/mock"/)
   assert.match(await read(cwd, "e2e/orders-api.e2e.ts"), /fetch\(path/)
   // Screens are assembled from src/patterns/ by whoever builds the app.
   assert.deepEqual((await readdir(join(cwd, "src/routes"))).sort(), ["__root.tsx", "auth", "index.tsx"])
@@ -59,8 +66,32 @@ test("mono: the schema lives once in packages/shared", async t => {
   assert.match(await read(cwd, "packages/shared/src/orders.ts"), /export const orderInputSchema/)
   assert.match(await read(cwd, "packages/shared/src/index.ts"), /export \* from "\.\/orders\.js"/)
   assert.match(await read(cwd, "apps/api/src/contracts/orders.ts"), /export \* from '@slipway\/shared\/orders'/)
-  assert.match(await read(cwd, "apps/web/src/api/orders.ts"), /export \* from "@slipway\/shared\/orders"/)
-  assert.doesNotMatch(await read(cwd, "apps/web/src/api/orders.ts"), /z\.object/)
+  assert.match(await read(cwd, "apps/web/src/entities/orders/api.ts"), /export \* from "@slipway\/shared\/orders"/)
+  assert.doesNotMatch(await read(cwd, "apps/web/src/entities/orders/api.ts"), /z\.object/)
+})
+
+test("a reference checks its target, deletes with it, and tests against a row it creates", async t => {
+  const cwd = await project(t, "react")
+  assert.throws(() => gen(cwd, "resource", "bookings", "예약", "--fields", "classId:ref(classes):수업"), /isn't generated yet/)
+  gen(cwd, "resource", "classes", "수업", "--fields", "title:text:수업명")
+  gen(cwd, "resource", "bookings", "예약", "--fields", "memberName:text:회원명 classId:ref(classes):수업")
+  const api = await read(cwd, "src/entities/bookings/api.ts")
+  assert.match(api, /classId: z\.string\(\)\.trim\(\)\.min\(1, "수업을 고르세요"\)/)
+  const mock = await read(cwd, "src/entities/bookings/mock.ts")
+  assert.match(mock, /!db\.classes\.some\(\s*\(row\) => row\.id === data\.classId && row\.userId === userId\s*\)/)
+  assert.match(await read(cwd, "src/entities/classes/mock.ts"), /db\.bookings = db\.bookings\.filter\(\s*\(row\) => row\.classId !== params\.id\s*\)/)
+  assert.match(await read(cwd, "e2e/bookings-api.e2e.ts"), /"path":"\/api\/classes"/)
+  const manifest = JSON.parse(await read(cwd, "package.json"))
+  assert.equal(manifest.slipway.resources.bookings.fields, "memberName:text:회원명 classId:ref(classes):수업")
+})
+
+test("derives English singulars, and prints the field syntax when asked", async t => {
+  const cwd = await project(t, "react")
+  gen(cwd, "resource", "classes", "수업", "--fields", "title:text:수업명")
+  assert.match(await read(cwd, "src/entities/classes/api.ts"), /export const classInputSchema/)
+  gen(cwd, "resource", "categories", "분류", "--fields", "name:text:이름")
+  assert.match(await read(cwd, "src/entities/categories/api.ts"), /export const categoryInputSchema/)
+  assert.throws(() => gen(cwd), /types\s+text, textarea, email, phone, number, won, date, time/)
 })
 
 test("refuses bad input and never overwrites", async t => {

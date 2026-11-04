@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview",
+    "preview": "vite preview --host",
     "typecheck": "tsr generate && tsc -b",
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
@@ -15,6 +15,7 @@
     "check:reqs": "node scripts/check-reqs.mjs",
     "verify": "pnpm typecheck && pnpm lint && pnpm test && pnpm check:reqs && pnpm build && pnpm check:bundle && pnpm e2e && pnpm e2e:demo && pnpm check:ui",
     "shots": "pnpm build:demo && node scripts/ui.mjs shots --dist dist-demo",
+    "design:compare": "pnpm build:demo && node scripts/ui.mjs compare --dist dist-demo",
     "parts:typecheck": "tsc -p tsconfig.parts.json",
     "parts:test": "playwright test --config playwright.parts.config.ts",
     "parts:verify": "pnpm parts:typecheck && pnpm parts:test",
@@ -24,7 +25,8 @@
     "check:score": "LHCI_DIST=dist-demo npx --yes @lhci/cli@0.16.0 autorun --config=lighthouserc.cjs",
     "dev:demo": "vite --mode demo",
     "build:demo": "tsc -b && vite build --mode demo --outDir dist-demo",
-    "e2e:demo": "pnpm build:demo && playwright test --config playwright.demo.config.ts"
+    "e2e:demo": "pnpm build:demo && playwright test --config playwright.demo.config.ts",
+    "preview:demo": "vite preview --outDir dist-demo --host"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

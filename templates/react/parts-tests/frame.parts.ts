@@ -81,3 +81,50 @@ test("theme settings switch theme and brand hue, and survive a reload", async ({
   await expect(page.locator("html")).toHaveClass(/dark/)
   await expect(page.getByRole("button", { name: "색상 168" })).toHaveAttribute("aria-pressed", "true")
 })
+
+test("mobile shell: tabs mark the current page, back falls back when opened directly, the bottom action never covers content", async ({
+  page,
+}, info) => {
+  const dark = info.project.name.includes("dark") ? "&theme=dark" : ""
+  await page.goto(`/fixtures/parts/index.html?part=mobile${dark}`)
+  const tabs = page.getByRole("navigation", { name: "메뉴" })
+  await tabs.getByRole("link", { name: "주문" }).click()
+  await expect(page.getByRole("heading", { name: "주문 화면" })).toBeVisible()
+  await expect(tabs.getByRole("link", { name: "주문" })).toHaveAttribute("aria-current", "page")
+  await expect(tabs.getByRole("link", { name: "홈" })).not.toHaveAttribute("aria-current", "page")
+
+  // A bottom sheet opens with its title, keeps focus inside, closes on Esc and on a choice.
+  await page.getByRole("button", { name: "상태 바꾸기 (접수)" }).click()
+  const sheet = page.getByRole("dialog", { name: "주문 상태" })
+  await expect(sheet).toBeVisible()
+  await page.keyboard.press("Escape")
+  await expect(sheet).toBeHidden()
+  await page.getByRole("button", { name: "상태 바꾸기 (접수)" }).click()
+  await sheet.getByRole("button", { name: "배송" }).click()
+  await expect(page.getByRole("button", { name: "상태 바꾸기 (배송)" })).toBeVisible()
+
+  // From the list, back returns to it.
+  await page.getByRole("link", { name: "주문 받기" }).click()
+  await expect(page.getByRole("heading", { name: "주문 받기" })).toBeVisible()
+  await page.getByRole("button", { name: "뒤로" }).click()
+  await expect(page.getByRole("heading", { name: "주문 화면" })).toBeVisible()
+
+  // Opened directly there is no page to return to: back goes to its fallback.
+  await page.goto(`/fixtures/parts/index.html?part=mobile&path=/orders/new${dark}`)
+  await page.getByRole("button", { name: "뒤로" }).click()
+  await expect(page.getByRole("heading", { name: "주문 화면" })).toBeVisible()
+
+  await page.goto(`/fixtures/parts/index.html?part=mobile&path=/orders/new${dark}`)
+  const last = page.getByText("마지막 줄")
+  await last.scrollIntoViewIfNeeded()
+  await page.mouse.wheel(0, 5000)
+  const action = page.getByRole("button", { name: "저장" })
+  const [lastBox, actionBox] = [await last.boundingBox(), await action.boundingBox()]
+  expect(lastBox!.y + lastBox!.height).toBeLessThanOrEqual(actionBox!.y)
+  await action.click()
+  await expect(page.locator("output")).toHaveText("저장함")
+
+  // On a wide screen the app stays a phone-width column.
+  const column = await page.getByRole("main").last().evaluate((main) => main.parentElement!.getBoundingClientRect().width)
+  expect(column).toBeLessThanOrEqual(480)
+})

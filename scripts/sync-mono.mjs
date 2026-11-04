@@ -57,8 +57,8 @@ patch(join(shared, "auth.ts"),
 writeFileSync(join(web, "src/lib/kr.ts"), '// Korean helpers live in packages/shared so the API validates with the same rules.\nexport * from "@slipway/shared/kr"\n')
 unlinkSync(join(web, "src/lib/kr.test.ts"))
 patch(join(web, "src/api/auth.ts"),
-  'import { z } from "zod"\n\nimport { api, token } from "./client"\n\nexport type User = { id: string; name: string; email: string; provider: "email" | "guest" | "kakao" | "naver" }\n',
-  'import type { z } from "zod"\n\nimport { loginSchema, signupSchema, type User } from "@slipway/shared/auth"\nimport { api, token } from "./client"\n\nexport { loginSchema, signupSchema, type User }\n')
+  'import { z } from "zod"\n\nimport { isDemo } from "@/config"\nimport { ApiError, api, BASE_URL, token } from "./client"\nimport { demoAccount } from "./demo-account"\n\nexport { demoAccount }\n\nexport type User = { id: string; name: string; email: string; provider: "email" | "guest" | "kakao" | "naver" }\n',
+  'import type { z } from "zod"\n\nimport { loginSchema, signupSchema, type User } from "@slipway/shared/auth"\nimport { isDemo } from "@/config"\nimport { ApiError, api, BASE_URL, token } from "./client"\nimport { demoAccount } from "./demo-account"\n\nexport { demoAccount }\nexport { loginSchema, signupSchema, type User }\n')
 {
   const file = join(web, "src/api/auth.ts")
   const text = readFileSync(file, "utf8").replace(/\r\n/g, "\n")
@@ -78,6 +78,9 @@ json(join(web, "package.json"), (pkg) => {
   pkg.scripts.verify = pkg.scripts.verify.replace(" && pnpm check:ui", "") + " && pnpm e2e:demo && pnpm check:ui"
   pkg.scripts["check:ui"] = "node scripts/ui.mjs check --dist dist-demo"
   pkg.scripts.shots = "pnpm build:demo && node scripts/ui.mjs shots --dist dist-demo"
+  pkg.scripts["design:compare"] = "pnpm build:demo && node scripts/ui.mjs compare --dist dist-demo"
+  // Hand over the built mock app: one bundle, so it opens in a second (the dev server serves hundreds of files).
+  pkg.scripts["preview:demo"] = "vite preview --outDir dist-demo --host"
   pkg.scripts["check:score"] = "LHCI_DIST=dist-demo npx --yes @lhci/cli@0.16.0 autorun --config=lighthouserc.cjs"
 })
 if (!existsSync(join(web, ".env"))) writeFileSync(join(web, ".env"), "# In the monorepo the web app talks to apps/api on the same origin (Vite proxies /api in dev and preview).\n# `pnpm dev:demo` runs it on the in-browser mock instead.\nVITE_API_URL=/\n")
@@ -128,7 +131,9 @@ patch(join(web, "AGENTS.md"),
   "# Slipway React\n\nDemo-first React app. It runs with no backend: an in-browser mock API (MSW) answers `/api/*`\nwith seeded Korean data. Set `VITE_API_URL` and the same calls go to a real server instead.",
   "# Slipway Mono: web\n\nThe web app of the Slipway monorepo (read `../../AGENTS.md` first). By default it talks to\n`apps/api` on the same origin; `pnpm dev:demo` swaps in the in-browser mock backend (MSW).",
   "| `src/components/kr-inputs.tsx`, `src/lib/kr.ts` | Korean inputs, formatting, validation |",
-  "| `src/components/kr-inputs.tsx` | Korean inputs. Formatting and validation come from `@slipway/shared/kr` |")
+  "| `src/components/kr-inputs.tsx` | Korean inputs. Formatting and validation come from `@slipway/shared/kr` |",
+  "- `pnpm build && pnpm preview` serves the built app. Hand that to people, not `pnpm dev`: the dev server",
+  "- `pnpm preview:demo` serves the mock build (after `pnpm build:demo`). Hand that to people, not `pnpm dev`: the dev server")
 
 // --- api
 writeFileSync(join(api, "src/contracts/kr.ts"), "export * from '@slipway/shared/kr';\n")

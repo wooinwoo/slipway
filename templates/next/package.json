@@ -14,6 +14,7 @@
     "e2e": "playwright test",
     "check:bundle": "node scripts/check-bundle.mjs",
     "shots": "pnpm build && node scripts/ui.mjs shots",
+    "design:compare": "pnpm build && node scripts/ui.mjs compare",
     "check:ui": "node scripts/ui.mjs check",
     "check:score": "npx --yes @lhci/cli@0.16.0 autorun --config=lighthouserc.cjs",
     "audit:deps": "pnpm audit --prod --audit-level high",

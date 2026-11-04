@@ -10,6 +10,8 @@ const projectSkills = { react: ["screen", "resource", "deploy"], next: ["screen"
 // Presets with an API or a mock API get the resource generator and the API-side docs.
 const dataPresets = new Set(["mono", "react", "next", "nest"])
 const webPresets = new Set(["mono", "react", "next", "astro"])
+// Presets whose theme is Tailwind + shadcn tokens: `pnpm design` writes the harness tokens there.
+const themePresets = new Set(["mono", "react", "next"])
 const excluded = new Set([".git", "node_modules", "dist", "dist-demo", ".next", ".astro", ".lighthouseci", ".data", ".turbo", ".tanstack", ".shots", ".cache", ".tmp", "coverage", ".pnpm-store", "test-results", "playwright-report", "build", ".dart_tool", ".gradle", "Pods", ".flutter-plugins-dependencies", ".idea"])
 const inside = (parent, child) => {
   const rel = relative(parent, child)
@@ -56,6 +58,8 @@ export async function createProject(destination, { preset = "react", name, tagli
       if (dataPresets.has(preset)) manifest.scripts = { ...manifest.scripts, gen: "node scripts/gen.mjs" }
       // `pnpm brand logo.svg` wires the user's own logo (favicon, public/). Slipway never makes one.
       if (webPresets.has(preset)) manifest.scripts = { ...manifest.scripts, brand: "node scripts/brand.mjs" }
+      // `pnpm design out/` copies the design harness's tokens into the theme. It never picks a look.
+      if (themePresets.has(preset)) manifest.scripts = { ...manifest.scripts, design: "node scripts/design.mjs" }
       await writeFile(manifestPath, JSON.stringify(manifest, null, 2) + "\n")
       try {
         const lockPath = join(stage, "package-lock.json")
@@ -97,6 +101,7 @@ export async function createProject(destination, { preset = "react", name, tagli
         await mkdir(join(stage, "scripts"), { recursive: true })
         await cp(new URL("./brand.mjs", import.meta.url), join(stage, "scripts/brand.mjs"))
       }
+      if (themePresets.has(preset)) await cp(new URL("./design.mjs", import.meta.url), join(stage, "scripts/design.mjs"))
       await writeFile(join(stage, "README.md"), projectReadme(slug, preset, name ?? slug))
     }
     // The target was checked above; recheck just before the atomic publish as well.
@@ -177,7 +182,9 @@ function projectReadme(slug, preset, name) {
     + "\n\n"
     + (preset === "nest" ? "" : "## 화면과 디자인\n\nSlipway는 화면도 디자인 기준도 주지 않습니다. 부품(`src/patterns/`, `CODEPACK.md`)과 데이터 층만 있습니다. "
       + "화면의 방향과 모양은 디자인 하네스로 정합니다. 모바일 앱(휴대폰에서 주로 쓰는 화면)은 [k-style-ui-ux](https://github.com/vmc-inner-circle/k-style-ui-ux)가 PRD로 디자인을 만들고 "
-      + "그 결과를 부품과 테마 토큰으로 옮깁니다. 데스크톱 웹·랜딩은 [Impeccable](https://impeccable.style)이 사용자와 함께 `PRODUCT.md`·`DESIGN.md`를 만들고 화면을 짓고 다듬습니다. "
+      + "그 결과를 부품과 테마 토큰으로 옮깁니다"
+      + (themePresets.has(preset) ? "(`corepack pnpm design out`이 토큰을 넣고, `corepack pnpm design:compare /today=today.html`이 앱 화면과 디자인 화면을 나란히 찍습니다)" : "")
+      + ". 데스크톱 웹·랜딩은 [Impeccable](https://impeccable.style)이 사용자와 함께 `PRODUCT.md`·`DESIGN.md`를 만들고 화면을 짓고 다듬습니다. "
       + "어떤 디자인이든 `pnpm check:ui`(접근성·대비·포커스·넘침)와 E2E는 통과해야 합니다.\n\n")
     + generate
     + `## 검증\n\n\`\`\`sh\n${browsers}corepack pnpm verify\n\`\`\`\n\n${verify} GitHub에 올리면 \`.github/workflows/verify.yml\`이 같은 검증에 웹 점수(Lighthouse)와 의존성 검사를 더해 돌립니다.\n\n`

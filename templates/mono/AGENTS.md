@@ -47,6 +47,7 @@ the migration. Screens are built by hand from `apps/web/src/patterns/`.
 1. `packages/shared/src/<resource>.ts`: zod schema and types. Export it from `index.ts`.
 2. `apps/api`: table in `src/db/schema.ts` and `pnpm db:generate`, then a module behind `AuthGuard`
    (steps in `apps/api/AGENTS.md`).
-3. `apps/web`: query options in `src/api/<resource>.ts`, a route under `src/routes/_app/`, a `nav`
-   entry, and a mock handler in `src/mocks/` so `pnpm dev:demo` keeps working.
+3. `apps/web`: query options in `src/entities/<resource>/api.ts` and a mock in
+   `src/entities/<resource>/mock.ts` so `pnpm dev:demo` keeps working; what users do with it in
+   `src/features/`, the pages under `src/routes/_app/`.
 4. Add `REQ-n` entries, API contract tests, and web e2e tests.

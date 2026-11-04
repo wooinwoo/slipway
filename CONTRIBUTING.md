@@ -32,6 +32,8 @@ templates/astro, templates/flutter            따로 관리
 | 테마 토큰(기술 기본값) | `templates/react/src/index.css` | `pnpm sync`(next·mono에 복사), astro의 `src/styles/global.css`는 직접. 디자인 기준·예시 화면은 넣지 않습니다(디자인은 각 프로젝트의 하네스가 정함) |
 | 인증·API 규칙 | `templates/nest/src/` | 계약 테스트 `test/`, 웹 Mock(`templates/react/src/mocks/`)도 같은 규칙으로 |
 | 로고 연결 | `scripts/brand.mjs` | `tests/brand.test.mjs` |
+| 하네스 토큰 넣기 | `scripts/design.mjs` | `tests/design.test.mjs` |
+| 휴대폰 앱 틀 | `templates/react/src/patterns/mobile-shell.tsx`(next는 직접 관리하는 next/link 버전) | `parts-tests/frame.parts.ts` |
 | 리소스 생성기 | `scripts/gen.mjs` | `tests/gen.test.mjs`, 그리고 실제 프로젝트에 생성해서 `pnpm verify`(아래) |
 | 새 프로젝트에 들어가는 문서·README | `docs/*.md`, `scripts/create-project.mjs` | `tests/create-project.test.mjs` |
 | 검사 기준(접근성·번들·점수) | `templates/react/scripts/ui-checks.mjs`·`check-bundle.mjs`·`lighthouserc.cjs` | `pnpm sync`, next·astro의 대응 파일 |

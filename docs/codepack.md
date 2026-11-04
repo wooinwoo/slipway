@@ -49,12 +49,13 @@ AI 작업 도구에서도 읽을 수 있습니다. 목록의 원본은 `codepack
 | `src/patterns/async-state.tsx` | pending·error·empty·retry·children | 로딩·오류·빈 상태·콘텐츠 |
 | `src/patterns/confirm-action.tsx` | 트리거·문구·비동기 콜백 | 확인·취소·실행 중 상태·실패 재시도 |
 | `src/components/kr-inputs.tsx` | value·onChange | 전화·사업자번호·금액·주소 입력 |
-| `src/lib/kr.ts` | 문자열·숫자·날짜 | 한국어 포맷과 검증 |
-| `src/api/client.ts` | 경로·JSON·RequestInit | JSON 응답·필드 오류·bearer 토큰 |
+| `src/lib/kr.ts` | 문자열·숫자·날짜 | 한국어 포맷과 검증. 날짜 문구 `formatDateLong`("11월 4일 수요일")·`formatDateShort`("11/4 수")·`formatDateWord`("오늘"), `toIsoDate`·`isoDaysFrom` |
+| `src/api/client.ts` | 경로·JSON·RequestInit | JSON 응답·필드 오류·bearer 토큰. `failureOf(error)`: zod 오류나 `ApiError`를 메시지와 칸별 메시지로 |
 | `src/patterns/auth-forms.tsx` | submit·onSelect·onClick 콜백 | 로그인 카드, 이메일 로그인·가입 폼, 카카오·네이버·게스트 버튼 |
 | `src/patterns/app-shell.tsx` | brand·logo?·nav·user·onLogout·children | 사이드바, 브레드크럼, Ctrl/⌘+K, 사용자 메뉴 |
+| `src/patterns/mobile-shell.tsx` | tabs?·top?·bottom?·className·children, TopBar(title·back·end), useBack(fallback), BottomSheet(open·onOpenChange·className·overlayClassName) | 휴대폰 폭 한 칸, 하단 탭, 뒤로 가기, 아래에 고정한 주 동작, 아래에서 올라오는 시트 |
 | `src/patterns/theme-settings.tsx` | defaultHue | 라이트·다크·시스템, 브랜드 색 |
-| `src/index.css` | 브랜드 hue·dark 클래스 | 공통 테마, 별도 파일로 선택 복사 |
+| `src/index.css` | 브랜드 hue·dark 클래스 | 공통 테마, 별도 파일로 선택 복사. `pnpm design <out>`이 하네스 토큰으로 바꿈 |
 
 모노레포에서는 같은 파일이 `apps/web/src/patterns/`에 있습니다. 각 부품은 다른 부품이나
 업무 API를 자동으로 연결하지 않습니다. UI 기초 컴포넌트와 공통 테마만 사용합니다.

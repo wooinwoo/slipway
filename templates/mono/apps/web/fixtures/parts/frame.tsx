@@ -1,5 +1,6 @@
-import { useState } from "react"
+import { useState, type ReactNode } from "react"
 import {
+  Link,
   Outlet,
   RouterProvider,
   createMemoryHistory,
@@ -8,9 +9,11 @@ import {
   createRouter,
 } from "@tanstack/react-router"
 import { HouseIcon, ReceiptIcon } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { AppShell, type NavItem } from "@/patterns/app-shell"
+import { BottomSheet, BottomSheetTitle, MobileShell, TopBar, type TabItem } from "@/patterns/mobile-shell"
 import {
   AuthCard,
   AuthDivider,
@@ -108,7 +111,93 @@ function ShellFixture() {
   )
 }
 
+const tabs: TabItem[] = [
+  { to: "/", label: "홈", icon: HouseIcon },
+  { to: "/orders", label: "주문", icon: ReceiptIcon },
+]
+
+function SheetFixture() {
+  const [open, setOpen] = useState(false)
+  const [status, setStatus] = useState("접수")
+  return (
+    <>
+      <Button variant="outline" className="m-4" onClick={() => setOpen(true)}>
+        상태 바꾸기 ({status})
+      </Button>
+      <BottomSheet open={open} onOpenChange={setOpen}>
+        <BottomSheetTitle className="text-lg font-semibold">주문 상태</BottomSheetTitle>
+        {["접수", "배송"].map((option) => (
+          <Button key={option} variant="ghost" onClick={() => { setStatus(option); setOpen(false) }}>
+            {option}
+          </Button>
+        ))}
+      </BottomSheet>
+    </>
+  )
+}
+
+/** `?part=mobile&path=/orders/new` opens a screen directly, with no page to go back to. */
+function MobileFixture() {
+  const [saved, setSaved] = useState(false)
+  const [router] = useState(() => {
+    const root = createRootRoute({ component: () => <Outlet /> })
+    const tabbed = (path: string, title: string, body?: ReactNode) =>
+      createRoute({
+        getParentRoute: () => root,
+        path,
+        component: () => (
+          <MobileShell tabs={tabs}>
+            <h1 className="p-4 text-xl font-semibold">{title} 화면</h1>
+            {body}
+          </MobileShell>
+        ),
+      })
+    const form = createRoute({
+      getParentRoute: () => root,
+      path: "/orders/new",
+      component: () => (
+        <MobileShell
+          className="bg-card"
+          top={<TopBar title="주문 받기" back={{ to: "/orders" }} />}
+          bottom={
+            <Button className="h-12 w-full" onClick={() => setSaved(true)}>
+              저장
+            </Button>
+          }
+        >
+          {Array.from({ length: 30 }, (_, i) => (
+            <p key={i} className="px-4 py-2">
+              {i === 29 ? "마지막 줄" : `내용 ${i + 1}`}
+            </p>
+          ))}
+        </MobileShell>
+      ),
+    })
+    const path = new URLSearchParams(location.search).get("path") ?? "/"
+    return createRouter({
+      routeTree: root.addChildren([
+        tabbed("/", "홈"),
+        tabbed("/orders", "주문", (
+          <>
+            <Link to="/orders/new" className="m-4 underline">주문 받기</Link>
+            <SheetFixture />
+          </>
+        )),
+        form,
+      ]),
+      history: createMemoryHistory({ initialEntries: [path] }),
+    })
+  })
+  return (
+    <>
+      <RouterProvider router={router} />
+      <output>{saved ? "저장함" : ""}</output>
+    </>
+  )
+}
+
 export const frameFixtures = {
+  mobile: MobileFixture,
   login: LoginFixture,
   signup: SignupFixture,
   shell: ShellFixture,

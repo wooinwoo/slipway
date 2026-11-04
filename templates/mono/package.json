@@ -12,6 +12,9 @@
     "verify": "turbo verify",
     "build:web": "turbo build --filter=@slipway/web",
     "build:api": "turbo build --filter=@slipway/api",
+    "shots": "pnpm --filter @slipway/web shots",
+    "design:compare": "pnpm --filter @slipway/web design:compare",
+    "preview:demo": "pnpm --filter @slipway/web preview:demo",
     "audit:deps": "pnpm audit --prod --audit-level high"
   },
   "devDependencies": {

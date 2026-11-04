@@ -100,3 +100,41 @@ export function formatRelative(date: Date | string, now = new Date()) {
   const sameYear = d.getFullYear() === now.getFullYear()
   return d.toLocaleDateString("ko-KR", sameYear ? { month: "long", day: "numeric" } : { year: "numeric", month: "long", day: "numeric" })
 }
+
+// Dates as Korean screens write them. A string is a calendar day ("2026-11-04") or an ISO date-time;
+// a day is read in local time, so "2026-11-04" stays the 4th in any time zone.
+const weekdays = ["일", "월", "화", "수", "목", "금", "토"]
+const toDate = (date: Date | string) => (typeof date === "string" && date.length === 10 ? new Date(`${date}T00:00:00`) : new Date(date))
+const startOfDay = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate())
+
+/** "2026-11-04": the local calendar day, the format of `<input type="date">` and the `date` field type. */
+export const toIsoDate = (date: Date | string = new Date()) => toDate(date).toLocaleDateString("sv-SE")
+
+/** The local calendar day `days` from `from` (negative is the past): `isoDaysFrom(1)` is tomorrow. */
+export const isoDaysFrom = (days: number, from: Date | string = new Date()) => {
+  const date = startOfDay(toDate(from))
+  date.setDate(date.getDate() + days)
+  return toIsoDate(date)
+}
+
+/** "11월 4일 수요일" */
+export const formatDateLong = (date: Date | string) => {
+  const d = toDate(date)
+  return `${d.getMonth() + 1}월 ${d.getDate()}일 ${weekdays[d.getDay()]}요일`
+}
+
+/** "11/4 수": date chips, compact rows */
+export const formatDateShort = (date: Date | string) => {
+  const d = toDate(date)
+  return `${d.getMonth() + 1}/${d.getDate()} ${weekdays[d.getDay()]}`
+}
+
+/** "오늘", "내일", "어제", or "11월 6일" (with the year when it isn't this year) */
+export function formatDateWord(date: Date | string, now = new Date()) {
+  const d = startOfDay(toDate(date))
+  const days = Math.round((d.getTime() - startOfDay(now).getTime()) / 86_400_000)
+  if (days === 0) return "오늘"
+  if (days === 1) return "내일"
+  if (days === -1) return "어제"
+  return `${d.getFullYear() === now.getFullYear() ? "" : `${d.getFullYear()}년 `}${d.getMonth() + 1}월 ${d.getDate()}일`
+}
