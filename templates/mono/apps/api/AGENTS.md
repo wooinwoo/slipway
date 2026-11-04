@@ -4,6 +4,10 @@ The API of the Slipway monorepo (read `../../AGENTS.md` first). It serves exactl
 contract that the web app's mock backend fakes. Runs with zero setup: embedded Postgres (PGlite) in `./.data`, seeded with
 the same demo account as the web mock (demo@slipway.dev / demo1234).
 
+For the common requests (add a resource, deploy) follow the step-by-step flow in the
+project's `.claude/skills/<resource|deploy>/SKILL.md`. Claude Code loads them on its own; other
+tools read them from there.
+
 ## Commands
 
 - `pnpm dev` starts http://localhost:3000/api with watch mode.

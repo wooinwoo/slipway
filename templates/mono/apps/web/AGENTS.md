@@ -6,6 +6,10 @@ The web app of the Slipway monorepo (read `../../AGENTS.md` first). By default i
 The template ships no screens. Every screen, the sign-in page and the app frame included, is
 assembled per project from the parts in `src/patterns/`.
 
+For the common requests (build a screen, add a resource, deploy) follow the step-by-step flow in the
+project's `.claude/skills/<screen|resource|deploy>/SKILL.md`. Claude Code loads them on its own; other
+tools read them from there.
+
 ## Commands
 
 - `pnpm dev` starts http://localhost:5173.
@@ -51,7 +55,10 @@ assembled per project from the parts in `src/patterns/`.
 
 ## Building screens
 
-Screens and their design are yours to build here; Slipway ships parts, not screens.
+Screens and their design are yours to build here; Slipway ships parts, not screens. Parts, tokens and
+`DESIGN.md` are a starting point, not a frame to preserve: edit, replace or drop any of them. When the
+product needs a different look, rewrite `DESIGN.md` and the tokens in `src/index.css` first, then build.
+What stays fixed are the quality gates (`pnpm check:ui`, the bundle budget, security defaults).
 
 - Read `PRODUCT.md` (who, why, tone) and `DESIGN.md` (tokens, type, layout, component rules) first.
   Fill `PRODUCT.md` with the user before the first screen.

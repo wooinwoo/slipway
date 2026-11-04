@@ -8,6 +8,10 @@ formatting and validation.
 `node scripts/sync-mono.mjs` at the Slipway repo root. Inside a project made from this
 template they are ordinary code; edit them freely.
 
+For the common requests (build a screen, add a resource, deploy) follow the step-by-step flow in the
+project's `.claude/skills/<screen|resource|deploy>/SKILL.md`. Claude Code loads them on its own; other
+tools read them from there.
+
 ## Commands
 
 - `pnpm dev` builds `packages/shared`, then runs it in watch mode, the API on :3000, and the web

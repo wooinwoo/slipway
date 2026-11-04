@@ -66,7 +66,7 @@ cd <폴더> && corepack pnpm install --frozen-lockfile
    corepack pnpm gen resource orders 주문 --fields "title:text:주문명 amount:won:금액 status:enum(접수|배송중|완료):상태 dueAt?:date:납기 memo?:textarea:메모"
    ```
    타입: text, textarea, email, phone, number, won, date, enum(a|b). 이름 뒤 `?`는 선택 입력.
-3. 화면은 `/slipway:screen`의 순서로 하나씩 `src/patterns/`의 부품으로 조립한다. 로그인·앱 틀은 `CODEPACK.md`의 "로그인과 앱 틀 조립",
+3. 화면은 screen 스킬(`/slipway:screen`, 프로젝트의 `.claude/skills/screen`)의 순서로 하나씩 `src/patterns/`의 부품으로 조립한다. 로그인·앱 틀은 `CODEPACK.md`의 "로그인과 앱 틀 조립",
    목록·상세·폼은 `AdvancedTable`·`FilterBar`·`DetailPanel`·`RecordForm`, 대시보드는 `MetricGrid`·`ChartPanel`.
    요구사항에 맞는 구성과 배치를 정하는 것이 이 단계의 일이다. 요구사항마다 `docs/requirements.md`에 `REQ-n`을 추가한다.
 4. `src/config.ts`의 이름·소개, `src/index.css`의 브랜드 색을 맞춘다.
@@ -85,7 +85,7 @@ corepack pnpm shots / /<리소스>     # react·mono 웹. .shots/의 캡처를 �
 
 ## 7. 배포 (골랐을 때만)
 
-`/slipway:deploy`의 순서를 따른다.
+deploy 스킬(`/slipway:deploy`, 프로젝트의 `.claude/skills/deploy`)의 순서를 따른다.
 
 ## 끝낼 때
 

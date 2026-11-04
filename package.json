@@ -9,12 +9,11 @@
   "scripts": {
     "create": "node scripts/create-project.mjs",
     "parts": "node scripts/pack.mjs",
+    "bootstrap": "for t in react nest mono next astro; do pnpm --dir templates/$t install --frozen-lockfile || exit 1; done && pnpm --dir templates/react exec playwright install firefox",
+    "sync": "node scripts/sync-mono.mjs && node scripts/sync-next.mjs",
     "pack:check": "node scripts/pack.mjs check",
-    "sync:mono": "node scripts/sync-mono.mjs",
     "test": "node --test tests/*.test.mjs",
-    "verify": "pnpm pack:check && pnpm test && pnpm --dir templates/mono verify && pnpm --dir templates/mono/apps/web parts:verify && pnpm --dir templates/next verify && pnpm --dir templates/astro verify",
-    "sync:next": "node scripts/sync-next.mjs",
-    "sync": "pnpm sync:mono && pnpm sync:next",
+    "verify": "pnpm pack:check && pnpm test && pnpm --dir templates/react verify && pnpm --dir templates/react parts:verify && pnpm --dir templates/nest verify && pnpm --dir templates/mono verify && pnpm --dir templates/next verify && pnpm --dir templates/astro verify",
     "verify:flutter": "cd templates/flutter && flutter analyze && flutter test"
   }
 }

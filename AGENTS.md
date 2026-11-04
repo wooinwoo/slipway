@@ -3,7 +3,8 @@
 ## Building an app with Slipway
 
 When the request is to build an app (not to change Slipway itself), do not edit `templates/`.
-The full flow is `plugin/skills/new/SKILL.md` (the `/slipway:new` command). In short:
+The full flow is `plugin/skills/new/SKILL.md` (the `/slipway:new` command; Claude Code also loads it from
+`.claude/skills`, a link to `plugin/skills`). In short:
 
 1. Ask first, in one go: what the app is (a line or a PRD), the preset (react for a quick demo,
    next for Next.js App Router, mono for web + API + DB, nest for API only, astro for a landing or docs
@@ -43,8 +44,9 @@ Follow the generated project's AGENTS.md from step 2 on.
   are hand-maintained.
 - Read the relevant template's AGENTS.md before editing it. Keep `templates/astro` and the
   Next-only files in step with the React preset's design rules and checks.
-- Run `corepack pnpm test` for project creation and requirement traceability. Run the affected
-  template's `verify`; `corepack pnpm verify` at the root includes the mono verification suite.
+- Run `corepack pnpm test` for the generator, project creation and requirement traceability. Run the
+  affected template's `verify`; `corepack pnpm verify` at the root runs every template's. Human-facing
+  maintenance notes are in CONTRIBUTING.md; keep it and this file in agreement.
 - Match README claims to current behavior. New generated projects receive
   `docs/feature-workflow.md` as `FEATURE-WORKFLOW.md`.
 - Authentication identities use provider plus provider ID. Email collisions never merge

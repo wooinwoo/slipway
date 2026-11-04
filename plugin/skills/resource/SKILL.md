@@ -5,7 +5,7 @@ description: Slipway 프로젝트에 리소스의 데이터 층(DB 테이블·�
 
 # slipway:resource
 
-Slipway로 만든 프로젝트 루트(`scripts/gen.mjs`가 있음)에서 실행한다. 없으면 `/slipway:new`를 먼저 안내한다.
+Slipway로 만든 프로젝트 루트(`scripts/gen.mjs`가 있음)에서 실행한다. 없으면 Slipway의 new 스킬(`/slipway:new`)로 프로젝트부터 만들도록 안내한다.
 
 ## 1. 필드 정하기
 

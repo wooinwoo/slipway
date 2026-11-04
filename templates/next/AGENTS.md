@@ -15,6 +15,10 @@ preset (copied by `scripts/sync-next.mjs` in Slipway). It runs with no backend: 
 (MSW) answers `/api/*`. Set `NEXT_PUBLIC_API_URL` and the same calls go to a real server (the Nest
 preset). It ships no screens; build them per project from `src/patterns/`.
 
+For the common requests (build a screen, add a resource, deploy) follow the step-by-step flow in the
+project's `.claude/skills/<screen|resource|deploy>/SKILL.md`. Claude Code loads them on its own; other
+tools read them from there.
+
 ## Commands
 
 - `pnpm dev` starts http://localhost:3000.
@@ -45,6 +49,8 @@ preset). It ships no screens; build them per project from `src/patterns/`.
 
 - Read `PRODUCT.md` (who, why, tone) and `DESIGN.md` (tokens, type, layout, component rules) before
   building a screen. Use the Impeccable skill for design work when it is available.
+- Parts, tokens and `DESIGN.md` are a starting point: edit, replace or drop them. For a different look,
+  rewrite `DESIGN.md` and the tokens in `src/app/globals.css` first. The quality gates stay fixed.
 - Interactive parts are client components (`"use client"`). Keep pages as server components when they
   only arrange parts; data comes from the TanStack Query hooks in `src/api/` on the client.
 - A signed-in area is a layout (`src/app/(app)/layout.tsx`, client) that reads `meQuery`, sends visitors

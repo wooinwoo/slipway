@@ -4,6 +4,9 @@ import { fileURLToPath, pathToFileURL } from "node:url"
 
 const templates = fileURLToPath(new URL("../templates/", import.meta.url))
 const presets = new Set(["mono", "react", "next", "nest", "astro", "flutter"])
+// Skills shipped into each project's .claude/skills, so plain requests ("주문 목록 화면 만들어줘",
+// "배포해줘") follow them without installing the plugin. AGENTS.md points other AI tools at the same files.
+const projectSkills = { react: ["screen", "resource", "deploy"], next: ["screen", "resource", "deploy"], mono: ["screen", "resource", "deploy"], nest: ["resource", "deploy"], astro: ["deploy"], flutter: [] }
 // Presets with an API or a mock API get the resource generator and the API-side docs.
 const dataPresets = new Set(["mono", "react", "next", "nest"])
 const excluded = new Set([".git", "node_modules", "dist", "dist-demo", ".next", ".astro", ".lighthouseci", ".data", ".turbo", ".tanstack", ".shots", ".cache", ".tmp", "coverage", ".pnpm-store", "test-results", "playwright-report", "build", ".dart_tool", ".gradle", "Pods", ".flutter-plugins-dependencies", ".idea"])
@@ -36,6 +39,10 @@ export async function createProject(destination, { preset = "react", name, tagli
           && !(entry.startsWith(".env") && entry !== ".env.example")
       },
     })
+    for (const skill of projectSkills[preset]) {
+      await mkdir(join(stage, ".claude/skills", skill), { recursive: true })
+      await cp(new URL(`../plugin/skills/${skill}/SKILL.md`, import.meta.url), join(stage, ".claude/skills", skill, "SKILL.md"))
+    }
     if (preset === "flutter") {
       await nameFlutterApp(stage, name ?? slug)
       await writeFile(join(stage, "README.md"), projectReadme(slug, preset, name ?? slug))

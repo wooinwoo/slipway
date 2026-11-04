@@ -4,6 +4,8 @@ Static site setup for landing, service introduction and documentation pages. It 
 sections; build them per project. Pages are HTML at build time; React islands add interactivity
 where a page needs it.
 
+For deploying, follow `.claude/skills/deploy/SKILL.md`.
+
 ## Commands
 
 - `pnpm dev` starts http://localhost:4321.
@@ -30,7 +32,8 @@ where a page needs it.
 ## Rules
 
 - Read `PRODUCT.md` (who, why, tone) and `DESIGN.md` (tokens, type, layout) before building a page.
-  Use the Impeccable skill for design work when it is available.
+  Use the Impeccable skill for design work when it is available. Both are a starting point: for a
+  different look, rewrite `DESIGN.md` and `src/styles/global.css` first. The quality gates stay fixed.
 - Every page passes `title` and `description` to `Base`. One `<h1>` per page.
 - Images go through `astro:assets` (`<Image>`) with `alt` text and explicit sizes.
 - Ship HTML first. Use a React island (`client:visible`, `client:idle`) only where the page needs

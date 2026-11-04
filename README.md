@@ -43,6 +43,10 @@
 Slipway는 도구 상자입니다. 앱은 Slipway 밖, 지정한 폴더에 독립 프로젝트로 만들어지고 각자 자기 레포가 됩니다.
 화면은 미리 만들어 두지 않습니다. 부품을 쓰는 사람이나 AI가 요구에 맞게 조립합니다.
 
+명령을 외울 필요는 없습니다. "주문 목록 화면 만들어 줘", "예약 테이블 추가해 줘", "Vercel에 올려 줘"처럼 말하면 맞는 스킬이 잡힙니다.
+새 프로젝트에는 화면·리소스·배포 스킬이 `.claude/skills/`에 들어 있어 플러그인을 설치하지 않아도 되고,
+Slipway 레포에서 "Slipway로 ○○ 앱 만들어 줘"라고 하면 앱 만들기 스킬이 잡힙니다. Codex·Cursor는 `AGENTS.md`가 같은 스킬 파일을 가리킵니다.
+
 ### 1. Claude Code 플러그인 (추천)
 
 ```
@@ -260,7 +264,9 @@ node scripts/pack.mjs copy advanced-table filters --to ../my-app/src
 | `DESIGN.md` | 색·타이포·간격·곡률 토큰과 레이아웃, 부품별 규칙, 하지 말 것. `src/index.css`의 값과 같습니다 |
 
 두 파일은 Impeccable 디자인 스킬이 읽는 형식이라 `/impeccable critique`·`polish`가 그대로 맞물립니다.
-기본 톤은 조용한 업무 도구입니다. 브랜드 색 하나와 그 색이 섞인 중립색, Pretendard, 어절 단위 줄바꿈을 씁니다. 제품에 맞게 토큰과 이 파일을 함께 바꿉니다.
+기본 톤은 조용한 업무 도구입니다. 브랜드 색 하나와 그 색이 섞인 중립색, Pretendard, 어절 단위 줄바꿈을 씁니다.
+이건 출발점이지 지켜야 할 템플릿이 아닙니다. 과감한 색, 다른 글꼴, 사진 중심처럼 제품에 맞는 방향이 따로 있으면 `DESIGN.md`와 토큰을 먼저 그 방향으로 다시 쓰고 화면을 만듭니다.
+부품도 고쳐 쓰거나 안 써도 됩니다. 바뀌지 않는 것은 품질 관문(접근성·대비·포커스·넘침, 번들 예산, 보안 기본값)뿐입니다.
 
 ## 품질 관문
 
@@ -336,19 +342,6 @@ WSL의 헤드리스 Chromium은 화면을 그리지 못하는 경우가 있어 �
 **기존 프로젝트에도 쓸 수 있나요?**
 부품만 가져다 쓸 수 있습니다(`node scripts/pack.mjs copy …`). React, TypeScript, Tailwind CSS 4, `@/` 경로 별칭이 필요합니다.
 
-## Slipway 자체를 고칠 때
-
-- 원본은 `templates/react`와 `templates/nest`입니다. 고친 뒤 `pnpm sync`로 `templates/mono`와 `templates/next`를 다시 만듭니다.
-  next의 `src/app/`, `proxy.ts`, `config.ts`, `app-shell.tsx`와 astro·flutter는 직접 관리합니다.
-- 부품은 [`codepack/catalog.json`](codepack/catalog.json)에 입력·출력·수정 지점·의존성과 함께 등록하고, `fixtures/parts/`와 `parts-tests/`에서 테스트합니다.
-- 대표 그림의 원본은 `docs/images/banner.html`입니다.
-
-```sh
-corepack pnpm test                      # 생성기·프로젝트 생성·요구사항 검사 테스트
-corepack pnpm verify                    # 위 + 카탈로그 + mono·next·astro 템플릿 전체 검증
-corepack pnpm verify:flutter            # Flutter SDK가 있을 때
-```
-
 ## 문서
 
 - [부품 사용법](docs/codepack.md): 부품 규약, 로그인·앱 틀 조립, 조합 예시
@@ -356,3 +349,4 @@ corepack pnpm verify:flutter            # Flutter SDK가 있을 때
 - [보안](docs/security.md): 기본으로 막는 것, 공개 전 점검표, 들어 있지 않은 것
 - [개발·검증 기준](docs/feature-workflow.md): 요청 하나를 요구사항부터 E2E까지 끝내는 순서
 - [제품 기준](PRODUCT.md): Slipway가 지키는 방향
+- [Slipway 고치기](CONTRIBUTING.md): 템플릿 관계, 무엇을 어디서 고치나, 검증
