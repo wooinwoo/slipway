@@ -16,6 +16,7 @@
   <img src="https://img.shields.io/badge/TypeScript-6-3178c6?logo=typescript&logoColor=white" alt="TypeScript 6">
   <img src="https://img.shields.io/badge/Tailwind-4-06b6d4?logo=tailwindcss&logoColor=white" alt="Tailwind CSS 4">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-555555" alt="MIT License"></a>
+  <a href="https://github.com/wooinwoo/slipway/actions/workflows/verify.yml"><img src="https://github.com/wooinwoo/slipway/actions/workflows/verify.yml/badge.svg" alt="verify"></a>
 </p>
 
 <p align="center">

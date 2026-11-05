@@ -58,6 +58,8 @@ flutter 템플릿을 고친다면 Flutter SDK(stable)와 Android SDK도 필요�
 | `corepack pnpm verify` | 위 둘 + react(앱·부품 테스트), nest, mono, next, astro 템플릿 각각의 `verify` | 15분 안팎 |
 | `corepack pnpm verify:flutter` | Flutter 분석과 단위 테스트 | 1분 안팎 |
 
+main 푸시와 PR마다 CI(`.github/workflows/verify.yml`)가 `bootstrap` 뒤 `verify`, 그리고 Flutter 분석과 테스트를 돌립니다. 실패하면 스크린샷과 트레이스를 `reports`로 붙입니다.
+
 생성기를 바꿨다면 실제 프로젝트로도 확인합니다. 템플릿 검증만으로는 생성된 코드가 컴파일되는지 알 수 없습니다.
 
 ```sh
