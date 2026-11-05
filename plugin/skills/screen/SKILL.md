@@ -85,7 +85,8 @@ react는 `corepack pnpm build && corepack pnpm preview`, mono는 `corepack pnpm 
      - 디자인의 앱 바·탭바·하단 CTA·FAB 마크업(`k-appbar`·`k-tabbar`·`k-cta`·`k-fab`)을 그대로 쓴다. MobileShell의 `top`·`tabs`·`bottom`은
        그런 마크업이 없는 디자인용이다. 뒤로 버튼은 `useBack({ to: "/목록" })`, 탭바는 `KTabBar`, 디자인의 선 아이콘은 lucide(`strokeWidth={1.75}`).
      - 시트는 `<BottomSheet className="k-sheet" overlayClassName="k-dim">` 안에 손잡이와 `<BottomSheetTitle className="k-h2">`. 시트를 비교하려면 검색 파라미터로 열리게 한다.
-     - 폼은 `KField` 안에 디자인의 `k-input`, 리소스 zod 스키마로 검사하고 `failureOf(parsed.error)`·`failureOf(error)`를 보여 준다.
+     - 폼은 `KField` 안에 디자인의 `k-input`. 입력칸 글자를 그대로 상태로 두고 리소스 zod 스키마로 검사한다(숫자·원 칸은 "12"와 빈칸을 스스로 읽는다).
+       `failureOf(parsed.error)`·`failureOf(error)`의 칸별 메시지는 `KField`의 `error`로, 칸이 없는 메시지는 버튼 위 `<KFormError failure={failure} />`로 보여 준다.
        디자인의 "둘러보기"는 `useDemoLogin()`(데모 계정과 심어 둔 데이터), 카카오·네이버는 `useSocialLogin()`(Mock과 실제 리다이렉트를 훅이 가른다).
      - 한 페이지는 `<plural>Query`, 목록 전체를 세거나 합치는 화면은 `all<Plural>Query()`, 상세는 `<singular>Query(id)`. 값 하나만 바꿔 저장할 때는
        `{ ...to<Single>Input(row), status }`. 디자인에 없는 것만 토큰 유틸리티로 짓고 색 값은 쓰지 않는다.

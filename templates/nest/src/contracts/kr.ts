@@ -29,6 +29,17 @@ export const phoneSchema = z
     '전화번호 형식이 아닙니다',
   );
 
+/**
+ * A number field that also takes the text an input holds: '' is no value (null), '1,200' is 1200, so a form
+ * passes its strings straight to the schema. Wraps the field's `z.number()`.
+ */
+export const numberInput = <T extends z.ZodType>(schema: T) =>
+  z.preprocess((value) => {
+    if (typeof value !== 'string') return value ?? null;
+    const text = value.replaceAll(',', '').trim();
+    return text ? Number(text) : null;
+  }, schema);
+
 /** 1234567890 -> 123-45-67890 */
 export function formatBizNo(value: string) {
   const d = digits(value).slice(0, 10);

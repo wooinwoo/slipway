@@ -55,6 +55,9 @@ test("react: data layer only, no screens", async t => {
   assert.match(await read(cwd, "src/entities/orders/api.ts"), /export const orderQuery = \(id: string\) =>/)
   assert.match(await read(cwd, "src/entities/orders/api.ts"), /export const allOrdersQuery = \(\) =>/)
   assert.match(await read(cwd, "src/entities/orders/api.ts"), /removeQueries\(\{ queryKey: \["orders", id\] \}\)/)
+  // A form passes the input's text; the schema reads it as a number.
+  assert.match(await read(cwd, "src/entities/orders/api.ts"), /import \{ numberInput, phoneSchema \} from "@\/shared\/lib\/kr"/)
+  assert.match(await read(cwd, "src/entities/orders/api.ts"), /amount: numberInput\(z\.number\(/)
   assert.match(await read(cwd, "src/entities/orders/api.ts"), /pickupAt: z\.string\(\)\.regex\(\/\^\(\[01\]\\d\|2\[0-3\]\):\[0-5\]\\d\$\/, "수령 시각을 입력하세요"\)/)
   assert.match(await read(cwd, "src/mocks/browser.ts"), /\.\.\.orderHandlers,\n\s+\/\/ gen:handlers/)
   assert.match(await read(cwd, "src/mocks/db.ts"), /orders: OrderRow\[\]/)

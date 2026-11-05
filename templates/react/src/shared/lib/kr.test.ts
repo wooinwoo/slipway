@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest"
+import { z } from "zod"
 
 import {
   formatBizNo,
@@ -12,6 +13,7 @@ import {
   formatWonKorean,
   isoDaysFrom,
   isValidBizNo,
+  numberInput,
   phoneSchema,
   toIsoDate,
 } from "./kr"
@@ -29,6 +31,21 @@ describe("phone", () => {
     expect(phoneSchema.safeParse("010-1234-5678").success).toBe(true)
     expect(phoneSchema.safeParse("02-123-4567").success).toBe(true)
     expect(phoneSchema.safeParse("010-12-5678").success).toBe(false)
+  })
+})
+
+describe("number input", () => {
+  const capacity = numberInput(z.number({ error: "정원을 입력하세요" }).int().min(1))
+  it("reads the text an input holds", () => {
+    expect(capacity.parse("12")).toBe(12)
+    expect(capacity.parse(" 1,200 ")).toBe(1200)
+    expect(capacity.parse(3)).toBe(3)
+  })
+  it("treats a blank as no value", () => {
+    expect(capacity.safeParse("").error?.issues[0].message).toBe("정원을 입력하세요")
+    expect(capacity.safeParse("abc").success).toBe(false)
+    expect(numberInput(z.number().nullable()).parse("")).toBeNull()
+    expect(numberInput(z.number().nullable()).parse(undefined)).toBeNull()
   })
 })
 

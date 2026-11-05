@@ -185,8 +185,9 @@ function zodFor(field) {
     case "textarea": return text(2000)
     case "email": return blankOr(`z.email("이메일 형식이 아닙니다")`)
     case "phone": return blankOr("phoneSchema")
-    case "number": return nullable(`z.number({ error: ${q(required)} }).int("정수를 입력하세요")`)
-    case "won": return nullable(`z.number({ error: ${q(required)} }).int().min(0, "0원 이상 입력하세요")`)
+    // numberInput: the form passes the input's text ("", "1,200") as is.
+    case "number": return `numberInput(${nullable(`z.number({ error: ${q(required)} }).int("정수를 입력하세요").min(0, "0 이상 입력하세요")`)})`
+    case "won": return `numberInput(${nullable(`z.number({ error: ${q(required)} }).int().min(0, "0원 이상 입력하세요")`)})`
     case "date": return nullable(`z.iso.date({ error: "날짜를 선택하세요" })`)
     // A time of day as typed in <input type="time">; stored as text.
     case "time": return blankOr(`z.string().regex(/^([01]\\d|2[0-3]):[0-5]\\d$/, ${q(field.optional ? "시각을 00:00 형식으로 입력하세요" : particle(field.label, ["을", "를"]) + " 입력하세요")})`)
@@ -205,7 +206,8 @@ function schemaParts(resource, krImport) {
   const enums = fields.filter((f) => f.type === "enum")
     .map((f) => `export const ${optionsName(f)} = ${q(f.values)} as const\n`).join("")
   const imports = ['import { z } from "zod"']
-  if (fields.some((f) => f.type === "phone")) imports.push(`import { phoneSchema } from ${q(krImport)}`)
+  const kr = [fields.some((f) => f.type === "number" || f.type === "won") && "numberInput", fields.some((f) => f.type === "phone") && "phoneSchema"].filter(Boolean)
+  if (kr.length) imports.push(`import { ${kr.join(", ")} } from ${q(krImport)}`)
   const body = `// ${label}: fields and validation rules, shared by the form, the mock backend and the API.
 ${enums}
 export const ${singular}InputSchema = z.object({

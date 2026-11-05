@@ -94,8 +94,10 @@ the sign-in page and the app frame included, comes from a design harness working
      - Sheets: `<BottomSheet className="k-sheet" overlayClassName="k-dim">` with the grip and
        `<BottomSheetTitle className="k-h2">` inside. To compare a sheet, open it from a search param.
      - Forms: `KField` around the design's `k-input` (`group` when the control is a button or a set of
-       options, so it keeps its own name; `KSeg` for a segment), values checked with the resource's zod schema;
-       show `failureOf(parsed.error)` or `failureOf(error)` from a failed save. Sign-in calls the hooks
+       options, so it keeps its own name; `KSeg` for a segment). Keep the inputs' text as the form state and
+       check it with the resource's zod schema (number and won fields read "12" and "" themselves); show
+       `failureOf(parsed.error)` or `failureOf(error)` from a failed save: field errors through `KField`'s
+       `error`, the rest with `<KFormError failure={failure} />` above the button. Sign-in calls the hooks
        in `src/shared/api/auth.ts`: the design's "둘러보기" is `useDemoLogin()` (the seeded demo account),
        `useSocialLogin()` handles the mock and the real redirect.
      - Data from the generated hooks: `<plural>Query` for a page, `all<Plural>Query()` when a screen

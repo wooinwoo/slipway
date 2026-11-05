@@ -49,7 +49,7 @@ AI 작업 도구에서도 읽을 수 있습니다. 목록의 원본은 `codepack
 | `src/shared/patterns/async-state.tsx` | pending·error·empty·retry·children | 로딩·오류·빈 상태·콘텐츠 |
 | `src/shared/patterns/confirm-action.tsx` | 트리거·문구·비동기 콜백 | 확인·취소·실행 중 상태·실패 재시도 |
 | `src/shared/components/kr-inputs.tsx` | value·onChange | 전화·사업자번호·금액·주소 입력 |
-| `src/shared/lib/kr.ts` | 문자열·숫자·날짜 | 한국어 포맷과 검증. 날짜 문구 `formatDateLong`("11월 4일 수요일")·`formatDateShort`("11/4 수")·`formatDateWord`("오늘"), `toIsoDate`·`isoDaysFrom` |
+| `src/shared/lib/kr.ts` | 문자열·숫자·날짜 | 한국어 포맷과 검증. 날짜 문구 `formatDateLong`("11월 4일 수요일")·`formatDateShort`("11/4 수")·`formatDateWord`("오늘"), `toIsoDate`·`isoDaysFrom`. `numberInput(z.number())`: 입력칸 글자("12", "1,200", 빈칸)를 숫자로 읽는 스키마 |
 | `src/shared/api/client.ts` | 경로·JSON·RequestInit | JSON 응답·필드 오류·bearer 토큰. `failureOf(error)`: zod 오류나 `ApiError`를 메시지와 칸별 메시지로 |
 | `src/shared/patterns/auth-forms.tsx` | submit·onSelect·onClick 콜백 | 로그인 카드, 이메일 로그인·가입 폼, 카카오·네이버·게스트 버튼 |
 | `src/shared/patterns/app-shell.tsx` | brand·logo?·nav·user·onLogout·children | 사이드바, 브레드크럼, Ctrl/⌘+K, 사용자 메뉴 |

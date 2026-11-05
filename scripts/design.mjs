@@ -18,7 +18,7 @@
 // `k-screen` class). A screen is then `out/screens/<id>.html` written as JSX: the same classes with the
 // prefix, data from the hooks, behavior from the parts. Its images (`out/assets`) go to `public/k-style/`.
 // `src/shared/design/k-style.tsx` gets the markup every k-style screen repeats: KField (label, control
-// and error line wired for screen readers), KSeg, KAvatar (a prepared drawing picked by name), KAppBar
+// and error line wired for screen readers), KFormError, KSeg, KAvatar (a prepared drawing picked by name), KAppBar
 // and KTabBar.
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs"
 import { dirname, join, relative } from "node:path"
@@ -297,6 +297,21 @@ export function KField({
         </p>
       )}
     </div>
+  )
+}
+
+/**
+ * The form's own error line, for a failure no field shows (no connection, a server rule): place it above the
+ * submit button. Field errors stay under their fields, so this renders only when there are none.
+ * \`<KFormError failure={failure} />\` with \`failure\` from \`failureOf\`.
+ */
+export function KFormError({ failure }: { failure?: { message: string; fields: Record<string, string> } | null }) {
+  if (!failure || Object.keys(failure.fields).length) return null
+  return (
+    <p role="alert" className="k-field-msg">
+      <CircleAlertIcon strokeWidth={1.75} aria-hidden />
+      {failure.message}
+    </p>
   )
 }
 
