@@ -86,6 +86,8 @@ try {
   // Firefox: headless Chromium renders no frames on some WSL setups.
   // Playwright's Firefox ships English only: <input type="date|time"> draws "mm/dd/yyyy" here while a
   // Korean phone draws its own picker. Expect that difference in compare images.
+  // WSLg sets WAYLAND_DISPLAY; Firefox's Wayland probe (gfxtest -w) then hangs and outlives every run.
+  delete process.env.WAYLAND_DISPLAY
   const browser = await firefox.launch()
   if (mode === "compare") {
     await compare(browser)

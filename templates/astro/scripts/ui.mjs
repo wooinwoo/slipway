@@ -38,6 +38,8 @@ try {
     if (await fetch(base).then(() => true, () => false)) break
     await new Promise((r) => setTimeout(r, 200))
   }
+  // WSLg sets WAYLAND_DISPLAY; Firefox's Wayland probe (gfxtest -w) then hangs and outlives every run.
+  delete process.env.WAYLAND_DISPLAY
   const browser = await firefox.launch()
   const sizes = { desktop: { width: 1440, height: 900 }, mobile: { width: 390, height: 844 } }
   for (const scheme of ["light", "dark"]) {

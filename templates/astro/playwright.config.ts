@@ -1,5 +1,8 @@
 import { defineConfig, devices } from "@playwright/test"
 
+// WSLg sets WAYLAND_DISPLAY; Firefox's Wayland probe (gfxtest -w) then hangs and outlives every run.
+delete process.env.WAYLAND_DISPLAY
+
 const PORT = 4398
 
 export default defineConfig({
