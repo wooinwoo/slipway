@@ -8,6 +8,12 @@ test("the app boots and names the tab from src/shared/config.ts", async ({ page 
   await expect(page).toHaveTitle(/.+ · .+/)
 })
 
+test("a frozen local time reads the same in the test and the page, on UTC CI runners too", async ({ page }) => {
+  await page.clock.setFixedTime(new Date("2026-11-04T18:50"))
+  await page.goto("/")
+  expect(await page.evaluate(() => new Date().getHours())).toBe(18)
+})
+
 test("an unknown address shows the not-found state", async ({ page }) => {
   await page.goto("/nope")
   await expect(page.getByText("페이지를 찾을 수 없습니다")).toBeVisible()

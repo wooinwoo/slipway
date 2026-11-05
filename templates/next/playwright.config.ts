@@ -2,6 +2,8 @@ import { defineConfig, devices } from "@playwright/test"
 
 // WSLg sets WAYLAND_DISPLAY; Firefox's Wayland probe (gfxtest -w) then hangs and outlives every run.
 delete process.env.WAYLAND_DISPLAY
+// Tests write local times ("2026-11-04T18:50") that Node parses; keep Node on the browser timezone, UTC CI runners too.
+process.env.TZ = "Asia/Seoul"
 
 const PORT = 3457
 

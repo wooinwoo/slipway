@@ -41,6 +41,10 @@
 - **어디든 배포.** 정적 호스팅, 컨테이너(Docker 선택), Node 직접 실행, VPS 한 대. Vercel, Cloudflare, Railway, AWS, iwinv.
 - **AI와 같이 쓰는 하네스.** `AGENTS.md`(Claude Code는 `CLAUDE.md`로 같은 파일을 읽음), 디자인 하네스(모바일 앱 k-style-ui-ux, 웹 Impeccable) 연결, `REQ-n` 추적, `pnpm shots` 캡처, Claude Code 플러그인.
 
+## 만드는 방식
+
+Slipway는 버리는 시험 앱으로 고칩니다. Slipway 문서만 받은 새 AI 에이전트가 디자인 하네스의 화면을 보고 앱을 만들면서 막힌 곳을 기록하고, 그중 Slipway 구조 탓인 것만 템플릿·생성기·문서에서 고친 뒤 시험 앱은 버립니다. 로그인을 포함한 다섯 화면짜리 9차 시험 앱은 12.5분 만에 `pnpm verify`를 통과했습니다(7차 17.5분, 8차 18분).
+
 ## 사용법
 
 Slipway는 도구 상자입니다. 앱은 Slipway 밖, 지정한 폴더에 독립 프로젝트로 만들어지고 각자 자기 레포가 됩니다.

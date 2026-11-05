@@ -93,6 +93,8 @@ try {
   // Korean phone draws its own picker. Expect that difference in compare images.
   // WSLg sets WAYLAND_DISPLAY; Firefox's Wayland probe (gfxtest -w) then hangs and outlives every run.
   delete process.env.WAYLAND_DISPLAY
+  // `--now` is a local time: Node parses it and Firefox shows it in this timezone, UTC CI runners too.
+  process.env.TZ = "Asia/Seoul"
   const browser = await firefox.launch()
   if (mode === "compare") {
     await compare(browser)
