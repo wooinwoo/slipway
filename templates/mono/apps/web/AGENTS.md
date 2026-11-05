@@ -104,9 +104,13 @@ the sign-in page and the app frame included, comes from a design harness working
      - Data from the generated hooks: `<plural>Query` for a page, `all<Plural>Query()` when a screen
        counts or joins across the list, `<singular>Query(id)` for a detail; save one changed value
        with `{ ...to<Single>Input(row), status }`. Images from `/k-style/...`. Dates: also
-       `formatWeekday` ("수") to join them (`${formatMonthDay(d)} ${formatWeekday(d)}`).
-     - check:ui opens every route, bare: a route that needs a search param (`/classes/done?id=`) sends
-       a visit without it somewhere useful in `beforeLoad` instead of failing `validateSearch`.
+       `formatWeekday` ("수") to join them (`${formatMonthDay(d)} ${formatWeekday(d)}`); a date field
+       and a time field make one moment with `atTime(row.date, row.startTime)` (sort, "N분 뒤", over
+       or not) and `formatTime(now)` gives "18:50".
+     - Search params (a sheet's `?pick=1`, a done screen's `?id=`) are optional keys,
+       `validateSearch: z.object({ id: z.string().optional().catch(undefined) })`, so links elsewhere
+       don't have to pass them. check:ui opens every route bare: a route that can't work without one
+       sends the visit somewhere useful in `beforeLoad`.
      - The home screen under the signed-in layout (`src/routes/_app/index.tsx`) replaces the empty
        `src/routes/index.tsx`: delete that file. Anything the design doesn't draw uses the token utilities
        (`bg-surface`, `text-ink-2`, `text-title`, `h-btn`, ...), never raw colors.
@@ -122,16 +126,17 @@ the sign-in page and the app frame included, comes from a design harness working
      check:ui open them too. With the design's light-only theme they take light captures only.
   4. Set the design's moment once as `"slipway": { "now": "2026-11-04T18:50" }` in package.json (shots,
      check:ui and compare freeze the clock there). `pnpm design:compare /route=<id>.html ...` for every screen
-     (`--signed-out /login` for screens seen before signing in); fix what differs and repeat until
+     (`--signed-out /login=login.html` for screens seen before signing in); fix what differs and repeat until
      they match. `--now` also works for shots and check:ui. To skip the rebuild between rounds run
      `node scripts/ui.mjs compare ...` on the last build.
   E2E: designs hide native radios and checkboxes behind styled labels, so tap the visible label
   (`page.locator("label", { hasText })`) and assert the input is checked. Form and done screens have
   no tab bar; leave them through their own back, close or link. `openAsDemo(page, path, { now })` from
   `e2e/demo.ts` opens a screen as the demo account at the design's moment. A calculation across two
-  resources (seats left from classes and bookings) goes in the entity whose rows it counts and takes the
-  other side as plain values (`seatsLeft(capacity, bookings)` in `src/entities/bookings/`), so every
-  feature that shows it imports the same one.
+  resources (seats left from classes and bookings) goes in a file you add to the entity whose rows it
+  counts, taking the other side as plain values (for instance `src/entities/bookings/seats.ts` with
+  `seatsLeft(capacity, bookings)`), so every feature that shows it imports the same one. A rule the
+  server enforces (a full class refuses a booking) goes in the mock handler and the API too.
   A field that points at another resource (a booking's class) is `classId:ref(classes):수업` in
   `pnpm gen`: generate the target first; the mock and API check it and delete with it.
   The parts table in CODEPACK.md (tables, record forms, detail panels) is for designs without their own

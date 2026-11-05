@@ -34,8 +34,13 @@ const nowAt = args.indexOf("--now")
 // time-based copy matches the design's moment.
 const now = nowAt >= 0 ? args.splice(nowAt, 2)[1] : (process.env.SLIPWAY_NOW ?? config.now)
 // `--signed-out /login` (repeatable): routes compare opens without a session, like a sign-in screen.
+// `--signed-out /login=login.html` also names the pair to compare.
 const signedOut = []
-for (let at = args.indexOf("--signed-out"); at >= 0; at = args.indexOf("--signed-out")) signedOut.push(args.splice(at, 2)[1])
+for (let at = args.indexOf("--signed-out"); at >= 0; at = args.indexOf("--signed-out")) {
+  const value = args.splice(at, 2)[1] ?? ""
+  if (value.includes("=")) args.push(value)
+  signedOut.push(value.includes("=") ? value.slice(0, value.lastIndexOf("=")) : value)
+}
 // A free port each run: another check, a dev server or a second agent may hold any fixed one.
 const PORT = await new Promise((resolve) => {
   const probe = createServer().listen(0, () => {

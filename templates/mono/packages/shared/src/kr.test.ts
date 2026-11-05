@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 import { z } from "zod"
 
 import {
+  atTime,
   formatBizNo,
   formatDateLong,
   formatDateShort,
@@ -9,6 +10,7 @@ import {
   formatMonthDay,
   formatPhone,
   formatRelative,
+  formatTime,
   formatWeekday,
   formatWonCompact,
   formatWonKorean,
@@ -88,6 +90,8 @@ describe("calendar days", () => {
     expect(formatDateShort("2026-11-05")).toBe("11/5 목")
     expect(formatMonthDay("2026-11-05")).toBe("11월 5일")
     expect(formatWeekday("2026-11-05")).toBe("목")
+    expect(atTime("2026-11-05", "07:00").getTime()).toBe(new Date(2026, 10, 5, 7, 0).getTime())
+    expect(formatTime(new Date(2026, 10, 4, 18, 50))).toBe("18:50")
     expect(formatDateWord("2026-11-04", now)).toBe("오늘")
     expect(formatDateWord("2026-11-05", now)).toBe("내일")
     expect(formatDateWord("2026-11-03", now)).toBe("어제")

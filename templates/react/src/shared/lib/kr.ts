@@ -143,6 +143,12 @@ export const formatMonthDay = (date: Date | string) => {
 /** "수": joins the other formats, `${formatMonthDay(d)} ${formatWeekday(d)}` -> "11월 4일 수" */
 export const formatWeekday = (date: Date | string) => weekdays[toDate(date).getDay()]
 
+/** A date field and a time field as one moment: ("2026-11-04", "19:00") -> that local time. Sort, compare with now. */
+export const atTime = (date: string, time: string) => new Date(`${date}T${time}`)
+
+/** "18:50": the time of a moment, as a time field holds it */
+export const formatTime = (date: Date | string) => toDate(date).toTimeString().slice(0, 5)
+
 /** "11/4 수": date chips, compact rows */
 export const formatDateShort = (date: Date | string) => {
   const d = toDate(date)

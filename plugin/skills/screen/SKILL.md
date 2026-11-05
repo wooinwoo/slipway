@@ -94,11 +94,14 @@ react는 `corepack pnpm build && corepack pnpm preview`, mono는 `corepack pnpm 
   3. 데모 계정에 `out/journey.md` 시나리오를 `src/mocks/scenario.ts`에 심는다(`demoRow({...})`가 주인·시각을 채운다, 먼저 쓴 행이 가장 최근이라
      디자인 목록 순서대로 쓴다, 날짜는 `isoDaysFrom`으로 오늘 기준, 표에 수만 있으면 이름을 지어 채운다, 행 id는 고정). 아바타는 필드를 만들지 않는다:
      시나리오가 정한 그림은 `src/shared/config.ts`의 `avatarFiles`(`pnpm design`이 만든다)에 적고, 나머지는 `KAvatar`가 남는 그림에서 이름으로 고른다.
-     두 리소스에 걸친 계산(수업 정원과 예약으로 남은 자리)은 세는 쪽 엔티티에 두고 상대는 값으로 받는다(`src/entities/bookings/`의 `seatsLeft(capacity, bookings)`).
-     `check:ui`는 모든 경로를 파라미터 없이도 연다: 검색 파라미터가 꼭 필요한 경로는 없을 때 `beforeLoad`에서 다른 곳으로 보낸다. 디자인의 시각은 `package.json`의 `"slipway": { "now": "2026-11-04T18:50" }`에 한 번. 상세 경로는
+     두 리소스에 걸친 계산(수업 정원과 예약으로 남은 자리)은 세는 쪽 엔티티에 파일을 더해 두고 상대는 값으로 받는다(예: `src/entities/bookings/seats.ts`의
+     `seatsLeft(capacity, bookings)`를 직접 쓴다). 서버가 지켜야 할 규칙(정원 초과 예약 거절)은 Mock 핸들러와 API에도 넣는다.
+     날짜 칸과 시간 칸은 `atTime(date, time)`으로 한 시각으로 합치고, 지금 시각 글자는 `formatTime(now)`("18:50").
+     검색 파라미터(시트의 `?pick=1`, 완료 화면의 `?id=`)는 선택 키로 둔다(`z.string().optional().catch(undefined)`). 그래야 다른 링크가 넘기지 않아도 된다.
+     `check:ui`는 모든 경로를 파라미터 없이도 연다: 파라미터가 꼭 필요한 경로는 없을 때 `beforeLoad`에서 다른 곳으로 보낸다. 디자인의 시각은 `package.json`의 `"slipway": { "now": "2026-11-04T18:50" }`에 한 번. 상세 경로는
      `package.json`의 `"slipway": { "routes": [...] }`에 적어 `shots`·`check:ui`도 열게 한다.
   3-1. `corepack pnpm design:compare --now <시나리오 날짜·시각> /<route>=<id>.html ...`: 화면마다 디자인과 나란히 찍는다(`.shots/compare-<id>.png`).
-     로그인 전 화면은 `--signed-out /login`. 다시 찍을 때 빌드를 건너뛰려면 `node scripts/ui.mjs compare ...`.
+     로그인 전 화면은 `--signed-out /login=login.html`. 다시 찍을 때 빌드를 건너뛰려면 `node scripts/ui.mjs compare ...`.
      다른 곳(배치·간격·글자 크기·빠진 블록·문구)을 고치고 다시 찍는다. 모든 화면이 맞을 때까지 넘기지 않는다. `--now`는 `shots`·`check:ui`에도 된다.
 - Impeccable: `DESIGN.md`와 하네스의 판단을 따른다.
 
