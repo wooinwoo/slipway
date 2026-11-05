@@ -57,6 +57,7 @@ const USAGE = `usage: pnpm gen resource <plural> <한글 이름> --fields "<name
 
   types   text, textarea, email, phone, number, won, date, time (HH:MM), enum(a|b|c),
           ref(<plural>): points at a resource generated earlier (classId:ref(classes):수업)
+          number and won take whole numbers from 0; change the bound in the schema (.min(1) for a capacity)
   ?       after the name: optional field
   라벨    shown in forms and messages; write a space as _ (startTime:time:시작_시간)
   --singular  the singular when it isn't derived right (people -> --singular person)

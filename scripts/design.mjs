@@ -177,6 +177,11 @@ ${prefixSelectors(body).trim()}
       .map((d) => [d.name, readdirSync(join(avatarsDir, d.name)).filter((f) => /\.(svg|png|webp)$/.test(f)).sort()]))
     : {}
   writeFileSync(join(dirname(designCss), "k-style.tsx"), kStyleParts(theme.endsWith("globals.css") ? "next" : "tanstack", avatars))
+  // Drawings a scenario assigns by name sit with the product settings, where screens and the mock both read them.
+  const config = join(dirname(dirname(designCss)), "config.ts")
+  const settings = existsSync(config) ? readFileSync(config, "utf8") : ""
+  if (!settings.includes("avatarFiles"))
+    writeFileSync(config, `${settings.trimEnd()}\n\n/** Avatar drawings the design assigns by name ({ 김민지: "02.svg" }); KAvatar picks the others from the name. */\nexport const avatarFiles: Record<string, string> = {}\n`.trimStart())
 }
 
 let css = readFileSync(theme, "utf8").replace(/\r\n/g, "\n")
@@ -241,20 +246,25 @@ ${link}
 import { ChevronLeftIcon, CircleAlertIcon } from "lucide-react"
 import type { ReactNode } from "react"
 
+import { avatarFiles } from "@/shared/config"
 import { cn } from "@/shared/lib/utils"
 import { useBack } from "@/shared/patterns/mobile-shell"
 
 /** The prepared avatar drawings in public/k-style/avatars, by style. */
 const avatars: Record<string, string[]> = ${JSON.stringify(avatars)}
 
+const assigned = new Set(Object.values(avatarFiles))
+
 /**
- * A person's avatar: one of the prepared drawings, the one the scenario assigns (\`file\`) or else picked
- * from the name so a member always gets the same face. The design never draws initials or objects in a
- * person's place.
+ * A person's avatar: one of the prepared drawings. The one the scenario assigns (\`avatarFiles\` in
+ * src/shared/config.ts, or \`file\`), else one no one is assigned, picked from the name so a member always
+ * gets the same face. The design never draws initials or objects in a person's place.
  */
-export function KAvatar({ name, kind = "line", file: chosen }: { name: string; kind?: string; /** A drawing the scenario assigns ("02.svg"). */ file?: string }) {
-  const files = avatars[kind] ?? []
-  const file = chosen ?? files[[...name].reduce((hash, char) => (hash * 31 + char.codePointAt(0)!) >>> 0, 7) % Math.max(files.length, 1)]
+export function KAvatar({ name, kind = "line", file: chosen }: { name: string; kind?: string; /** A drawing for this row ("02.svg"). */ file?: string }) {
+  const all = avatars[kind] ?? []
+  const free = all.filter((file) => !assigned.has(file))
+  const files = free.length ? free : all
+  const file = chosen ?? avatarFiles[name] ?? files[[...name].reduce((hash, char) => (hash * 31 + char.codePointAt(0)!) >>> 0, 7) % Math.max(files.length, 1)]
   return <span className="k-avatar">{file && <img src={\`/k-style/avatars/\${kind}/\${file}\`} alt="" />}</span>
 }
 
@@ -301,16 +311,20 @@ export function KField({
 }
 
 /**
- * The form's own error line, for a failure no field shows (no connection, a server rule): place it above the
- * submit button. Field errors stay under their fields, so this renders only when there are none.
- * \`<KFormError failure={failure} />\` with \`failure\` from \`failureOf\`.
+ * The form's own error line, above the submit button, for what no field shows: a failure without field
+ * errors (no connection, a server rule), or errors on fields the form doesn't draw. \`shown\` lists the
+ * fields it draws; without it every field error is taken as shown under its field.
+ * \`<KFormError failure={failure} shown={["memberName", "phone"]} />\` with \`failure\` from \`failureOf\`.
  */
-export function KFormError({ failure }: { failure?: { message: string; fields: Record<string, string> } | null }) {
-  if (!failure || Object.keys(failure.fields).length) return null
+export function KFormError({ failure, shown }: { failure?: { message: string; fields: Record<string, string> } | null; shown?: readonly string[] }) {
+  if (!failure) return null
+  const names = Object.keys(failure.fields)
+  const elsewhere = shown ? names.filter((name) => !shown.includes(name)) : []
+  if (names.length && !elsewhere.length) return null
   return (
     <p role="alert" className="k-field-msg">
       <CircleAlertIcon strokeWidth={1.75} aria-hidden />
-      {failure.message}
+      {elsewhere.length ? elsewhere.map((name) => failure.fields[name]).join(" ") : failure.message}
     </p>
   )
 }

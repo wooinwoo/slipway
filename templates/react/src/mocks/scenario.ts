@@ -8,9 +8,12 @@ import type { Db } from "./db"
 export const DEMO_USER_ID = "u_demo"
 
 let order = 0
-/** A row of the demo account: its owner, and creation times a minute apart in the order written. */
+/**
+ * A row of the demo account: its owner, and creation times a minute apart, the first row written the newest.
+ * Lists show the newest first, so write rows in the order the design lists them.
+ */
 export function demoRow<T extends object>(row: T) {
-  const at = new Date(Date.now() - 86_400_000 + order++ * 60_000).toISOString()
+  const at = new Date(Date.now() - 86_400_000 - order++ * 60_000).toISOString()
   return { ...row, userId: DEMO_USER_ID, createdAt: at, updatedAt: at }
 }
 

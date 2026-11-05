@@ -86,14 +86,16 @@ react는 `corepack pnpm build && corepack pnpm preview`, mono는 `corepack pnpm 
        그런 마크업이 없는 디자인용이다. 뒤로 버튼은 `useBack({ to: "/목록" })`, 탭바는 `KTabBar`, 디자인의 선 아이콘은 lucide(`strokeWidth={1.75}`).
      - 시트는 `<BottomSheet className="k-sheet" overlayClassName="k-dim">` 안에 손잡이와 `<BottomSheetTitle className="k-h2">`. 시트를 비교하려면 검색 파라미터로 열리게 한다.
      - 폼은 `KField` 안에 디자인의 `k-input`. 입력칸 글자를 그대로 상태로 두고 리소스 zod 스키마로 검사한다(숫자·원 칸은 "12"와 빈칸을 스스로 읽는다).
-       `failureOf(parsed.error)`·`failureOf(error)`의 칸별 메시지는 `KField`의 `error`로, 칸이 없는 메시지는 버튼 위 `<KFormError failure={failure} />`로 보여 준다.
+       `failureOf(parsed.error)`·`failureOf(error)`의 칸별 메시지는 `KField`의 `error`로, 칸이 없는 메시지와 폼에 없는 칸의 메시지는 버튼 위 `<KFormError failure={failure} shown={[그리는 칸]} />`로 보여 준다.
        디자인의 "둘러보기"는 `useDemoLogin()`(데모 계정과 심어 둔 데이터), 카카오·네이버는 `useSocialLogin()`(Mock과 실제 리다이렉트를 훅이 가른다).
      - 한 페이지는 `<plural>Query`, 목록 전체를 세거나 합치는 화면은 `all<Plural>Query()`, 상세는 `<singular>Query(id)`. 값 하나만 바꿔 저장할 때는
        `{ ...to<Single>Input(row), status }`. 디자인에 없는 것만 토큰 유틸리티로 짓고 색 값은 쓰지 않는다.
      - 홈 화면을 로그인 레이아웃 아래(`src/routes/_app/index.tsx`)에 두면 빈 `src/routes/index.tsx`는 지운다.
-  3. 데모 계정에 `out/journey.md` 시나리오를 `src/mocks/scenario.ts`에 심는다(`demoRow({...})`가 주인·시각을 채운다, 날짜는 `isoDaysFrom`으로 오늘 기준,
-     표에 수만 있으면 이름을 지어 채운다, 행 id는 고정). 아바타는 필드를 만들지 않는다: `KAvatar`가 이름으로 고르고, 시나리오가 그림을 정했으면
-     시드 옆에 이름→파일 표를 둔다. 디자인의 시각은 `package.json`의 `"slipway": { "now": "2026-11-04T18:50" }`에 한 번. 상세 경로는
+  3. 데모 계정에 `out/journey.md` 시나리오를 `src/mocks/scenario.ts`에 심는다(`demoRow({...})`가 주인·시각을 채운다, 먼저 쓴 행이 가장 최근이라
+     디자인 목록 순서대로 쓴다, 날짜는 `isoDaysFrom`으로 오늘 기준, 표에 수만 있으면 이름을 지어 채운다, 행 id는 고정). 아바타는 필드를 만들지 않는다:
+     시나리오가 정한 그림은 `src/shared/config.ts`의 `avatarFiles`(`pnpm design`이 만든다)에 적고, 나머지는 `KAvatar`가 남는 그림에서 이름으로 고른다.
+     두 리소스에 걸친 계산(수업 정원과 예약으로 남은 자리)은 세는 쪽 엔티티에 두고 상대는 값으로 받는다(`src/entities/bookings/`의 `seatsLeft(capacity, bookings)`).
+     `check:ui`는 모든 경로를 파라미터 없이도 연다: 검색 파라미터가 꼭 필요한 경로는 없을 때 `beforeLoad`에서 다른 곳으로 보낸다. 디자인의 시각은 `package.json`의 `"slipway": { "now": "2026-11-04T18:50" }`에 한 번. 상세 경로는
      `package.json`의 `"slipway": { "routes": [...] }`에 적어 `shots`·`check:ui`도 열게 한다.
   3-1. `corepack pnpm design:compare --now <시나리오 날짜·시각> /<route>=<id>.html ...`: 화면마다 디자인과 나란히 찍는다(`.shots/compare-<id>.png`).
      로그인 전 화면은 `--signed-out /login`. 다시 찍을 때 빌드를 건너뛰려면 `node scripts/ui.mjs compare ...`.

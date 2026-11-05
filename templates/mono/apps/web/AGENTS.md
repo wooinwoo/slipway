@@ -97,20 +97,26 @@ the sign-in page and the app frame included, comes from a design harness working
        options, so it keeps its own name; `KSeg` for a segment). Keep the inputs' text as the form state and
        check it with the resource's zod schema (number and won fields read "12" and "" themselves); show
        `failureOf(parsed.error)` or `failureOf(error)` from a failed save: field errors through `KField`'s
-       `error`, the rest with `<KFormError failure={failure} />` above the button. Sign-in calls the hooks
+       `error`, the rest with `<KFormError failure={failure} shown={[...the fields it draws]} />` above the
+       button. Sign-in calls the hooks
        in `src/shared/api/auth.ts`: the design's "둘러보기" is `useDemoLogin()` (the seeded demo account),
        `useSocialLogin()` handles the mock and the real redirect.
      - Data from the generated hooks: `<plural>Query` for a page, `all<Plural>Query()` when a screen
        counts or joins across the list, `<singular>Query(id)` for a detail; save one changed value
-       with `{ ...to<Single>Input(row), status }`. Images from `/k-style/...`.
+       with `{ ...to<Single>Input(row), status }`. Images from `/k-style/...`. Dates: also
+       `formatWeekday` ("수") to join them (`${formatMonthDay(d)} ${formatWeekday(d)}`).
+     - check:ui opens every route, bare: a route that needs a search param (`/classes/done?id=`) sends
+       a visit without it somewhere useful in `beforeLoad` instead of failing `validateSearch`.
      - The home screen under the signed-in layout (`src/routes/_app/index.tsx`) replaces the empty
        `src/routes/index.tsx`: delete that file. Anything the design doesn't draw uses the token utilities
        (`bg-surface`, `text-ink-2`, `text-title`, `h-btn`, ...), never raw colors.
   3. Seed the demo account with the scenario in `out/journey.md`, in `src/mocks/scenario.ts`:
-     `demoRow({...})` fills the owner and times; the mock starts over each day, so count dates from
-     today with `isoDaysFrom`; invent plausible names where the table only gives counts; give rows
-     fixed ids. Avatars need no field: `KAvatar` picks a drawing by name; drawings a journey assigns go
-     in a name-to-file map in `src/shared/config.ts` (app code can't import `src/mocks`). List the
+     `demoRow({...})` fills the owner and times, the first row written the newest (lists show the
+     newest first, so write rows in the order the design lists them); the mock starts over each day, so
+     count dates from today with `isoDaysFrom`; invent plausible names where the table only gives counts;
+     give rows fixed ids. Avatars need no field: drawings a journey assigns go in `avatarFiles` in
+     `src/shared/config.ts` (`pnpm design` adds it), and `KAvatar` gives everyone else a free drawing
+     picked by name. List the
      detail routes, and sheets opened by a search param, under `"slipway": { "routes": [...] }` in
      package.json and the screens seen before signing in under `"signedOut": ["/login"]`, so shots and
      check:ui open them too. With the design's light-only theme they take light captures only.
@@ -123,7 +129,9 @@ the sign-in page and the app frame included, comes from a design harness working
   (`page.locator("label", { hasText })`) and assert the input is checked. Form and done screens have
   no tab bar; leave them through their own back, close or link. `openAsDemo(page, path, { now })` from
   `e2e/demo.ts` opens a screen as the demo account at the design's moment. A calculation across two
-  resources (seats left from classes and bookings) belongs to the feature that shows it.
+  resources (seats left from classes and bookings) goes in the entity whose rows it counts and takes the
+  other side as plain values (`seatsLeft(capacity, bookings)` in `src/entities/bookings/`), so every
+  feature that shows it imports the same one.
   A field that points at another resource (a booking's class) is `classId:ref(classes):수업` in
   `pnpm gen`: generate the target first; the mock and API check it and delete with it.
   The parts table in CODEPACK.md (tables, record forms, detail panels) is for designs without their own

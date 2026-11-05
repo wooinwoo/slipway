@@ -90,12 +90,17 @@ for (const [preset, theme] of [["react", "src/index.css"], ["mono", "apps/web/sr
     assert.match(parts, /export function KAvatar\(/)
     assert.match(parts, /"line":\["01\.svg"\]/)
     assert.match(parts, preset === "next" ? /from "next\/link"/ : /from "@tanstack\/react-router"/)
+    assert.match(parts, /export function KFormError\(/)
+    // Assigned drawings are a setting KAvatar reads; added once.
+    const config = () => readFile(join(cwd, `${web}src/shared/config.ts`), "utf8")
+    assert.match(await config(), /export const avatarFiles: Record<string, string> = \{\}/)
 
     // Rerunning with another palette replaces the block instead of adding one.
     design(cwd, "../out", "--palette", "seed-classpass")
     css = await readFile(join(cwd, theme), "utf8")
     assert.equal(css.match(/design:start/g).length, 1)
     assert.equal(css.match(/shared\/design\/k-style\.css/g).length, 1)
+    assert.equal((await config()).match(/avatarFiles/g).length, 1)
     assert.match(css, /--c-brand: #0055FF;/)
     assert.doesNotMatch(css, /#008363/)
   })

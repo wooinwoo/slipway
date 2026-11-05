@@ -9,6 +9,7 @@ import {
   formatMonthDay,
   formatPhone,
   formatRelative,
+  formatWeekday,
   formatWonCompact,
   formatWonKorean,
   isoDaysFrom,
@@ -86,6 +87,7 @@ describe("calendar days", () => {
     expect(formatDateLong("2026-11-04")).toBe("11월 4일 수요일")
     expect(formatDateShort("2026-11-05")).toBe("11/5 목")
     expect(formatMonthDay("2026-11-05")).toBe("11월 5일")
+    expect(formatWeekday("2026-11-05")).toBe("목")
     expect(formatDateWord("2026-11-04", now)).toBe("오늘")
     expect(formatDateWord("2026-11-05", now)).toBe("내일")
     expect(formatDateWord("2026-11-03", now)).toBe("어제")

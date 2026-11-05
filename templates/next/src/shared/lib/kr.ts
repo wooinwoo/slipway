@@ -140,6 +140,9 @@ export const formatMonthDay = (date: Date | string) => {
   return `${d.getMonth() + 1}월 ${d.getDate()}일`
 }
 
+/** "수": joins the other formats, `${formatMonthDay(d)} ${formatWeekday(d)}` -> "11월 4일 수" */
+export const formatWeekday = (date: Date | string) => weekdays[toDate(date).getDay()]
+
 /** "11/4 수": date chips, compact rows */
 export const formatDateShort = (date: Date | string) => {
   const d = toDate(date)
