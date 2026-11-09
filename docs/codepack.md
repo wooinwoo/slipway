@@ -10,7 +10,7 @@
 ```sh
 node scripts/pack.mjs list
 node scripts/pack.mjs show table form
-node scripts/pack.mjs copy table form --to ../my-poc/src
+node scripts/pack.mjs copy table form --to ../my-app/src
 ```
 
 `show`는 입력·출력·수정 지점·제약과 의존 파일·패키지를 보여 줍니다. `--json`을 붙이면
@@ -81,7 +81,7 @@ AI 작업 도구에서도 읽을 수 있습니다. 목록의 원본은 `codepack
 `columns`는 `{ key, title, render(row) }[]`, `onOpen`은 사용자가 첫 열을 선택했을 때의 콜백입니다.
 표는 데이터를 변경하거나 API를 호출하지 않습니다. `pageSize`는 기본 6입니다.
 검색 입력은 별도 `SearchInput`이며 필터링 방식은 호출하는 쪽에서 정합니다.
-현재 페이지 이동은 작은 POC 데이터셋을 위한 로컬 처리입니다.
+현재 페이지 이동은 전달받은 `rows`를 나누는 로컬 처리입니다.
 
 ```tsx
 <DataTable rows={rows} onOpen={open} columns={[
